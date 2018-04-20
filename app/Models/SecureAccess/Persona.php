@@ -11,7 +11,7 @@ use DB;
 class Persona extends Authenticatable
 {
     use Notifiable;
-    protected   $table = 'personas';
+    protected   $table = 'm_personas';
 
 
     public static function runEditPassword($r)
@@ -35,22 +35,22 @@ class Persona extends Authenticatable
         //if(Auth::check())
         $persona = Auth::user()->id;
         $set=DB::statement('SET group_concat_max_len := @@max_allowed_packet');
-        $result=DB::table('opciones as o')
-                ->join('menus as m', function($join){
+        $result=DB::table('m_opciones as o')
+                ->join('m_menus as m', function($join){
                         $join->on('m.id','o.menu_id')
                         ->where('m.estado',1);
                 })
-                ->join('privilegios_opciones as po', function($join){
+                ->join('m_privilegios_opciones as po', function($join){
                         $join->on('po.opcion_id','o.id')
                         ->where('po.estado',1);
                 })
-                ->join('privilegios as p', function($join){
+                ->join('m_privilegios as p', function($join){
                         $join->on('p.id','po.privilegio_id')
                         ->where('p.estado',1);
                 })
-                ->join('personas_privilegios_sucursales as pps', function($join){
-                        $join->on('pps.privilegio_id','p.id')
-                        ->where('pps.estado',1);
+                ->join('m_sedes_privilegios_personas as spp', function($join){
+                        $join->on('spp.privilegio_id','p.id')
+                        ->where('spp.estado',1);
                 })
                 ->select('m.menu','p.privilegio',
                     DB::raw(
@@ -60,7 +60,7 @@ class Persona extends Authenticatable
                         ) opciones, min(m.class_icono) icono'
                     )
                 )
-                ->where('pps.persona_id',$persona)
+                ->where('spp.persona_id',$persona)
                 ->where('o.estado',1)
                 ->groupBy('m.menu','p.privilegio')
                 ->orderBy('m.menu')

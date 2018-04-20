@@ -8,9 +8,9 @@
         <meta name="author" content="Jorge Salcedo (Shevchenko)">
         
         <link rel="shortcut icon" href="favicon.ico">
-        <meta name="description" content="">
+        <meta name="description" content="Software de Planillas">
         <title>         
-                Software de Negocios (JS)
+                Software de Planillas (JS)
         </title>
             {{ Html::style('lib/bootstrap/css/bootstrap.min.css') }}
             {{ Html::style('lib/font-awesome/css/font-awesome.min.css') }}

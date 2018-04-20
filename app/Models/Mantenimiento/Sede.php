@@ -7,74 +7,74 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Input;
 
-class Sucursal extends Model
+class Sede extends Model
 {
-    protected   $table = 'sucursales';
+    protected   $table = 'm_sedes';
 
     public static function runEditStatus($r)
     {
-        $sucursale = Auth::user()->id;
-        $sucursal = Sucursal::find($r->id);
-        $sucursal->estado = trim( $r->estadof );
-        $sucursal->persona_id_updated_at=$sucursale;
-        $sucursal->save();
+        $sedee = Auth::user()->id;
+        $sede = Sede::find($r->id);
+        $sede->estado = trim( $r->estadof );
+        $sede->persona_id_updated_at=$sedee;
+        $sede->save();
     }
 
     public static function runNew($r)
     {
-        $sucursale = Auth::user()->id;
-        $sucursal = new Sucursal;
-        $sucursal->sucursal = trim( $r->sucursal );
-        $sucursal->direccion = trim( $r->direccion );
-        $sucursal->telefono = trim( $r->telefono );
-        $sucursal->celular = trim( $r->celular );
-        $sucursal->email = trim( $r->email );
-        $sucursal->estado = trim( $r->estado );
-        $sucursal->persona_id_created_at=$sucursale;
+        $sedee = Auth::user()->id;
+        $sede = new Sede;
+        $sede->sede = trim( $r->sede );
+        $sede->direccion = trim( $r->direccion );
+        $sede->telefono = trim( $r->telefono );
+        $sede->celular = trim( $r->celular );
+        $sede->email = trim( $r->email );
+        $sede->estado = trim( $r->estado );
+        $sede->persona_id_created_at=$sedee;
         if(trim($r->imagen_nombre)!=''){
-        $sucursal->foto=$r->imagen_nombre;
-        $este = new Sucursal;
-        $url = "img/sucursa/".$r->imagen_nombre; 
+        $sede->foto=$r->imagen_nombre;
+        $este = new Sede;
+        $url = "img/sede/".$r->imagen_nombre; 
         $este->fileToFile($r->imagen_archivo, $url);}
         else {
-        $sucursal->foto=null;    
+        $sede->foto=null;    
         }
-        $sucursal->save();
+        $sede->save();
     }
 
     public static function runEdit($r)
     {
-        $sucursale = Auth::user()->id;
-        $sucursal = Sucursal::find($r->id);
-        $sucursal->sucursal = trim( $r->sucursal );
-        $sucursal->direccion = trim( $r->direccion );
-        $sucursal->telefono = trim( $r->telefono );
-        $sucursal->celular = trim( $r->celular );
-        $sucursal->email = trim( $r->email );
-        $sucursal->estado = trim( $r->estado );
-        $sucursal->persona_id_updated_at=$sucursale;
+        $sedee = Auth::user()->id;
+        $sede = Sede::find($r->id);
+        $sede->sede = trim( $r->sede );
+        $sede->direccion = trim( $r->direccion );
+        $sede->telefono = trim( $r->telefono );
+        $sede->celular = trim( $r->celular );
+        $sede->email = trim( $r->email );
+        $sede->estado = trim( $r->estado );
+        $sede->persona_id_updated_at=$sedee;
         if(trim($r->imagen_nombre)!=''){
-            $sucursal->foto=$r->imagen_nombre;
+            $sede->foto=$r->imagen_nombre;
         }else {
-            $sucursal->foto=null;    
+            $sede->foto=null;    
         }
         if(trim($r->imagen_archivo)!=''){
-            $este = new Sucursal;
-            $url = "img/sucursa/".$r->imagen_nombre; 
+            $este = new Sede;
+            $url = "img/sede/".$r->imagen_nombre; 
             $este->fileToFile($r->imagen_archivo, $url);
         }
-        $sucursal->save();
+        $sede->save();
     }
 
     public static function runLoad($r)
     {
-        $sql=Sucursal::select('id','sucursal','direccion','telefono','celular','email','foto','estado')
+        $sql=Sede::select('id','sede','direccion','telefono','celular','email','foto','estado')
             ->where( 
                 function($query) use ($r){
-                    if( $r->has("sucursal") ){
-                        $sucursal=trim($r->sucursal);
-                        if( $sucursal !='' ){
-                            $query->where('sucursal','like','%'.$sucursal.'%');
+                    if( $r->has("sede") ){
+                        $sede=trim($r->sede);
+                        if( $sede !='' ){
+                            $query->where('sede','like','%'.$sede.'%');
                         }
                     }
                     if( $r->has("direccion") ){
@@ -109,14 +109,14 @@ class Sucursal extends Model
                     }
                 }
             );
-        $result = $sql->orderBy('sucursal','asc')->paginate(10);
+        $result = $sql->orderBy('sede','asc')->paginate(10);
         return $result;
     }
 
     public static function runLoad2($r)
     {
-        $sql=Sucursal::select('id','sucursal','direccion','telefono','celular','email')->where('estado','=',1);
-        $result = $sql->orderBy('sucursal','asc')->get();
+        $sql=Sede::select('id','sede','direccion','telefono','celular','email')->where('estado','=',1);
+        $result = $sql->orderBy('sede','asc')->get();
         return $result;
     }
 
@@ -125,8 +125,8 @@ class Sucursal extends Model
         if ( !is_dir('img') ) {
             mkdir('img',0777);
         }
-        if ( !is_dir('img/sucursa') ) {
-            mkdir('img/sucursa',0777);
+        if ( !is_dir('img/sede') ) {
+            mkdir('img/sede',0777);
         }
         list($type, $file) = explode(';', $file);
         list(, $type) = explode('/', $type);
@@ -141,21 +141,21 @@ class Sucursal extends Model
         return $url. $type;
     }
     
-    public static function ListSucursal($r)
+    public static function ListSede($r)
     {
-        $sql=Sucursal::select('id','sucursal','estado')
+        $sql=Sede::select('id','sede','estado')
             ->where('estado','=','1');
-        $result = $sql->orderBy('sucursal','asc')->get();
+        $result = $sql->orderBy('sede','asc')->get();
         return $result;
     }
     
-    public static function ListSucursalandUsuario($r)
+    public static function ListSedeandUsuario($r)
     {
-        $sql= PersonaPrivilegioSucursal::select('s.id','s.sucursal','s.estado')
-            ->join('sucursales as s','s.id','=','pps.sucursal_id')
+        $sql= PersonaPrivilegioSede::select('s.id','s.sede','s.estado')
+            ->join('sedees as s','s.id','=','pps.sede_id')
             ->where('pps.estado','=','1')
             ->where('pps.persona_id','=', Auth::user()->id);
-        $result = $sql->orderBy('sucursal','asc')->get();
+        $result = $sql->orderBy('sede','asc')->get();
         return $result;
 
     }
@@ -163,7 +163,7 @@ class Sucursal extends Model
     // Export
     public static function runExport($r)
     {
-        $rsql= Sucursal::runLoad2($r);
+        $rsql= Sede::runLoad2($r);
 
         $length=array(
             'A'=>15,
@@ -171,11 +171,11 @@ class Sucursal extends Model
             'F'=>30
         );
         $cabecera=array(
-            'id','Sucursal','Direccion','Telefono',
+            'id','Sede','Direccion','Telefono',
             'Celular','Email'
         );
         $campos=array(
-            'id','sucursal','direccion','telefono',
+            'id','sede','direccion','telefono',
             'celular','email'
         );
 

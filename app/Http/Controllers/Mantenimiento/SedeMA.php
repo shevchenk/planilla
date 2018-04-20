@@ -3,12 +3,12 @@ namespace App\Http\Controllers\Mantenimiento;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Mantenimiento\Sucursal;
+use App\Models\Mantenimiento\Sede;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Excel;
 
-class SucursalEM extends Controller
+class SedeMA extends Controller
 {
     public function __construct()
     {
@@ -18,7 +18,7 @@ class SucursalEM extends Controller
     public function EditStatus(Request $r )
     {
         if ( $r->ajax() ) {
-            Sucursal::runEditStatus($r);
+            Sede::runEditStatus($r);
             $return['rst'] = 1;
             $return['msj'] = 'Registro actualizado';
             return response()->json($return);
@@ -35,9 +35,9 @@ class SucursalEM extends Controller
             );
 
             $rules = array(
-                'sucursal' => 
+                'sede' => 
                        ['required',
-                        Rule::unique('sucursales','sucursal'),
+                        Rule::unique('m_sedes','sede'),
                         ],
             );
 
@@ -45,7 +45,7 @@ class SucursalEM extends Controller
             $validator=Validator::make($r->all(), $rules,$mensaje);
 
             if ( !$validator->fails() ) {
-                Sucursal::runNew($r);
+                Sede::runNew($r);
                 $return['rst'] = 1;
                 $return['msj'] = 'Registro creado';
             }
@@ -66,16 +66,16 @@ class SucursalEM extends Controller
             );
 
             $rules = array(
-                'sucursal' => 
+                'sede' => 
                        ['required',
-                        Rule::unique('sucursales','sucursal')->ignore($r->id),
+                        Rule::unique('m_sedes','sede')->ignore($r->id),
                         ],
             );
 
             $validator=Validator::make($r->all(), $rules,$mensaje);
 
             if ( !$validator->fails() ) {
-                Sucursal::runEdit($r);
+                Sede::runEdit($r);
                 $return['rst'] = 1;
                 $return['msj'] = 'Registro actualizado';
             }
@@ -90,7 +90,7 @@ class SucursalEM extends Controller
     public function Load(Request $r )
     {
         if ( $r->ajax() ) {
-            $renturnModel = Sucursal::runLoad($r);
+            $renturnModel = Sede::runLoad($r);
             $return['rst'] = 1;
             $return['data'] = $renturnModel;
             $return['msj'] = "No hay registros aún";
@@ -98,10 +98,10 @@ class SucursalEM extends Controller
         }
     }
     
-    public function ListSucursal (Request $r )
+    public function ListSede (Request $r )
     {
         if ( $r->ajax() ) {
-            $renturnModel = Sucursal::ListSucursal($r);
+            $renturnModel = Sede::ListSede($r);
             $return['rst'] = 1;
             $return['data'] = $renturnModel;
             $return['msj'] = "No hay registros aún";
@@ -109,10 +109,10 @@ class SucursalEM extends Controller
         }
     }
     
-    public function ListSucursalandusuario (Request $r )
+    public function ListSedeandusuario (Request $r )
     {
         if ( $r->ajax() ) {
-            $renturnModel = Sucursal::ListSucursalandUsuario($r);
+            $renturnModel = Sede::ListSedeandUsuario($r);
             $return['rst'] = 1;
             $return['data'] = $renturnModel;
             $return['msj'] = "No hay registros aún";
@@ -121,18 +121,18 @@ class SucursalEM extends Controller
     }
 
     // Export
-    public function ExportSucursal(Request $r )
+    public function ExportSede(Request $r )
     {
-        $renturnModel = Sucursal::runExport($r);
+        $renturnModel = Sede::runExport($r);
         
-        Excel::create('Sucursal', function($excel) use($renturnModel) {
+        Excel::create('Sede', function($excel) use($renturnModel) {
         
-        $excel->setTitle('Reporte de Sucursales')
+        $excel->setTitle('Reporte de Sedees')
               ->setCreator('Jorge Salcedo')
               ->setCompany('JS Soluciones')
-              ->setDescription('ODE o Sucursales');
+              ->setDescription('ODE o Sedees');
 
-        $excel->sheet('Sucursal', function($sheet) use($renturnModel) {
+        $excel->sheet('Sede', function($sheet) use($renturnModel) {
             $sheet->setOrientation('landscape');
             $sheet->setPageMargin(array(
                 0.25, 0.30, 0.25, 0.30
@@ -147,7 +147,7 @@ class SucursalEM extends Controller
             ));
 
             $sheet->cell('A1', function($cell) {
-                $cell->setValue('REPORTE DE SUCURSALES');
+                $cell->setValue('REPORTE DE SEDES');
                 $cell->setFont(array(
                     'family'     => 'Bookman Old Style',
                     'size'       => '20',

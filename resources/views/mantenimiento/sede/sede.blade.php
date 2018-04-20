@@ -6,19 +6,19 @@
     {{ Html::script('lib/datatables/jquery.dataTables.min.js') }}
     {{ Html::script('lib/datatables/dataTables.bootstrap.min.js') }}
 
-    @include( 'mantenimiento.sucursal.js.sucursal_ajax' )
-    @include( 'mantenimiento.sucursal.js.sucursal' )
+    @include( 'mantenimiento.sede.js.sede_ajax' )
+    @include( 'mantenimiento.sede.js.sede' )
 @stop
 
 @section('content')
 <section class="content-header">
-    <h1>ODES
+    <h1>SEDES
         <small>Mantenimiento</small>
         <a class='btn btn-success btn-md' id="btnexport" name="btnexport" href='' target="_blank"><i class="glyphicon glyphicon-download-alt"></i> Export</i></a>
     </h1>
     <ol class="breadcrumb">
         <li><i class="fa fa-sitemap"></i> Mantenimiento</a></li>
-        <li class="active">ODES</li>
+        <li class="active">SEDES</li>
     </ol>
 </section>
 
@@ -26,18 +26,18 @@
     <div class="row">
         <div class="col-xs-12">
             <div class="box">
-                <form id="SucursalForm">
+                <form id="SedeForm">
                     <div class="box-body table-responsive no-padding">
-                        <table id="TableSucursal" class="table table-bordered table-hover">
+                        <table id="TableSede" class="table table-bordered table-hover">
                             <thead>
                                 <tr class="cabecera">
                                     <th class="col-xs-1">IMG</th>
                                     <th class="col-xs-2">
                                         <div class="form-group">
-                                            <label><h4>ODE:</h4></label>
+                                            <label><h4>Sede:</h4></label>
                                             <div class="input-group">
                                                 <div class="input-group-addon"><i class="fa fa-search"></i></div>
-                                                <input type="text" class="form-control" name="txt_sucursal" id="txt_sucursal" placeholder="Buscar ODE" onkeypress="return masterG.enterGlobal(event,'.input-group',1);">
+                                                <input type="text" class="form-control" name="txt_sede" id="txt_sede" placeholder="Buscar Sede" onkeypress="return masterG.enterGlobal(event,'.input-group',1);">
                                             </div>                                          
                                         </div>
                                     </th>
@@ -98,7 +98,7 @@
                             <tfoot>
                                 <tr class="cabecera">
                                   <th>Img</th>
-                                  <th>ODE</th>
+                                  <th>Sede</th>
                                   <th>Direccion</th>
                                   <th>Telefono</th>
                                   <th>Celular</th>
@@ -120,5 +120,5 @@
 @stop
 
 @section('form')
-     @include( 'mantenimiento.sucursal.form.sucursal' )
+     @include( 'mantenimiento.sede.form.sede' )
 @stop

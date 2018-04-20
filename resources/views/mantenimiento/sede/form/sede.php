@@ -1,25 +1,25 @@
-<div class="modal" id="ModalSucursal" tabindex="-1" role="dialog">
+<div class="modal" id="ModalSede" tabindex="-1" role="dialog">
     <div class="modal-dialog">
       <div class="modal-content"> 
         <div class="modal-header btn-info">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title">ODE</h4>
+          <h4 class="modal-title">Sede</h4>
         </div>
         <div class="modal-body">
-            <form id="ModalSucursalForm">
+            <form id="ModalSedeForm">
             <div class="form-group">
               <div class="col-md-12">
               
-                <label>ODE</label>
-                <input type="text" class="form-control" id="txt_sucursal" name="txt_sucursal" placeholder="ODE">
+                <label>Sede</label>
+                <input type="text" class="form-control" id="txt_sede" name="txt_sede" placeholder="Sede">
               </div>
             
 
             <div class="col-md-12">
               <div class="form-group">
-                <label>Direccion</label>
-                <input type="text" class="form-control" id="txt_direccion" name="txt_direccion" placeholder="Direccion">
+                <label>Dirección</label>
+                <input type="text" class="form-control" id="txt_direccion" name="txt_direccion" placeholder="Dirección">
               </div>
             </div>
 
