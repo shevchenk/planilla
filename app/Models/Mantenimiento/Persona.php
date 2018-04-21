@@ -8,7 +8,7 @@ use DB;
 
 class Persona extends Model
 {
-    protected   $table = 'v_personas';
+    protected   $table = 'm_personas';
 
 
 
