@@ -1,6 +1,6 @@
 <script type="text/javascript">
 var AddEdit=0; //0: Editar | 1: Agregar
-var RegimenG={id:0,regimen:"",tipo_regimen:0,pregunta_id:0,ipo_respuesta_id:0,estado:1}; // Datos Globales
+var RegimenG={id:0,regimen:"",tipo_regimen:0,aporte:0,comision:0,prima:0,seguro:0,estado:1}; // Datos Globales
 $(document).ready(function() {
 
     $("#TableRegimen").DataTable({
@@ -26,12 +26,14 @@ $(document).ready(function() {
             $(this).find('.modal-footer .btn-primary').text('Actualizar').attr('onClick','AgregarEditarAjax();');
             $("#ModalRegimenForm").append("<input type='hidden' value='"+RegimenG.id+"' name='id'>");
         }
-        $('#ModalRegimenForm #txt_respuesta').val( RegimenG.respuesta );
-        $('#ModalRegimenForm #txt_puntaje').val( RegimenG.puntaje );
-        $('#ModalRegimenForm #slct_pregunta_id').selectpicker('val', RegimenG.pregunta_id );
-        $('#ModalRegimenForm #slct_tipo_respuesta_id').selectpicker('val', RegimenG.tipo_respuesta_id );
+        $('#ModalRegimenForm #txt_regimen').val( RegimenG.regimen );
+        $('#ModalRegimenForm #slct_tipo_regimen_id').selectpicker('val', RegimenG.tipo_regimen );
+        $('#ModalRegimenForm #txt_aporte').val(RegimenG.aporte );
+        $('#ModalRegimenForm #txt_comision').val( RegimenG.comision );
+        $('#ModalRegimenForm #txt_prima').val(RegimenG.prima );
+        $('#ModalRegimenForm #txt_seguro').val(RegimenG.seguro );
         $('#ModalRegimenForm #slct_estado').selectpicker( 'val',RegimenG.estado );
-        $('#ModalRegimenForm #txt_respuesta').focus();
+        $('#ModalRegimenForm #txt_regimen').focus();
     });
 
     $('#ModalRegimen').on('hidden.bs.modal', function (event) {
@@ -42,21 +44,29 @@ $(document).ready(function() {
 
 ValidaForm=function(){
     var r=true;
-    if( $.trim( $("#ModalRegimenForm #slct_pregunta_id").val() )=='0' ){
-        r=false;
-        msjG.mensaje('warning','Seleccione Pregunta',4000);
-    }
-    else if( $.trim( $("#ModalRegimenForm #slct_tipo_respuesta_id").val() )=='0' ){
-        r=false;
-        msjG.mensaje('warning','Seleccione Tipo de Regimen',4000);
-    }
-    else if( $.trim( $("#ModalRegimenForm #txt_respuesta").val() )=='' ){
+    if(  $.trim( $("#ModalRegimenForm #txt_regimen").val() )=='' ){
         r=false;
         msjG.mensaje('warning','Ingrese Regimen',4000);
     }
-    else if( $.trim( $("#ModalRegimenForm #txt_puntaje").val() )=='' ){
+    else if( $.trim( $("#ModalRegimenForm #slct_tipo_regimen_id").val() )=='0' ){
         r=false;
-        msjG.mensaje('warning','Ingrese Puntaje',4000);
+        msjG.mensaje('warning','Seleccione Tipo de Regimen',4000);
+    }
+    else if( $.trim( $("#ModalRegimenForm #txt_aporte").val() )=='' ){
+        r=false;
+        msjG.mensaje('warning','Ingrese Aporte',4000);
+    }
+    else if( $.trim( $("#ModalRegimenForm #txt_comision").val() )=='' ){
+        r=false;
+        msjG.mensaje('warning','Ingrese Comisión',4000);
+    }
+    else if( $.trim( $("#ModalRegimenForm #txt_prima").val() )=='' ){
+        r=false;
+        msjG.mensaje('warning','Ingrese Prima',4000);
+    }
+    else if( $.trim( $("#ModalRegimenForm #txt_seguro").val() )=='' ){
+        r=false;
+        msjG.mensaje('warning','Ingrese Seguro',4000);
     }
     return r;
 }
@@ -64,17 +74,21 @@ ValidaForm=function(){
 AgregarEditar=function(val,id){
     AddEdit=val;
     RegimenG.id='';
-    RegimenG.respuesta='';
-    RegimenG.puntaje='';
-    RegimenG.pregunta_id='0';
-    RegimenG.tipo_respuesta_id='0';
+    RegimenG.regimen='';
+    RegimenG.tipo_regimen='0';
+    RegimenG.aporte='';
+    RegimenG.comision='';
+    RegimenG.prima='';
+    RegimenG.seguro='';
     RegimenG.estado='1';
     if( val==0 ){
         RegimenG.id=id;
-        RegimenG.respuesta=$("#TableRegimen #trid_"+id+" .respuesta").text();
-        RegimenG.puntaje=$("#TableRegimen #trid_"+id+" .puntaje").text();
-        RegimenG.pregunta_id=$("#TableRegimen #trid_"+id+" .pregunta_id").val();
-        RegimenG.tipo_respuesta_id=$("#TableRegimen #trid_"+id+" .tipo_respuesta_id").val();
+        RegimenG.regimen=$("#TableRegimen #trid_"+id+" .regimen").text();
+        RegimenG.tipo_regimen=$("#TableRegimen #trid_"+id+" .tipo_regimen").val();
+        RegimenG.aporte=$("#TableRegimen #trid_"+id+" .aporte").text();
+        RegimenG.comision=$("#TableRegimen #trid_"+id+" .comision").text();
+        RegimenG.prima=$("#TableRegimen #trid_"+id+" .prima").text();
+        RegimenG.seguro=$("#TableRegimen #trid_"+id+" .seguro").text();
         RegimenG.estado=$("#TableRegimen #trid_"+id+" .estado").val();
     }
     $('#ModalRegimen').modal('show');

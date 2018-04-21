@@ -34,10 +34,10 @@ class RegimenEM extends Controller
             );
 
             $rules = array(
-                'respuesta' => 
+                'regimen' => 
                        ['required',
-                        Rule::unique('v_respuestas','respuesta')->where(function ($query) use($r) {
-                                $query->where('pregunta_id',$r->pregunta_id );
+                        Rule::unique('m_regimenes','regimen')->where(function ($query) use($r) {
+//                                $query->where('pregunta_id',$r->pregunta_id );
                         }),
                         ],
             );
@@ -67,10 +67,10 @@ class RegimenEM extends Controller
             );
 
             $rules = array(
-                'respuesta' => 
+                'regimen' => 
                        ['required',
-                        Rule::unique('v_respuestas','respuesta')->ignore($r->id)->where(function ($query) use($r) {
-                                $query->where('pregunta_id',$r->pregunta_id );
+                        Rule::unique('m_regimenes','regimen')->ignore($r->id)->where(function ($query) use($r) {
+                              //  $query->where('pregunta_id',$r->pregunta_id );
                         }),
                         ],
             );
@@ -98,17 +98,6 @@ class RegimenEM extends Controller
             $return['data'] = $renturnModel;
             $return['msj'] = "No hay registros aún";    
             return response()->json($return);   
-        }
-    }
-    
-    public function ListPregunta (Request $r )
-    {
-        if ( $r->ajax() ) {
-            $renturnModel = Pregunta::ListPregunta($r);
-            $return['rst'] = 1;
-            $return['data'] = $renturnModel;
-            $return['msj'] = "No hay registros aún";
-            return response()->json($return);
         }
     }
     

@@ -53,8 +53,12 @@
                                         <div class="form-group">
                                             <label><h4>Tipo de Regimen:</h4></label>
                                             <div class="input-group">
-                                                <div class="input-group-addon"><i class="fa fa-search"></i></div>
-                                                <input type="text" class="form-control" name="txt_tipo_regimen" id="txt_tipo_regimen" placeholder="Tipo de Regimen" onkeypress="return masterG.enterGlobal(event,'.input-group',1);">
+                                                <select class="form-control" name="slct_tipo_regimen" id="slct_tipo_regimen">
+                                                    <option value='' selected>.::Todo::.</option>
+                                                    <option value='1'>Flujo</option>
+                                                    <option value='2'>Mixto</option>
+                                                    <option value='3'>Otros</option>
+                                                </select>
                                             </div>
                                         </div>
                                     </th>

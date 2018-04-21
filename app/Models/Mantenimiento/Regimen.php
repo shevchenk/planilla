@@ -21,8 +21,8 @@ class Regimen extends Model
     public static function runNew($r)
     {
         $regimen = new Regimen;
-        $regimen->tipo_regimen_id = trim( $r->tipo_respuesta_id );
-        $regimen->regimen = trim( $r->respuesta );
+        $regimen->tipo_regimen = trim( $r->tipo_regimen_id );
+        $regimen->regimen = trim( $r->regimen );
         $regimen->aporte =trim( $r->aporte );
         $regimen->comision = trim( $r->comision );
         $regimen->prima = trim( $r->prima );
@@ -35,8 +35,8 @@ class Regimen extends Model
     public static function runEdit($r)
     {
         $regimen = Regimen::find($r->id);
-        $regimen->tipo_regimen_id = trim( $r->tipo_respuesta_id );
-        $regimen->regimen = trim( $r->respuesta );
+        $regimen->tipo_regimen = trim( $r->tipo_regimen_id );
+        $regimen->regimen = trim( $r->regimen );
         $regimen->aporte =trim( $r->aporte );
         $regimen->comision = trim( $r->comision );
         $regimen->prima = trim( $r->prima );
@@ -56,33 +56,39 @@ class Regimen extends Model
                     
                 function($query) use ($r){
                     if( $r->has("regimen") ){
-                        $pregunta_id=trim($r->pregunta_id);
-                        if( $pregunta_id !='' ){
-                           $query->where('m_regimenes.pregunta_id','=',$pregunta_id);
+                        $regimen=trim($r->regimen);
+                        if( $regimen !='' ){
+                           $query->where('m_regimenes.regimen','=',$regimen);
                         }
                     }
                     if( $r->has("tipo_regimen") ){
-                        $pregunta=trim($r->pregunta);
-                        if( $pregunta !='' ){
-                            $query->where('vp.pregunta','like','%'.$pregunta.'%');
+                        $tipo_regimen=trim($r->tipo_regimen);
+                        if( $tipo_regimen !='' ){
+                            $query->where('m_regimenes.tipo_regimen','=',$tipo_regimen);
                         }   
                     }
                     if( $r->has("aporte") ){
-                        $alternativa_correcta=trim($r->alternativa_correcta);
-                        if( $alternativa_correcta !='' ){
-                            $query->where('m_regimenes.correcto','=',$r->alternativa_correcta);
+                        $aporte=trim($r->aporte);
+                        if( $aporte !='' ){
+                            $query->where('m_regimenes.aporte','like','%'.$aporte.'%');
                         }   
                     }
                     if( $r->has("comision") ){
-                        $respuesta=trim($r->respuesta);
-                        if( $respuesta !='' ){
-                            $query->where('m_regimenes.respuesta','like','%'.$respuesta.'%');
+                        $comision=trim($r->comision);
+                        if( $comision !='' ){
+                            $query->where('m_regimenes.comision','like','%'.$comision.'%');
                         }   
                     }
-                    if( $r->has("puntaje") ){
-                        $puntaje=trim($r->puntaje);
-                        if( $puntaje !='' ){
-                            $query->where('m_regimenes.puntaje','like','%'.$puntaje.'%');
+                    if( $r->has("prima") ){
+                        $prima=trim($r->prima);
+                        if( $prima !='' ){
+                            $query->where('m_regimenes.prima','like','%'.$prima.'%');
+                        }   
+                    }
+                    if( $r->has("seguro") ){
+                        $seguro=trim($r->seguro);
+                        if( $seguro !='' ){
+                            $query->where('m_regimenes.seguro','like','%'.$seguro.'%');
                         }   
                     }
                     if( $r->has("estado") ){
