@@ -3,13 +3,11 @@ namespace App\Http\Controllers\Mantenimiento;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Mantenimiento\Respuesta;
-use App\Models\Mantenimiento\Pregunta;
-use App\Models\Mantenimiento\TipoRespuesta;
+use App\Models\Mantenimiento\Regimen;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
-class RespuestaEM extends Controller
+class RegimenEM extends Controller
 {
     public function __construct()
     {
@@ -19,7 +17,7 @@ class RespuestaEM extends Controller
     public function EditStatus(Request $r )
     {
         if ( $r->ajax() ) {
-            Respuesta::runEditStatus($r);
+            Regimen::runEditStatus($r);
             $return['rst'] = 1;
             $return['msj'] = 'Registro actualizado';
             return response()->json($return);
@@ -48,7 +46,7 @@ class RespuestaEM extends Controller
             $validator=Validator::make($r->all(), $rules,$mensaje);
 
             if ( !$validator->fails() ) {
-                Respuesta::runNew($r);
+                Regimen::runNew($r);
                 $return['rst'] = 1;
                 $return['msj'] = 'Registro creado';
             }
@@ -80,7 +78,7 @@ class RespuestaEM extends Controller
             $validator=Validator::make($r->all(), $rules,$mensaje);
 
             if ( !$validator->fails() ) {
-                Respuesta::runEdit($r);
+                Regimen::runEdit($r);
                 $return['rst'] = 1;
                 $return['msj'] = 'Registro actualizado';
             }
@@ -95,7 +93,7 @@ class RespuestaEM extends Controller
     public function Load(Request $r )
     {
         if ( $r->ajax() ) {
-            $renturnModel = Respuesta::runLoad($r);
+            $renturnModel = Regimen::runLoad($r);
             $return['rst'] = 1;
             $return['data'] = $renturnModel;
             $return['msj'] = "No hay registros aún";    
@@ -114,10 +112,10 @@ class RespuestaEM extends Controller
         }
     }
     
-        public function ListTipoRespuesta (Request $r )
+        public function ListTipoRegimen (Request $r )
     {
         if ( $r->ajax() ) {
-            $renturnModel = TipoRespuesta::ListTipoRespuesta($r);
+            $renturnModel = TipoRegimen::ListTipoRegimen($r);
             $return['rst'] = 1;
             $return['data'] = $renturnModel;
             $return['msj'] = "No hay registros aún";

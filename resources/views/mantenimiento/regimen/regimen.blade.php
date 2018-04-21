@@ -1,4 +1,4 @@
-@extends('layout.master')
+@extends('layout.master')  
 
 @section('include')
     @parent
@@ -14,19 +14,20 @@
     {{ Html::script('lib/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js') }}
     {{ Html::script('lib/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.es.js') }}
 
-    @include( 'mantenimiento.pregunta.js.pregunta_ajax' )
-    @include( 'mantenimiento.pregunta.js.pregunta' )
+    @include( 'mantenimiento.regimen.js.regimen_ajax' )
+    @include( 'mantenimiento.regimen.js.regimen' )
+    
 
 @stop
 
 @section('content')
 <section class="content-header">
-    <h1>Preguntas
+    <h1>Regimenes
         <small>Mantenimiento</small>
     </h1>
     <ol class="breadcrumb">
         <li><i class="fa fa-sitemap"></i> Mantenimiento</a></li>
-        <li class="active">Preguntas</li>
+        <li class="active">Regimenes</li>
     </ol>
 </section>
 
@@ -34,44 +35,62 @@
     <div class="row">
         <div class="col-xs-12">
             <div class="box">
-                <form id="DataForm">
+                <form id="RegimenForm">
                     <div class="box-body table-responsive no-padding">
-                        <table id="TableDatos" class="table table-bordered table-hover">
+                        <table id="TableRegimen" class="table table-bordered table-hover">
                             <thead>
                                 <tr class="cabecera">
                                     <th class="col-xs-2">
                                         <div class="form-group">
-                                            <label><h4>Curso:</h4></label>
+                                            <label><h4>Regimen:</h4></label>
                                             <div class="input-group">
                                                 <div class="input-group-addon"><i class="fa fa-search"></i></div>
-                                                <input type="text" class="form-control" name="txt_curso" id="txt_curso" placeholder="Curso" onkeypress="return masterG.enterGlobal(event,'.input-group',1);">
+                                                <input type="text" class="form-control" name="txt_regimen" id="txt_regimen" placeholder="Regimen" onkeypress="return masterG.enterGlobal(event,'.input-group',1);">
                                             </div>
                                         </div>
                                     </th>
                                     <th class="col-xs-2">
                                         <div class="form-group">
-                                            <label><h4>Tipo Evaluacion:</h4></label>
+                                            <label><h4>Tipo de Regimen:</h4></label>
                                             <div class="input-group">
                                                 <div class="input-group-addon"><i class="fa fa-search"></i></div>
-                                                <input type="text" class="form-control" name="txt_tipo_evaluacion" id="txt_tipo_evaluacion" placeholder="Tipo de Evaluacion" onkeypress="return masterG.enterGlobal(event,'.input-group',1);">
-                                            </div>
-                                        </div>
-                                    </th>
-                                    <th class="col-xs-2">
-                                        <div class="form-group">
-                                            <label><h4>Pregunta:</h4></label>
-                                            <div class="input-group">
-                                                <div class="input-group-addon"><i class="fa fa-search"></i></div>
-                                                <input type="text" class="form-control" name="txt_pregunta" id="txt_pregunta" placeholder="Pregunta" onkeypress="return masterG.enterGlobal(event,'.input-group',1);">
+                                                <input type="text" class="form-control" name="txt_tipo_regimen" id="txt_tipo_regimen" placeholder="Tipo de Regimen" onkeypress="return masterG.enterGlobal(event,'.input-group',1);">
                                             </div>
                                         </div>
                                     </th>
                                     <th class="col-xs-1">
                                         <div class="form-group">
-                                            <label><h4>Puntaje:</h4></label>
+                                            <label><h4>Aporte:</h4></label>
                                             <div class="input-group">
                                                 <div class="input-group-addon"><i class="fa fa-search"></i></div>
-                                                <input type="text" class="form-control" name="txt_puntaje" id="txt_puntaje" placeholder="Puntaje" onkeypress="return masterG.enterGlobal(event,'.input-group',1);">
+                                                <input type="text" class="form-control" name="txt_aporte" id="txt_aporte" placeholder="Aporte" onkeypress="return masterG.enterGlobal(event,'.input-group',1);">
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th class="col-xs-1">
+                                        <div class="form-group">
+                                            <label><h4>Comisión:</h4></label>
+                                            <div class="input-group">
+                                                <div class="input-group-addon"><i class="fa fa-search"></i></div>
+                                                <input type="text" class="form-control" name="txt_comision" id="txt_comision" placeholder="Comisión" onkeypress="return masterG.enterGlobal(event,'.input-group',1);">
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th class="col-xs-1">
+                                        <div class="form-group">
+                                            <label><h4>Prima:</h4></label>
+                                            <div class="input-group">
+                                                <div class="input-group-addon"><i class="fa fa-search"></i></div>
+                                                <input type="text" class="form-control" name="txt_prima" id="txt_prima" placeholder="Prima" onkeypress="return masterG.enterGlobal(event,'.input-group',1);">
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th class="col-xs-1">
+                                        <div class="form-group">
+                                            <label><h4>Seguro:</h4></label>
+                                            <div class="input-group">
+                                                <div class="input-group-addon"><i class="fa fa-search"></i></div>
+                                                <input type="text" class="form-control" name="txt_seguro" id="txt_seguro" placeholder="Puntaje" onkeypress="return masterG.enterGlobal(event,'.input-group',1);">
                                             </div>
                                         </div>
                                     </th>
@@ -94,10 +113,12 @@
                             </tbody>
                             <tfoot>
                                 <tr class="cabecera">
-                                  <th>Curso</th>
-                                  <th>Tipo Evaluacion</th>
-                                  <th>Pregunta</th>
-                                  <th>Puntaje</th>
+                                  <th>Regimen</th>
+                                  <th>Tipo de Regimen</th>
+                                  <th>Aporte</th>
+                                  <th>Comisión</th>
+                                  <th>Prima</th>
+                                  <th>Seguro</th>
                                   <th>Estado</th>
                                   <th>[-]</th>
                                 </tr>
@@ -115,5 +136,5 @@
 @stop
 
 @section('form')
-     @include( 'mantenimiento.pregunta.form.pregunta' )
+     @include( 'mantenimiento.regimen.form.regimen' )
 @stop
