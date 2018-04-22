@@ -34,11 +34,11 @@ class PersonaContratoPR extends Controller
             );
 
             $rules = array(
-                'regimen' => 
+                'persona_id' => 
                        ['required',
-                        Rule::unique('m_regimenes','regimen')->where(function ($query) use($r) {
+//                        Rule::unique('m_regimenes','regimen')->where(function ($query) use($r) {
 //                                $query->where('pregunta_id',$r->pregunta_id );
-                        }),
+//                        }),
                         ],
             );
 
@@ -67,11 +67,11 @@ class PersonaContratoPR extends Controller
             );
 
             $rules = array(
-                'regimen' => 
+                'persona_id' => 
                        ['required',
-                        Rule::unique('m_regimenes','regimen')->ignore($r->id)->where(function ($query) use($r) {
+//                        Rule::unique('m_regimenes','regimen')->ignore($r->id)->where(function ($query) use($r) {
                               //  $query->where('pregunta_id',$r->pregunta_id );
-                        }),
+//                        }),
                         ],
             );
 

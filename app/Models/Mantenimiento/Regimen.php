@@ -103,5 +103,12 @@ class Regimen extends Model
         return $result;
     }
     
+    public static function ListRegimen($r){
+        $sql=Regimen::select('id','regimen','estado')
+            ->where('estado','=','1');
+        $result = $sql->orderBy('regimen','asc')->get();
+        return $result;
+    }
+    
 
 }

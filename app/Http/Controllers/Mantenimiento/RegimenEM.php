@@ -101,10 +101,10 @@ class RegimenEM extends Controller
         }
     }
     
-        public function ListTipoRegimen (Request $r )
+        public function ListRegimen (Request $r )
     {
         if ( $r->ajax() ) {
-            $renturnModel = TipoRegimen::ListTipoRegimen($r);
+            $renturnModel = Regimen::ListRegimen($r);
             $return['rst'] = 1;
             $return['data'] = $renturnModel;
             $return['msj'] = "No hay registros aún";

@@ -4,6 +4,7 @@ namespace App\Models\Proceso;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Proceso\PersonaContratoHistorico;
 use DB;
 
 class PersonaContrato extends Model
@@ -20,6 +21,10 @@ class PersonaContrato extends Model
 
     public static function runNew($r)
     {
+        $buscar= PersonaContrato::where('persona_id','=',$r->persona_id)->first();
+        if($buscar){
+            PersonaContrato::runEdit($r);
+        }else{
         $personacontrato = new PersonaContrato;
         $personacontrato->persona_id = trim( $r->persona_id );
         $personacontrato->sede_id = trim( $r->sede_id );
@@ -33,9 +38,14 @@ class PersonaContrato extends Model
         $personacontrato->sueldo_mensual = trim( $r->sueldo_mensual );
         $personacontrato->sueldo_produccion = trim( $r->sueldo_produccion );
         $personacontrato->asignacion_familiar = trim( $r->asignacion_familiar );
-        $personacontrato->estado = trim( $r->estado );
+        $personacontrato->estado = 1;
         $personacontrato->persona_id_created_at=Auth::user()->id;
         $personacontrato->save();
+
+            if($personacontrato){
+                PersonaContratoHistorico::runNew($r);
+            }
+        }
     }
 
     public static function runEdit($r)
@@ -52,9 +62,13 @@ class PersonaContrato extends Model
         $personacontrato->sueldo_mensual = trim( $r->sueldo_mensual );
         $personacontrato->sueldo_produccion = trim( $r->sueldo_produccion );
         $personacontrato->asignacion_familiar = trim( $r->asignacion_familiar );
-        $personacontrato->estado = trim( $r->estado );
+        $personacontrato->estado = 1;
         $personacontrato->persona_id_updated_at=Auth::user()->id;
         $personacontrato->save();
+        
+        if($personacontrato){
+            PersonaContratoHistorico::runNew($r);
+        }
     }
 
 

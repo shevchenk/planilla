@@ -7,13 +7,13 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Input;
 
-class consorcio extends Model
+class Consorcio extends Model
 {
     protected   $table = 'm_consorcios';
 
     public static function runEditStatus($r)
     {
-        $consorcio = consorcio::find($r->id);
+        $consorcio = Consorcio::find($r->id);
         $consorcio->estado = trim( $r->estadof );
         $consorcio->persona_id_updated_at=Auth::user()->id;
         $consorcio->save();
@@ -22,7 +22,7 @@ class consorcio extends Model
     public static function runNew($r)
     {
         
-        $consorcio = new consorcio;
+        $consorcio = new Consorcio;
         $consorcio->consorcio = trim( $r->consorcio );
         $consorcio->consorcio_apocope = trim( $r->consorcio_apocope );
         $consorcio->ruc = trim( $r->ruc );
@@ -30,7 +30,7 @@ class consorcio extends Model
         $consorcio->persona_id_created_at=Auth::user()->id;
         if(trim($r->imagen_nombre)!=''){
         $consorcio->logo=$r->imagen_nombre;
-        $este = new consorcio;
+        $este = new Consorcio;
         $url = "img/consorcio/".$r->imagen_nombre; 
         $este->fileToFile($r->imagen_archivo, $url);}
         else {
@@ -41,7 +41,7 @@ class consorcio extends Model
 
     public static function runEdit($r)
     {
-        $consorcio = consorcio::find($r->id);
+        $consorcio = Consorcio::find($r->id);
         $consorcio->consorcio = trim( $r->consorcio );
         $consorcio->consorcio_apocope = trim( $r->consorcio_apocope );
         $consorcio->ruc = trim( $r->ruc );
@@ -53,7 +53,7 @@ class consorcio extends Model
             $consorcio->logo=null;    
         }
         if(trim($r->imagen_archivo)!=''){
-            $este = new consorcio;
+            $este = new Consorcio;
             $url = "img/consorcio/".$r->imagen_nombre; 
             $este->fileToFile($r->imagen_archivo, $url);
         }
@@ -62,7 +62,7 @@ class consorcio extends Model
 
     public static function runLoad($r)
     {
-        $sql=consorcio::select('id','consorcio_apocope','consorcio','logo','ruc','estado')
+        $sql=Consorcio::select('id','consorcio_apocope','consorcio','logo','ruc','estado')
             ->where( 
                 function($query) use ($r){
                     if( $r->has("consorcio") ){
@@ -97,7 +97,7 @@ class consorcio extends Model
 
     public static function runLoad2($r)
     {
-        $sql=consorcio::select('id','sede','direccion','telefono','celular','email')->where('estado','=',1);
+        $sql=Consorcio::select('id','sede','direccion','telefono','celular','email')->where('estado','=',1);
         $result = $sql->orderBy('sede','asc')->get();
         return $result;
     }
@@ -125,9 +125,9 @@ class consorcio extends Model
     
     public static function Listconsorcio($r)
     {
-        $sql=consorcio::select('id','sede','estado')
+        $sql=Consorcio::select('id','consorcio','estado')
             ->where('estado','=','1');
-        $result = $sql->orderBy('sede','asc')->get();
+        $result = $sql->orderBy('consorcio','asc')->get();
         return $result;
     }
     
@@ -145,7 +145,7 @@ class consorcio extends Model
     // Export
     public static function runExport($r)
     {
-        $rsql= consorcio::runLoad2($r);
+        $rsql= Consorcio::runLoad2($r);
 
         $length=array(
             'A'=>15,

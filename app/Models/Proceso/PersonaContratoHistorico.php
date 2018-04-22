@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Mantenimiento;
+namespace App\Models\Proceso;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -33,7 +33,7 @@ class PersonaContratoHistorico extends Model
         $personacontrato->sueldo_mensual = trim( $r->sueldo_mensual );
         $personacontrato->sueldo_produccion = trim( $r->sueldo_produccion );
         $personacontrato->asignacion_familiar = trim( $r->asignacion_familiar );
-        $personacontrato->estado = trim( $r->estado );
+        $personacontrato->estado = 1;
         $personacontrato->persona_id_created_at=Auth::user()->id;
         $personacontrato->save();
     }
@@ -52,7 +52,7 @@ class PersonaContratoHistorico extends Model
         $personacontrato->sueldo_mensual = trim( $r->sueldo_mensual );
         $personacontrato->sueldo_produccion = trim( $r->sueldo_produccion );
         $personacontrato->asignacion_familiar = trim( $r->asignacion_familiar );
-        $personacontrato->estado = trim( $r->estado );
+        $personacontrato->estado = 1;
         $personacontrato->persona_id_updated_at=Auth::user()->id;
         $personacontrato->save();
     }

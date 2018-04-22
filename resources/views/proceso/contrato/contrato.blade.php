@@ -16,7 +16,8 @@
 
 @include( 'proceso.contrato.js.contrato_ajax' )
 @include( 'proceso.contrato.js.contrato' )
-
+@include( 'proceso.contrato.js.listapersona_ajax' )
+@include( 'proceso.contrato.js.listapersona' )
 
 @stop
 
@@ -92,7 +93,7 @@
                                             </div>
                                         </div>
                                     </th>
-                                    <th class="col-xs-2">
+<!--                                    <th class="col-xs-2">
                                         <div class="form-group">
                                             <label><h4>Estado:</h4></label>
                                             <div class="input-group">
@@ -103,7 +104,7 @@
                                                 </select>
                                             </div>
                                         </div>
-                                    </th>
+                                    </th>-->
                                     <th class="col-xs-1">[-]</th>
                                 </tr>
                             </thead>
@@ -117,7 +118,7 @@
                                     <th>Estado Contrato</th>
                                     <th>Tipo Contrato</th>
                                     <th>[-]</th>
-                                    <th>[-]</th>
+                                    <!--<th>[-]</th>-->
                                 </tr>
                             </tfoot>
                         </table>
@@ -128,10 +129,136 @@
                 </form><!-- .form -->
             </div><!-- .box -->
         </div><!-- .col -->
+        <div class="col-xs-12">
+            <div class="box box-primary">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Contrato</h3>
+                </div>
+                <div class="box-body with-border">
+                    <form id="ModalContratoForm">
+                        <div class="col-md-12">
+                            <div class="panel panel-primary">
+                                <div class="panel-heading"><center>Contrato</center></div>
+                                <div class="panel-body">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label>Nombre Completo</label>
+                                            <input type="hidden" name="txt_persona_id" id="txt_persona_id" class="form-control" readonly="">
+                                            <input type="text" class="form-control" id="txt_persona" name="txt_persona" disabled="">
+                                        </div> 
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label>&nbsp;&nbsp;&nbsp;</label>
+                                            <span class="input-group-btn">
+                                                <button type="button" class="btn btn-info btn-flat" data-toggle="modal" data-target="#ModalListapersona" data-filtros="estado:1" data-personaid="ModalContratoForm #txt_persona_id"  data-persona="ModalContratoForm #txt_persona">Buscar Persona</button>
+                                            </span>
+                                        </div> 
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label>Sede</label>
+                                            <select  class="form-control selectpicker show-menu-arrow" data-live-search="true" id="slct_sede_id" name="slct_sede_id">
+                                                <option value="0">.::Seleccione::.</option>
+                                            </select>
+                                        </div> 
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label>Consorcio</label>
+                                            <select  class="form-control selectpicker show-menu-arrow" data-live-search="true" id="slct_consorcio_id" name="slct_consorcio_id">
+                                                <option value="0">.::Seleccione::.</option>
+                                            </select>
+                                        </div> 
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label>Cargo</label>
+                                            <select  class="form-control selectpicker show-menu-arrow" data-live-search="true" id="slct_cargo_id" name="slct_cargo_id">
+                                                <option value="0">.::Seleccione::.</option>
+                                            </select>
+                                        </div> 
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label>Regimen</label>
+                                            <select  class="form-control selectpicker show-menu-arrow" data-live-search="true" id="slct_regimen_id" name="slct_regimen_id">
+                                                <option value="0">.::Seleccione::.</option>
+                                            </select>
+                                        </div> 
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label>Estado Contrato</label>
+                                            <select  class="form-control selectpicker show-menu-arrow" data-live-search="true" id="slct_estado_contrato" name="slct_estado_contrato">
+                                                <option value="0">.::Seleccione::.</option>
+                                                <option value='1'>Vigente</option>
+                                                <option value='2'>Vacaciones</option>
+                                                <option value='3'>Cesante</option>
+                                            </select>
+                                        </div> 
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label>Tipo Contrato</label>
+                                            <select  class="form-control selectpicker show-menu-arrow" data-live-search="true" id="slct_tipo_contrato" name="slct_tipo_contrato">
+                                                <option value="0">.::Seleccione::.</option>
+                                                <option value='1'>Producción</option>
+                                                <option value='2'>Regular</option>
+                                            </select>
+                                        </div> 
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label>Fecha Inicial de contrato</label>
+                                            <input type="text" class="form-control fecha" id="txt_fecha_ini_contrato" name="txt_fecha_ini_contrato" readonly="">
+                                        </div> 
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label>Fecha Final de contrato</label>
+                                            <input type="text" class="form-control fecha" id="txt_fecha_fin_contrato" name="txt_fecha_fin_contrato" readonly="">
+                                        </div> 
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label>Sueldo Mensual</label>
+                                            <input type="text" onkeyup="masterG.DecimalMax(this, 2);" onkeypress="return masterG.validaDecimal(event, this);" class="form-control" id="txt_sueldo_mensual" name="txt_sueldo_mensual">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label>Sueldo Producción</label>
+                                            <input type="text" onkeyup="masterG.DecimalMax(this, 2);" onkeypress="return masterG.validaDecimal(event, this);" class="form-control" id="txt_sueldo_produccion" name="txt_sueldo_produccion">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label>Asignación Familiar</label>
+                                            <select  class="form-control selectpicker show-menu-arrow" data-live-search="true" id="slct_asignacion_familiar" name="slct_asignacion_familiar">
+                                                <option value="0">No</option>
+                                                <option value='1'>Si</option>
+                                            </select>
+                                        </div> 
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group"> 
+                            <label></label>
+                        </div>
+
+                    </form>
+                </div>
+                <div class="box-footer">
+                    <button type="submit" class="btn btn-info pull-right" onclick="AgregarEditarAjax()">Guardar Contrato</button>
+                </div>
+            </div><!-- .box -->
+        </div><!-- .col -->
     </div><!-- .row -->
 </section><!-- .content -->
 @stop
 
 @section('form')
-@include( 'proceso.contrato.form.contrato' )
+@include( 'proceso.contrato.form.listapersona' )
 @stop

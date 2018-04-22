@@ -24,6 +24,26 @@ var AjaxContrato={
         $("#ModalContratoForm input[type='hidden']").not('.mant').remove();
         url='AjaxDinamic/Proceso.PersonaContratoPR@EditStatus';
         masterG.postAjax(url,data,evento);
-    }
+    },
+    CargarSede:function(evento){
+        url='AjaxDinamic/Mantenimiento.SedeMA@ListSede';
+        data={};
+        masterG.postAjax(url,data,evento);
+    },
+    CargarConsorcio:function(evento){
+        url='AjaxDinamic/Mantenimiento.ConsorcioMA@ListConsorcio';
+        data={};
+        masterG.postAjax(url,data,evento);
+    },
+    CargarCargo:function(evento){
+        url='AjaxDinamic/Mantenimiento.CargoEM@ListCargo';
+        data={};
+        masterG.postAjax(url,data,evento);
+    },
+    CargarRegimen:function(evento){
+        url='AjaxDinamic/Mantenimiento.RegimenEM@ListRegimen';
+        data={};
+        masterG.postAjax(url,data,evento);
+    },
 };
 </script>
