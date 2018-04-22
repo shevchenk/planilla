@@ -1,7 +1,7 @@
 <script type="text/javascript">
 var AjaxPersona={
     AgregarEditar:function(evento){
-//        $("#ModalPersonaForm input[name='cargos_selec']").remove();
+        $("#ModalPersonaForm input[name='cargos_selec']").remove();
         $("#ModalPersonaForm").append("<input type='hidden' value='"+cargos_selec+"' name='cargos_selec'>");
         var data=$("#ModalPersonaForm").serialize().split("txt_").join("").split("slct_").join("");
         url='AjaxDinamic/Mantenimiento.PersonaEM@New';
@@ -32,8 +32,13 @@ var AjaxPersona={
         data={};
         masterG.postAjax(url,data,evento);
     },
-    CargarSucursal:function(evento){
-        url='AjaxDinamic/Mantenimiento.SucursalEM@ListSucursal';
+    CargarSede:function(evento){
+        url='AjaxDinamic/Mantenimiento.SedeMA@ListSede';
+        data={};
+        masterG.postAjax(url,data,evento,null,false);
+    },
+    CargarConsorcio:function(evento){
+        url='AjaxDinamic/Mantenimiento.ConsorcioMA@ListConsorcio';
         data={};
         masterG.postAjax(url,data,evento,null,false);
     },

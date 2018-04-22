@@ -37,7 +37,7 @@ class PersonaEM extends Controller
             $rules = array(
                 'dni' => 
                        ['required',
-                        Rule::unique('personas','dni')->where(function ($query) use($r) {
+                        Rule::unique('m_personas','dni')->where(function ($query) use($r) {
                             if( $r->dni!='99999999' ){
                                 $query->where('dni', $r->dni);
                             }
@@ -79,7 +79,7 @@ class PersonaEM extends Controller
             $rules = array(
                 'dni' => 
                        ['required',
-                        Rule::unique('personas','dni')->ignore($r->id)->where(function ($query) use($r) {
+                        Rule::unique('m_personas','dni')->ignore($r->id)->where(function ($query) use($r) {
                             if( $r->dni=='99999999' ){
                                 $query->where('dni','!=' ,$r->dni);
                             }

@@ -18,6 +18,8 @@
 @include( 'proceso.contrato.js.contrato' )
 @include( 'proceso.contrato.js.listapersona_ajax' )
 @include( 'proceso.contrato.js.listapersona' )
+@include( 'proceso.contrato.js.aepersona_ajax' )
+@include( 'proceso.contrato.js.aepersona' )
 
 @stop
 
@@ -261,4 +263,5 @@
 
 @section('form')
 @include( 'proceso.contrato.form.listapersona' )
+@include( 'mantenimiento.persona.form.persona' )
 @stop

@@ -23,6 +23,7 @@ class Persona extends Model
 
     public static function runNew($r)
     {
+        DB::beginTransaction();
         $persona_id = Auth::user()->id;
         $persona = new Persona;
         $persona->paterno = trim( $r->paterno );
@@ -45,36 +46,38 @@ class Persona extends Model
         $persona->save();
 
         if ($r->cargos_selec) {
-                $cargos=$r->cargos_selec;
-                $cargos = explode(',', $cargos);
-                if (is_array($cargos)) {
-                    for ($i=0; $i<count($cargos); $i++) {
-                        $cargoId = $cargos[$i];
+                $privilegios = explode(',', $r->cargos_selec);
+                if (is_array($privilegios)) {
+                    for ($i=0; $i<count($privilegios); $i++) {
 
-                         $areas = $r['areas'.$cargoId];
-
-                        for ($j=0; $j<count($areas); $j++) {
-                            //recorrer las areas y buscar si exten
-                            $areaId = $areas[$j];
-                            DB::table('personas_privilegios_sucursales')->insert(
-                                array(
-                                    'sucursal_id' => $areaId,
-                                    'privilegio_id' => $cargoId,
-                                    'persona_id' => $persona->id,
-                                    'created_at'=> date('Y-m-d h:m:s'),
-                                    'persona_id_created_at'=> Auth::user()->id,
-                                    'estado' => 1,
-                                    'persona_id_updated_at' => Auth::user()->id
-                                )
-                            );
-                        }
+                        $sedes = implode(',', $r['sedes'.$privilegios[$i]]);
+                        $consorcios = implode(',', $r['consorcios'.$privilegios[$i]]);
+                        $fecha_ingreso = $r['fecha_ingreso'.$privilegios[$i]];
+                        $fecha_salida = $r['fecha_salida'.$privilegios[$i]];
+                        DB::table('m_sedes_privilegios_personas')->insert(
+                            array(
+                                'sede_ids' => $sedes,
+                                'consorcio_ids' => $consorcios,
+                                'privilegio_id' => $privilegios[$i],
+                                'persona_id' => $persona->id,
+                                'fecha_ingreso' => $fecha_ingreso,
+                                'fecha_salida' => $fecha_salida,
+                                'created_at'=> date('Y-m-d h:m:s'),
+                                'persona_id_created_at'=> Auth::user()->id,
+                                'estado' => 1,
+                            )
+                        );
+                        
                     }
                 }
             }
+        DB::commit();
     }
 
     public static function runEdit($r)
     {
+        var_dump("");exit();
+        DB::beginTransaction();
         $persona_id = Auth::user()->id;
         $persona = Persona::find($r->id);
         $persona->paterno = trim( $r->paterno );
@@ -102,66 +105,61 @@ class Persona extends Model
         $persona->persona_id_updated_at=$persona_id;
         $persona->save();
 
-        DB::table('personas_privilegios_sucursales')
+        DB::table('m_sedes_privilegios_personas')
                 ->where('persona_id', $r->id)
                 ->update(array('estado' => 0,
                     'persona_id_updated_at' => Auth::user()->id));
-
-        $cargos = $r->cargos_selec;
-         if ($cargos) {//si selecciono algun cargo
-                $cargos = explode(',', $cargos);
-                $areas=array();
-
-                //recorrer os cargos y verificar si existen
-                for ($i=0; $i<count($cargos); $i++) {
-                    $cargoId = $cargos[$i];
-                    $areas = $r['areas'.$cargoId];
-
-                    DB::table('personas_privilegios_sucursales')
-                            ->where('privilegio_id', '=', $cargoId)
-                            ->where('persona_id', '=', $r->id)
-                            ->update(
-                                array(
-                                    'estado' => 0,
-                                    'persona_id_updated_at' => Auth::user()->id
-                                    )
-                                );
-
-                    //almacenar las areas seleccionadas
-                    for ($j=0; $j<count($areas); $j++) {
-                        //recorrer las areas y buscar si exten
-                        $areaId = $areas[$j];
-                        $areaCargoPersona=DB::table('personas_privilegios_sucursales')
-                                ->where('sucursal_id', '=', $areaId)
-                                ->where('privilegio_id', $cargoId)
-                                ->where('persona_id', $r->id)
-                                ->first();
-                        if (is_null($areaCargoPersona)) {
-                            DB::table('personas_privilegios_sucursales')->insert(
-                                array(
-                                    'sucursal_id' => $areaId,
-                                    'privilegio_id' => $cargoId,
-                                    'persona_id' => $r->id,
-                                    'created_at'=> date('Y-m-d h:m:s'),
-                                    'persona_id_created_at'=> Auth::user()->id,
-                                    'estado' => 1,
-                                    'persona_id_updated_at' => Auth::user()->id
-                                )
-                            );
-                        } else {
-                            DB::table('personas_privilegios_sucursales')
-                            ->where('sucursal_id', '=', $areaId)
-                            ->where('privilegio_id', '=', $cargoId)
-                            ->update(
-                                array(
-                                    'estado' => 1,
-                                    'persona_id_updated_at' => Auth::user()->id
-                                ));
-                        }
+        
+        if ($r->cargos_selec) {
+            $privilegios = explode(',', $r->cargos_selec);
+            if (is_array($privilegios)) {
+                for ($i=0; $i<count($privilegios); $i++) {
+                    
+                    $sedes = implode(',', $r['sedes'.$privilegios[$i]]);
+                    $consorcios = implode(',', $r['consorcios'.$privilegios[$i]]);
+                    $fecha_ingreso = $r['fecha_ingreso'.$privilegios[$i]];
+                    $fecha_salida = $r['fecha_salida'.$privilegios[$i]];
+                            
+                    $privilegioPersona=DB::table('m_sedes_privilegios_personas')
+                            ->where('privilegio_id', $privilegios[$i])
+                            ->where('persona_id', $r->id)
+                            ->first();
+                    
+                    if (is_null($privilegioPersona)) {
+                        
+                        DB::table('m_sedes_privilegios_personas')->insert(
+                            array(
+                                'sede_ids' => $sedes,
+                                'consorcio_ids' => $consorcios,
+                                'privilegio_id' => $privilegios[$i],
+                                'persona_id' => $persona->id,
+                                'fecha_ingreso' => $fecha_ingreso,
+                                'fecha_salida' => $fecha_salida,
+                                'created_at'=> date('Y-m-d h:m:s'),
+                                'persona_id_created_at'=> Auth::user()->id,
+                                'estado' => 1,
+                            )
+                        );
+                    } else {
+                        DB::table('m_sedes_privilegios_personas')
+                        ->where('persona_id', '=', $r->id)
+                        ->where('privilegio_id', '=', $privilegios[$i])
+                        ->update(
+                            array(
+                                'sede_ids' => $sedes,
+                                'consorcio_ids' => $consorcios,
+                                'fecha_ingreso' => $fecha_ingreso,
+                                'fecha_salida' => $fecha_salida,
+                                'estado' => 1,
+                                'persona_id_updated_at' => Auth::user()->id
+                            ));
                     }
+                   
+
                 }
             }
-
+        }
+        DB::commit();
     }
 
 
@@ -215,35 +213,15 @@ class Persona extends Model
     }
 
      public static function getAreas($personaId) {
-        //subconsulta
-        $sql = DB::table('personas_privilegios_sucursales as cp')
-                ->join(
-                        'privilegios as c', 'cp.privilegio_id', '=', 'c.id'
-                )
-//                ->join(
-//                        'area_cargo_persona as acp', 'cp.id', '=', 'acp.cargo_persona_id'
-//                )
-                ->join(
-                        'sucursales as a', 'cp.sucursal_id', '=', 'a.id'
-                )
-                ->select(
-                        DB::raw(
-                                "
-                CONCAT(c.id, '-',
-                    GROUP_CONCAT(a.id)
-                ) AS info"
-                        )
-                )
-                ->whereRaw("cp.persona_id=$personaId AND cp.estado=1 AND c.estado=1 ")
-                ->groupBy('c.id');
-        //consulta
-        $areas = DB::table(DB::raw("(" . $sql->toSql() . ") as a"))
-                ->select(
-                        DB::raw("GROUP_CONCAT( info SEPARATOR '|'  ) as DATA ")
-                )
-                ->get();
-
-        return $areas;
+        $sql = DB::table('m_sedes_privilegios_personas as mspp')
+                   ->select('mspp.privilegio_id','mspp.sede_ids',"mp.privilegio",
+                           'mspp.consorcio_ids','mspp.fecha_ingreso','mspp.fecha_salida')
+                   ->join("m_privilegios as  mp","mp.id","=","mspp.privilegio_id")
+                   ->where('mspp.persona_id','=',$personaId)
+                   ->where('mspp.estado','=',1)
+                    ->get();
+        
+        return $sql;
     }
 
 

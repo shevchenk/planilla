@@ -1,5 +1,5 @@
 <script type="text/javascript">
-var persona_id, cargos_selec=[], PersonaObj,SlctItem='',SlctAreasMarcadas="";
+var persona_id, cargos_selec=[], PersonaObj,SlctItem='',SlctSedesMarcadas="",SlctConsorciosMarcadas="";
 var AddEdit=0; //0: Editar | 1: Agregar
 var PersonaG={id:0,
 paterno:"",
@@ -172,43 +172,52 @@ SlctCargarPrivilegio=function(result){
 
 }
 
-SlctCargarSucursal=function(result){
+SlctCargarSede=function(result){
     var html="";
     $.each(result.data,function(index,r){
-        html+="<option value="+r.id+">"+r.sucursal+"</option>";
+        html+="<option value="+r.id+">"+r.sede+"</option>";
     });
-    $("#t_cargoPersona #slct_areas"+SlctItem).html(html); 
-    $("#t_cargoPersona #slct_areas"+SlctItem).val(SlctAreasMarcadas); 
-    $("#t_cargoPersona #slct_areas"+SlctItem).selectpicker('refresh');
-
+    $("#t_cargoPersona #slct_sedes"+SlctItem).html(html); 
+    $("#t_cargoPersona #slct_sedes"+SlctItem).val(SlctSedesMarcadas); 
+    $("#t_cargoPersona #slct_sedes"+SlctItem).selectpicker('refresh');
+};
+SlctCargarConsorcio=function(result){
+    var html="";
+    $.each(result.data,function(index,r){
+        html+="<option value="+r.id+">"+r.consorcio+"</option>";
+    });
+    $("#t_cargoPersona #slct_consorcios"+SlctItem).html(html); 
+    $("#t_cargoPersona #slct_consorcios"+SlctItem).val(SlctConsorciosMarcadas); 
+    $("#t_cargoPersona #slct_consorcios"+SlctItem).selectpicker('refresh');
 };
 SlctCargarAreas=function(result){
-                if(result[0].DATA !== null){
-                    var cargos = result[0].DATA.split("|"); 
+    var html="";
+    cargos_selec=[];
+    $.each(result, function(index,r){
+        var sedes = r.sede_ids.split(",");
+        var consorcios = r.consorcio_ids.split(",");
+        html="<li class='list-group-item'>";
+        html+="<div class='row'><div class='col-sm-1' id='cargo_"+r.privilegio_id+"'><h5>"+r.privilegio+"</h5></div>";
+        html+="<div class='col-sm-3'><select class='form-control selectpicker' multiple data-actions-box='true' name='slct_sedes"+r.privilegio_id+"[]' id='slct_sedes"+r.privilegio_id+"'></select></div>";
+        html+="<div class='col-sm-3'><select class='form-control selectpicker' multiple data-actions-box='true' name='slct_consorcios"+r.privilegio_id+"[]' id='slct_consorcios"+r.privilegio_id+"'></select></div>";
+        html+='<div class="col-sm-2"> <input type="text" class="form-control fecha" id="txt_fecha_ingreso" name="txt_fecha_ingreso'+r.privilegio_id+'"  readonly="" value="'+r.fecha_ingreso+'"></div>';
+        html+='<div class="col-sm-2"> <input type="text" class="form-control fecha" id="txt_fecha_salida" name="txt_fecha_salida'+r.privilegio_id+'"  readonly="" value="'+r.fecha_salida+'"></div>';
+        html+='<div class="col-sm-1">';
+        html+='<button type="button" id="'+r.privilegio_id+'" Onclick="EliminarArea(this)" class="btn btn-danger btn-sm" >';
+        html+='<i class="fa fa-minus fa-sm"></i> </button></div></div>';
+        html+="</li>";
 
-                    var html="";
+        $("#t_cargoPersona").append(html); 
+        SlctItem=r.privilegio_id;
+        SlctSedesMarcadas=sedes;
+        SlctConsorciosMarcadas=consorcios;
+        AjaxPersona.CargarSede(SlctCargarSede);
+        AjaxPersona.CargarConsorcio(SlctCargarConsorcio);
+        cargos_selec.push(r.privilegio_id);
+    });
+    Fecha(); 
+};
 
-                    $.each(cargos, function(i,opcion){
-                        var data = opcion.split("-");
-                        html="<li class='list-group-item'><div class='row'>";
-                        html+="<div class='col-sm-4' id='cargo_"+data[0]+"'><h5>"+$("#slct_cargos option[value=" +data[0] +"]").text()+"</h5></div>";
-                        var areas = data[1].split(",");
-                        html+="<div class='col-sm-6'><select class='selectpicker' multiple data-actions-box='true' name='slct_areas"+data[0]+"[]' id='slct_areas"+data[0]+"'></select></div>";
-                        html+='<div class="col-sm-2">';
-                        html+='<button type="button" id="'+data[0]+'" Onclick="EliminarArea(this)" class="btn btn-danger btn-sm" >';
-                        html+='<i class="fa fa-minus fa-sm"></i> </button></div>';
-                        html+="</div></li>";
-                        $("#t_cargoPersona").append(html); 
-                        
-                        SlctItem=data[0];
-                        SlctAreasMarcadas=areas;
-                        AjaxPersona.CargarSucursal(SlctCargarSucursal);
-                        cargos_selec.push(data[0]);
-                    });
-                    
-                    
-                }
-                }
 HTMLCargarPersona=function(result){
     var html="";
     $('#TablePersona').DataTable().destroy();
@@ -256,32 +265,36 @@ HTMLCargarPersona=function(result){
 };
 AgregarArea=function(){
     //añadir registro "opcion" por usuario
-    var cargo_id=$('#slct_cargos option:selected').val();
-    var cargo=$('#slct_cargos option:selected').text();
-    var buscar_cargo = $('#cargo_'+cargo_id).text();
-    if (cargo_id!=='') {
-        if (buscar_cargo==="") {
+    var html="";
+    var privilegio_id=$('#slct_cargos option:selected').val();
+    var privilegio=$('#slct_cargos option:selected').text();
+    var buscar_privilegio = $('#cargo_'+privilegio_id).text();
+    if (privilegio_id!=='') {
+        if (buscar_privilegio==="") {
 
-            var html='';
-            html+="<li class='list-group-item'><div class='row'>";
-            html+="<div class='col-sm-4' id='cargo_"+cargo_id+"'><h5>"+cargo+"</h5></div>";
-            html+="<div class='col-xs-6'>";
-            html+="<select class='selectpicker' multiple data-actions-box='true' name='slct_areas"+cargo_id+"[]' id='slct_areas"+cargo_id+"'>";
-            html+="</select></div>";
-            html+='<div class="col-sm-2">';
-            html+='<button type="button" id="'+cargo_id+'" Onclick="EliminarArea(this)" class="btn btn-danger btn-sm" >';
-            html+='<i class="fa fa-minus fa-sm"></i> </button></div>';
-            html+="</div></li>";
-            $("#t_cargoPersona").append(html);
-            
-            SlctItem=cargo_id;
-            SlctAreasMarcadas="";
-            AjaxPersona.CargarSucursal(SlctCargarSucursal);
-            cargos_selec.push(cargo_id);
+            html="<li class='list-group-item'>";
+            html+="<div class='row'><div class='col-sm-1' id='cargo_"+privilegio_id+"'><h5>"+privilegio+"</h5></div>";
+            html+="<div class='col-sm-3'><select class='form-control selectpicker' multiple data-actions-box='true' name='slct_sedes"+privilegio_id+"[]' id='slct_sedes"+privilegio_id+"'></select></div>";
+            html+="<div class='col-sm-3'><select class='form-control selectpicker' multiple data-actions-box='true' name='slct_consorcios"+privilegio_id+"[]' id='slct_consorcios"+privilegio_id+"'></select></div>";
+            html+='<div class="col-sm-2"> <input type="text" class="form-control fecha" id="txt_fecha_ingreso" name="txt_fecha_ingreso'+privilegio_id+'"  readonly="" ></div>';
+            html+='<div class="col-sm-2"> <input type="text" class="form-control fecha" id="txt_fecha_salida" name="txt_fecha_salida'+privilegio_id+'"  readonly=""></div>';
+            html+='<div class="col-sm-1">';
+            html+='<button type="button" id="'+privilegio_id+'" Onclick="EliminarArea(this)" class="btn btn-danger btn-sm" >';
+            html+='<i class="fa fa-minus fa-sm"></i> </button></div></div>';
+            html+="</li>";
+
+            $("#t_cargoPersona").append(html); 
+            SlctItem=privilegio_id;
+            SlctSedesMarcadas="";
+            SlctConsorciosMarcadas="";
+            AjaxPersona.CargarSede(SlctCargarSede);
+            AjaxPersona.CargarConsorcio(SlctCargarConsorcio);
+            cargos_selec.push(privilegio_id);
+            Fecha(); 
         } else 
-            alert("Ya se agrego este Cargo");
+            alert("Ya se agrego este Privilegio");
     } else 
-        alert("Seleccione Cargo");
+        alert("Seleccione Privilegio");
 
 };
 
@@ -291,5 +304,18 @@ EliminarArea=function(obj){
     obj.parentNode.parentNode.parentNode.remove();
     var index = cargos_selec.indexOf(valor);
     cargos_selec.splice( index, 1 );
+    console.log(cargos_selec);
 };
+
+Fecha=function(){
+    $(".fecha").datetimepicker({
+        format: "yyyy-mm-dd",
+        language: 'es',
+        showMeridian: false,
+        time:false,
+        minView:2,
+        autoclose: true,
+        todayBtn: false
+    });
+}
 </script>
