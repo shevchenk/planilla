@@ -8,7 +8,7 @@ use DB;
 
 class PersonaContratoHistorico extends Model
 {
-    protected   $table = 'p_personas_contratos';
+    protected   $table = 'p_personas_contratos_historicos';
 
     public static function runEditStatus($r)
     {

@@ -2,7 +2,7 @@
 var AjaxContrato={
     AgregarEditar:function(evento){
         var data=$("#ModalContratoForm").serialize().split("txt_").join("").split("slct_").join("");
-        url='AjaxDinamic/Proceso.ContratoPR@New';
+        url='AjaxDinamic/Proceso.PersonaContratoPR@New';
         if(AddEdit==0){
             url='AjaxDinamic/Proceso.PersonaContratoPR@Edit';
         }
