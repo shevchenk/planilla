@@ -1,8 +1,8 @@
 <script type="text/javascript">
 var AjaxAEPersona={
     AgregarEditar2:function(evento){
-//        $("#ModalPersonaForm input[name='cargos_selec']").remove();
-        $("#ModalPersonaForm").append("<input type='hidden' value='"+cargos_selec+"' name='cargos_selec'>");
+       // $("#ModalPersonaForm input[name='cargos_selec']").remove();
+       // $("#ModalPersonaForm").append("<input type='hidden' value='"+cargos_selec+"' name='cargos_selec'>");
         var data=$("#ModalPersonaForm").serialize().split("txt_").join("").split("slct_").join("");
         url='AjaxDinamic/Mantenimiento.PersonaEM@New';
         if(AddEdit2==0){
@@ -15,8 +15,13 @@ var AjaxAEPersona={
         data={};
         masterG.postAjax(url,data,evento);
     },
-    CargarSucursal:function(evento){
-        url='AjaxDinamic/Mantenimiento.SucursalEM@ListSucursal';
+    CargarSede2:function(evento){
+        url='AjaxDinamic/Mantenimiento.SedeMA@ListSede';
+        data={};
+        masterG.postAjax(url,data,evento,null,false);
+    },
+    CargarConsorcio2:function(evento){
+        url='AjaxDinamic/Mantenimiento.ConsorcioMA@ListConsorcio';
         data={};
         masterG.postAjax(url,data,evento,null,false);
     },

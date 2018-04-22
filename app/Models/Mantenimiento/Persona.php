@@ -76,7 +76,7 @@ class Persona extends Model
 
     public static function runEdit($r)
     {
-        var_dump("");exit();
+        
         DB::beginTransaction();
         $persona_id = Auth::user()->id;
         $persona = Persona::find($r->id);
@@ -105,12 +105,15 @@ class Persona extends Model
         $persona->persona_id_updated_at=$persona_id;
         $persona->save();
 
-        DB::table('m_sedes_privilegios_personas')
+        
+        
+        if ($r->cargos_selec) {
+            
+            DB::table('m_sedes_privilegios_personas')
                 ->where('persona_id', $r->id)
                 ->update(array('estado' => 0,
                     'persona_id_updated_at' => Auth::user()->id));
-        
-        if ($r->cargos_selec) {
+            
             $privilegios = explode(',', $r->cargos_selec);
             if (is_array($privilegios)) {
                 for ($i=0; $i<count($privilegios); $i++) {
