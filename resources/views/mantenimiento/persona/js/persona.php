@@ -276,7 +276,7 @@ AgregarArea=function(){
             html+="<div class='row'><div class='col-sm-1' id='cargo_"+privilegio_id+"'><h5>"+privilegio+"</h5></div>";
             html+="<div class='col-sm-3'><select class='form-control selectpicker' multiple data-actions-box='true' name='slct_sedes"+privilegio_id+"[]' id='slct_sedes"+privilegio_id+"'></select></div>";
             html+="<div class='col-sm-3'><select class='form-control selectpicker' multiple data-actions-box='true' name='slct_consorcios"+privilegio_id+"[]' id='slct_consorcios"+privilegio_id+"'></select></div>";
-            html+='<div class="col-sm-2"> <input type="text" class="form-control fecha" id="txt_fecha_ingreso" name="txt_fecha_ingreso'+privilegio_id+'"  readonly="" ></div>';
+            html+='<div class="col-sm-2"> <input type="text" class="form-control fecha" id="txt_fecha_ingreso" name="txt_fecha_ingreso'+privilegio_id+'"  readonly="" value="<?php echo date('Y-m-d')?>"></div>';
             html+='<div class="col-sm-2"> <input type="text" class="form-control fecha" id="txt_fecha_salida" name="txt_fecha_salida'+privilegio_id+'"  readonly=""></div>';
             html+='<div class="col-sm-1">';
             html+='<button type="button" id="'+privilegio_id+'" Onclick="EliminarArea(this)" class="btn btn-danger btn-sm" >';

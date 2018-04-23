@@ -17,5 +17,13 @@ class Cargo extends Model
         return $result;
     }
     
+    public static function SueldoCargo($r){
+        $sql=Cargo::select('id','sueldo_mensual_base','sueldo_produccion_base')
+            ->where('estado','=','1')
+            ->where('id','=',$r->cargo_id);
+        $result = $sql->orderBy('cargo','asc')->get();
+        return $result;
+    }
+    
 
 }

@@ -50,10 +50,24 @@ class Persona extends Model
                 if (is_array($privilegios)) {
                     for ($i=0; $i<count($privilegios); $i++) {
 
-                        $sedes = implode(',', $r['sedes'.$privilegios[$i]]);
-                        $consorcios = implode(',', $r['consorcios'.$privilegios[$i]]);
+                        if($r['sedes'.$privilegios[$i]]){
+                            $sedes = implode(',', $r['sedes'.$privilegios[$i]]);
+                        }else{
+                            $sedes='';
+                        }
+                        if($r['consorcios'.$privilegios[$i]]){
+                            $consorcios = implode(',', $r['consorcios'.$privilegios[$i]]);
+                        }else{
+                            $consorcios='';
+                        }
+                        if($r['fecha_salida'.$privilegios[$i]]){
+                            $fecha_salida = $r['fecha_salida'.$privilegios[$i]];
+                        }else{
+                            $fecha_salida=null;
+                        }
+
                         $fecha_ingreso = $r['fecha_ingreso'.$privilegios[$i]];
-                        $fecha_salida = $r['fecha_salida'.$privilegios[$i]];
+                        
                         DB::table('m_sedes_privilegios_personas')->insert(
                             array(
                                 'sede_ids' => $sedes,
@@ -118,10 +132,24 @@ class Persona extends Model
             if (is_array($privilegios)) {
                 for ($i=0; $i<count($privilegios); $i++) {
                     
-                    $sedes = implode(',', $r['sedes'.$privilegios[$i]]);
-                    $consorcios = implode(',', $r['consorcios'.$privilegios[$i]]);
+                    if($r['sedes'.$privilegios[$i]]){
+                        $sedes = implode(',', $r['sedes'.$privilegios[$i]]);
+                    }else{
+                        $sedes='';
+                    }
+                    if($r['consorcios'.$privilegios[$i]]){
+                        $consorcios = implode(',', $r['consorcios'.$privilegios[$i]]);
+                    }else{
+                        $consorcios='';
+                    }
+                    if($r['fecha_salida'.$privilegios[$i]]){
+                        $fecha_salida = $r['fecha_salida'.$privilegios[$i]];
+                    }else{
+                        $fecha_salida=null;
+                    }
+                    
                     $fecha_ingreso = $r['fecha_ingreso'.$privilegios[$i]];
-                    $fecha_salida = $r['fecha_salida'.$privilegios[$i]];
+                    
                             
                     $privilegioPersona=DB::table('m_sedes_privilegios_personas')
                             ->where('privilegio_id', $privilegios[$i])
@@ -218,7 +246,8 @@ class Persona extends Model
      public static function getAreas($personaId) {
         $sql = DB::table('m_sedes_privilegios_personas as mspp')
                    ->select('mspp.privilegio_id','mspp.sede_ids',"mp.privilegio",
-                           'mspp.consorcio_ids','mspp.fecha_ingreso','mspp.fecha_salida')
+                           'mspp.consorcio_ids',DB::raw('IFNULL(mspp.fecha_ingreso,"") as fecha_ingreso'),
+                           DB::raw('IFNULL(mspp.fecha_salida,"") as fecha_salida'))
                    ->join("m_privilegios as  mp","mp.id","=","mspp.privilegio_id")
                    ->where('mspp.persona_id','=',$personaId)
                    ->where('mspp.estado','=',1)

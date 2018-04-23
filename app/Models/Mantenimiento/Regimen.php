@@ -58,7 +58,7 @@ class Regimen extends Model
                     if( $r->has("regimen") ){
                         $regimen=trim($r->regimen);
                         if( $regimen !='' ){
-                           $query->where('m_regimenes.regimen','=',$regimen);
+                           $query->where('m_regimenes.regimen','like','%'.$regimen.'%');
                         }
                     }
                     if( $r->has("tipo_regimen") ){
