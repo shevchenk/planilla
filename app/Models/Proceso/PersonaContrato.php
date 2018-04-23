@@ -17,6 +17,10 @@ class PersonaContrato extends Model
         $personacontrato->estado = trim( $r->estadof );
         $personacontrato->persona_id_updated_at=Auth::user()->id;
         $personacontrato->save();
+        
+        if($personacontrato){
+            PersonaContratoHistorico::runNew($personacontrato);
+        }
     }
 
     public static function runNew($r)
@@ -50,7 +54,8 @@ class PersonaContrato extends Model
 
     public static function runEdit($r)
     {
-        $personacontrato = PersonaContrato::find($r->id);
+        
+        $personacontrato = PersonaContrato::where('persona_id','=',$r->persona_id)->first();
         $personacontrato->sede_id = trim( $r->sede_id );
         $personacontrato->consorcio_id =trim( $r->consorcio_id );
         $personacontrato->cargo_id = trim( $r->cargo_id );

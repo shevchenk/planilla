@@ -10,16 +10,16 @@ class PersonaContratoHistorico extends Model
 {
     protected   $table = 'p_personas_contratos_historicos';
 
-    public static function runEditStatus($r)
-    {
-        $personacontrato = PersonaContratoHistorico::find($r->id);
-        $personacontrato->estado = trim( $r->estadof );
-        $personacontrato->persona_id_updated_at=Auth::user()->id;
-        $personacontrato->save();
-    }
-
     public static function runNew($r)
     {
+        DB::beginTransaction();
+        PersonaContratoHistorico::where('persona_id', '=', $r->persona_id)
+                        ->update(
+                            array(
+                                'ultimo_registro' => 0,
+                                'persona_id_updated_at' => Auth::user()->id
+                            ));
+        
         $personacontrato = new PersonaContratoHistorico;
         $personacontrato->persona_id = trim( $r->persona_id );
         $personacontrato->sede_id = trim( $r->sede_id );
@@ -33,30 +33,11 @@ class PersonaContratoHistorico extends Model
         $personacontrato->sueldo_mensual = trim( $r->sueldo_mensual );
         $personacontrato->sueldo_produccion = trim( $r->sueldo_produccion );
         $personacontrato->asignacion_familiar = trim( $r->asignacion_familiar );
-        $personacontrato->estado = 1;
+        $personacontrato->estado = trim( $r->estado );
         $personacontrato->persona_id_created_at=Auth::user()->id;
         $personacontrato->save();
+        DB::commit();
     }
-
-    public static function runEdit($r)
-    {
-        $personacontrato = PersonaContratoHistorico::find($r->id);
-        $personacontrato->sede_id = trim( $r->sede_id );
-        $personacontrato->consorcio_id =trim( $r->consorcio_id );
-        $personacontrato->cargo_id = trim( $r->cargo_id );
-        $personacontrato->regimen_id = trim( $r->regimen_id );
-        $personacontrato->estado_contrato = trim( $r->estado_contrato );
-        $personacontrato->tipo_contrato = trim( $r->tipo_contrato );
-        $personacontrato->fecha_ini_contrato = trim( $r->fecha_ini_contrato );
-        $personacontrato->fecha_fin_contrato = trim( $r->fecha_fin_contrato );
-        $personacontrato->sueldo_mensual = trim( $r->sueldo_mensual );
-        $personacontrato->sueldo_produccion = trim( $r->sueldo_produccion );
-        $personacontrato->asignacion_familiar = trim( $r->asignacion_familiar );
-        $personacontrato->estado = 1;
-        $personacontrato->persona_id_updated_at=Auth::user()->id;
-        $personacontrato->save();
-    }
-
 
     public static function runLoad($r)
     {

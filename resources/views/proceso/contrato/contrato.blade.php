@@ -132,7 +132,7 @@
                 </form><!-- .form -->
             </div><!-- .box -->
         </div><!-- .col -->
-        <div class="col-xs-12">
+        <div class="col-xs-12" id="Contrato" style="display: none">
             <div class="box box-primary">
                 <div class="box-header with-border">
                     <h3 class="box-title">Contrato</h3>
@@ -146,7 +146,8 @@
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label>Nombre Completo</label>
-                                            <input type="hidden" name="txt_persona_id" id="txt_persona_id" class="form-control" readonly="">
+                                            <input type="hidden" name="txt_estado" id="txt_estado" class="form-control mant" readonly="" value="1">
+                                            <input type="hidden" name="txt_persona_id" id="txt_persona_id" class="form-control mant" readonly="">
                                             <input type="text" class="form-control" id="txt_persona" name="txt_persona" disabled="">
                                         </div> 
                                     </div>

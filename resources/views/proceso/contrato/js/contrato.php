@@ -93,6 +93,7 @@ AgregarEditar=function(val,id){
     AddEdit=val;
     $("#btn_buscar_persona").prop("disabled",false);
     $("#btn_buscar_persona").show();
+    $("#Contrato").css("display","");
     ContratoG.id='';
     ContratoG.persona_id='';
     ContratoG.persona='';
@@ -112,6 +113,7 @@ AgregarEditar=function(val,id){
     if( val==0 ){
         $("#btn_buscar_persona").prop("disabled",true);
         $("#btn_buscar_persona").hide();
+        $("#Contrato").css("display","");
         ContratoG.id=id;
         ContratoG.persona_id=$("#TableContrato #trid_"+id+" .persona_id").val();
         ContratoG.persona=$("#TableContrato #trid_"+id+" .persona").text();
@@ -154,6 +156,7 @@ LlenarAgregarEditar=function(){
         $('#ModalContratoForm #txt_sueldo_mensual').val(ContratoG.sueldo_mensual );
         $('#ModalContratoForm #txt_sueldo_produccion').val(ContratoG.sueldo_produccion );
         $('#ModalContratoForm #txt_asignacion_familiar').val(ContratoG.asignacion_familiar );
+        $('#ModalContratoForm #txt_estado').val(ContratoG.estado );
         $('#ModalContratoForm #txt_persona').focus();
         
         
