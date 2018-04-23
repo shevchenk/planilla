@@ -24,5 +24,16 @@ class CargoEM extends Controller
             return response()->json($return);
         }
     }
+    
+        public function SueldoCargo (Request $r )
+    {
+        if ( $r->ajax() ) {
+            $renturnModel = Cargo::SueldoCargo($r);
+            $return['rst'] = 1;
+            $return['data'] = $renturnModel;
+            $return['msj'] = "No hay registros aún";
+            return response()->json($return);
+        }
+    }
 
 }

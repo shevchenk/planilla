@@ -93,48 +93,39 @@ class PersonaContrato extends Model
             ->where( 
                     
                 function($query) use ($r){
-                    if( $r->has("regimen") ){
-                        $personacontrato=trim($r->regimen);
-                        if( $personacontrato !='' ){
-                           $query->where('p_personas_contratos.regimen','=',$personacontrato);
+                    if( $r->has("persona") ){
+                        $persona=trim($r->persona);
+                        if( $persona !='' ){
+                           $query->where(DB::raw('CONCAT_WS(" ",mp.paterno,mp.materno,mp.nombre)'),"like", "%".$persona."%");
                         }
                     }
-                    if( $r->has("tipo_regimen") ){
-                        $tipo_regimen=trim($r->tipo_regimen);
-                        if( $tipo_regimen !='' ){
-                            $query->where('p_personas_contratos.tipo_regimen','=',$tipo_regimen);
+                    if( $r->has("sede") ){
+                        $sede=trim($r->sede);
+                        if( $sede !='' ){
+                            $query->where('ms.sede',"like","%".$sede."%");
                         }   
                     }
-                    if( $r->has("aporte") ){
-                        $aporte=trim($r->aporte);
-                        if( $aporte !='' ){
-                            $query->where('p_personas_contratos.aporte','like','%'.$aporte.'%');
+                    if( $r->has("consorcio") ){
+                        $consorcio=trim($r->consorcio);
+                        if( $consorcio !='' ){
+                            $query->where('mc.consorcio','like','%'.$consorcio.'%');
                         }   
                     }
-                    if( $r->has("comision") ){
-                        $comision=trim($r->comision);
-                        if( $comision !='' ){
-                            $query->where('p_personas_contratos.comision','like','%'.$comision.'%');
+                    if( $r->has("estado_contrato") ){
+                        $estado_contrato=trim($r->estado_contrato);
+                        if( $estado_contrato !='' ){
+                            $query->where('p_personas_contratos.estado_contrato','=',$estado_contrato);
                         }   
                     }
-                    if( $r->has("prima") ){
-                        $prima=trim($r->prima);
-                        if( $prima !='' ){
-                            $query->where('p_personas_contratos.prima','like','%'.$prima.'%');
+                    if( $r->has("tipo_contrato") ){
+                        $tipo_contrato=trim($r->tipo_contrato);
+                        if( $tipo_contrato !='' ){
+                            $query->where('p_personas_contratos.tipo_contrato','=',$tipo_contrato);
                         }   
                     }
-                    if( $r->has("seguro") ){
-                        $seguro=trim($r->seguro);
-                        if( $seguro !='' ){
-                            $query->where('p_personas_contratos.seguro','like','%'.$seguro.'%');
-                        }   
-                    }
-                    if( $r->has("estado") ){
-                        $estado=trim($r->estado);
-                        if( $estado !='' ){
-                            $query->where('p_personas_contratos.estado','=',''.$estado.'');
-                        }
-                    }
+                    
+                    $query->where('p_personas_contratos.estado','=',1);
+             
                 }
             );
         $result = $sql->orderBy('p_personas_contratos.id','asc')->paginate(10);

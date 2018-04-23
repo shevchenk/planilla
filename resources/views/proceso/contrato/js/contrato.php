@@ -33,6 +33,11 @@ $(document).ready(function() {
     $("#ContratoForm #TableContrato select").change(function(){ AjaxContrato.Cargar(HTMLCargarContrato); });
     $("#ContratoForm #TableContrato input").blur(function(){ AjaxContrato.Cargar(HTMLCargarContrato); });
     
+    $( "#ModalContratoForm #slct_cargo_id" ).change(function() {
+            var cargo_id= $('#ModalContratoForm #slct_cargo_id').val();
+            AjaxContrato.CargarSueldoCargo(SlctCargarSueldoCargo,cargo_id);
+    });
+    
 });
 
 ValidaForm=function(){
@@ -86,6 +91,7 @@ ValidaForm=function(){
 
 AgregarEditar=function(val,id){
     AddEdit=val;
+    $("#btn_buscar_persona").prop("disabled",false);
     ContratoG.id='';
     ContratoG.persona_id='';
     ContratoG.persona='';
@@ -103,6 +109,7 @@ AgregarEditar=function(val,id){
     ContratoG.estado=1;
     
     if( val==0 ){
+        $("#btn_buscar_persona").prop("disabled",true);
         ContratoG.id=id;
         ContratoG.persona_id=$("#TableContrato #trid_"+id+" .persona_id").val();
         ContratoG.persona=$("#TableContrato #trid_"+id+" .persona").text();
@@ -151,7 +158,9 @@ LlenarAgregarEditar=function(){
 }
 
 CambiarEstado=function(estado,id){
-    AjaxContrato.CambiarEstado(HTMLCambiarEstado,estado,id);
+    sweetalertG.confirm("¿Estás seguro?", "Confirme la eliminación", function(){
+        AjaxContrato.CambiarEstado(HTMLCambiarEstado,estado,id);
+    });
 }
 
 HTMLCambiarEstado=function(result){
@@ -184,7 +193,7 @@ HTMLCargarContrato=function(result){
     $.each(result.data.data,function(index,r){
         estadohtml='<span id="'+r.id+'" onClick="CambiarEstado(1,'+r.id+')" class="btn btn-danger">Inactivo</span>';
         if(r.estado==1){
-            estadohtml='<span id="'+r.id+'" onClick="CambiarEstado(0,'+r.id+')" class="btn btn-success">Activo</span>';
+            estadohtml='<span id="'+r.id+'" onClick="CambiarEstado(0,'+r.id+')" class="btn btn-danger btn-sm"><i class="fa fa-trash fa-lg"></i></span>';
         }
 
         html+="<tr id='trid_"+r.id+"'>"+
@@ -205,8 +214,8 @@ HTMLCargarContrato=function(result){
             "<input type='hidden' class='fecha_fin_contrato' value='"+r.fecha_fin_contrato+"'>"+
             "<input type='hidden' class='sueldo_mensual' value='"+r.sueldo_mensual+"'>"+
             "<input type='hidden' class='sueldo_produccion' value='"+r.sueldo_produccion+"'>"+
-            "<input type='hidden' class='asignacion_familiar' value='"+r.asignacion_familiar+"'>"+
-//        html+="<input type='hidden' class='estado' value='"+r.estado+"'>"+estadohtml+"</td><td>"+
+            "<input type='hidden' class='asignacion_familiar' value='"+r.asignacion_familiar+"'>";
+        html+="<input type='hidden' class='estado' value='"+r.estado+"'>"+estadohtml+"</td><td>"+
             '<a class="btn btn-primary btn-sm" onClick="AgregarEditar(0,'+r.id+')"><i class="fa fa-edit fa-lg"></i> </a></td>';
         html+="</tr>";
     });
@@ -271,5 +280,14 @@ SlctCargarRegimen=function(result){
 
 };
 
-
+SlctCargarSueldoCargo=function(result){
+    if(result.data.length>0){
+        $("#ModalContratoForm #txt_sueldo_mensual").val(result.data[0].sueldo_mensual_base); 
+        $("#ModalContratoForm #txt_sueldo_produccion").val(result.data[0].sueldo_produccion_base); 
+    }else{
+        $("#ModalContratoForm #txt_sueldo_mensual").val(""); 
+        $("#ModalContratoForm #txt_sueldo_produccion").val(""); 
+    }
+    
+};
 </script>

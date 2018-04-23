@@ -45,5 +45,10 @@ var AjaxContrato={
         data={};
         masterG.postAjax(url,data,evento);
     },
+    CargarSueldoCargo:function(evento,cargo_id){
+        url='AjaxDinamic/Mantenimiento.CargoEM@SueldoCargo';
+        data={cargo_id:cargo_id};
+        masterG.postAjax(url,data,evento,null,false);
+    },
 };
 </script>

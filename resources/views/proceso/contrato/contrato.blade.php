@@ -108,6 +108,7 @@
                                         </div>
                                     </th>-->
                                     <th class="col-xs-1">[-]</th>
+                                    <th class="col-xs-1">[-]</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -120,7 +121,7 @@
                                     <th>Estado Contrato</th>
                                     <th>Tipo Contrato</th>
                                     <th>[-]</th>
-                                    <!--<th>[-]</th>-->
+                                    <th>[-]</th>
                                 </tr>
                             </tfoot>
                         </table>
@@ -153,7 +154,7 @@
                                         <div class="form-group">
                                             <label>&nbsp;&nbsp;&nbsp;</label>
                                             <span class="input-group-btn">
-                                                <button type="button" class="btn btn-info btn-flat" data-toggle="modal" data-target="#ModalListapersona" data-filtros="estado:1" data-personaid="ModalContratoForm #txt_persona_id"  data-persona="ModalContratoForm #txt_persona">Buscar Persona</button>
+                                                <button type="button" id="btn_buscar_persona" class="btn btn-info btn-flat" data-toggle="modal" data-target="#ModalListapersona" data-filtros="estado:1" data-personaid="ModalContratoForm #txt_persona_id"  data-persona="ModalContratoForm #txt_persona">Buscar Persona</button>
                                             </span>
                                         </div> 
                                     </div>
@@ -225,13 +226,13 @@
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Sueldo Mensual</label>
-                                            <input type="text" onkeyup="masterG.DecimalMax(this, 2);" onkeypress="return masterG.validaDecimal(event, this);" class="form-control" id="txt_sueldo_mensual" name="txt_sueldo_mensual">
+                                            <input type="text" onkeyup="masterG.DecimalMax(this, 2);" onkeypress="return masterG.validaDecimal(event, this);" class="form-control" id="txt_sueldo_mensual" name="txt_sueldo_mensual" readonly="">
                                         </div>
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Sueldo Producción</label>
-                                            <input type="text" onkeyup="masterG.DecimalMax(this, 2);" onkeypress="return masterG.validaDecimal(event, this);" class="form-control" id="txt_sueldo_produccion" name="txt_sueldo_produccion">
+                                            <input type="text" onkeyup="masterG.DecimalMax(this, 2);" onkeypress="return masterG.validaDecimal(event, this);" class="form-control" id="txt_sueldo_produccion" name="txt_sueldo_produccion" readonly="">
                                         </div>
                                     </div>
                                     <div class="col-md-2">
