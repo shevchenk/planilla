@@ -1,6 +1,6 @@
 <script type="text/javascript">
 var AddEdit=0; //0: Editar | 1: Agregar
-var RegimenG={id:0,evento_tipo:"",aplica_dscto:0,estado:1}; // Datos Globales
+var DatosG={id:0,evento_tipo:"",aplica_dscto:0,estado:1}; // Datos Globales
 $(document).ready(function() {
 
     $("#TableTipoEvento").DataTable({
@@ -13,7 +13,9 @@ $(document).ready(function() {
     });
 
     AjaxDatos.Cargar(HTMLCargarDatos);
-     
+    $("#TipoEventoForm #TableTipoEvento input").blur(function(){ AjaxDatos.Cargar(HTMLCargarDatos); });
+    $("#TipoEventoForm #TableTipoEvento select").change(function(){ AjaxDatos.Cargar(HTMLCargarDatos); });
+
     $('#ModalEventoTipo').on('shown.bs.modal', function (event) {
 
         if( AddEdit==1 ){        
@@ -21,12 +23,12 @@ $(document).ready(function() {
         }
         else{
             $(this).find('.modal-footer .btn-primary').text('Actualizar').attr('onClick','AgregarEditarAjax();');
-            $("#ModalTipoEventoForm").append("<input type='hidden' value='"+RegimenG.id+"' name='id'>");
+            $("#ModalTipoEventoForm").append("<input type='hidden' value='"+DatosG.id+"' name='id'>");
         }
-        $('#ModalTipoEventoForm #txt_evento_tipo').val( RegimenG.evento_tipo );
-        $('#ModalTipoEventoForm #slct_aplica_dscto').selectpicker('val', RegimenG.aplica_dscto );        
-        $('#ModalTipoEventoForm #slct_estado').selectpicker( 'val',RegimenG.estado );
-        $('#ModalTipoEventoForm #txt_regimen').focus();
+        $('#ModalTipoEventoForm #txt_evento_tipo').val( DatosG.evento_tipo );
+        $('#ModalTipoEventoForm #slct_aplica_dscto').selectpicker('val', DatosG.aplica_dscto );        
+        $('#ModalTipoEventoForm #slct_estado').selectpicker( 'val',DatosG.estado );
+        $('#ModalTipoEventoForm #txt_evento_tipo').focus();
     });
 
     $('#ModalEventoTipo').on('hidden.bs.modal', function (event) {
@@ -50,15 +52,15 @@ ValidaForm=function(){
 
 AgregarEditar=function(val,id){
     AddEdit=val;
-    RegimenG.id='';
-    RegimenG.evento_tipo='';
-    RegimenG.aplica_dscto='0';
-    RegimenG.estado='1';
+    DatosG.id='';
+    DatosG.evento_tipo='';
+    DatosG.aplica_dscto='0';
+    DatosG.estado='1';
     if( val==0 ){
-        RegimenG.id=id;
-        RegimenG.evento_tipo=$("#TableTipoEvento #trid_"+id+" .evento_tipo").text();
-        RegimenG.aplica_dscto=$("#TableTipoEvento #trid_"+id+" .aplica_dscto").val();
-        RegimenG.estado=$("#TableTipoEvento #trid_"+id+" .estado").val();
+        DatosG.id=id;
+        DatosG.evento_tipo=$("#TableTipoEvento #trid_"+id+" .evento_tipo").text();
+        DatosG.aplica_dscto=$("#TableTipoEvento #trid_"+id+" .aplica_dscto").val();
+        DatosG.estado=$("#TableTipoEvento #trid_"+id+" .estado").val();
     }
     $('#ModalEventoTipo').modal('show');
 }

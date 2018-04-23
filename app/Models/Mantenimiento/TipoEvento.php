@@ -52,7 +52,7 @@ class TipoEvento extends Model
                                     if( $r->has("evento_tipo") ){
                                         $evento_tipo=trim($r->evento_tipo);
                                         if( $evento_tipo !='' ){
-                                           $query->where('m_eventos_tipos.evento_tipo','=',$evento_tipo);
+                                           $query->where('m_eventos_tipos.evento_tipo','like','%'.$evento_tipo.'%');
                                         }
                                     }
                                     if( $r->has("aplica_dscto") ){

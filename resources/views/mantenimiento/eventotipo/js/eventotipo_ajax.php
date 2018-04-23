@@ -10,10 +10,10 @@ var AjaxDatos={
     },
     Cargar:function(evento,pag){
         if( typeof(pag)!='undefined' ){
-            $("#RegimenForm").append("<input type='hidden' value='"+pag+"' name='page'>");
+            $("#TipoEventoForm").append("<input type='hidden' value='"+pag+"' name='page'>");
         }
-        data=$("#RegimenForm").serialize().split("txt_").join("").split("slct_").join("");
-        $("#RegimenForm input[type='hidden']").not('.mant').remove();
+        data=$("#TipoEventoForm").serialize().split("txt_").join("").split("slct_").join("");
+        $("#TipoEventoForm input[type='hidden']").not('.mant').remove();
         url='AjaxDinamic/Mantenimiento.TipoEventoEM@Load';
         masterG.postAjax(url,data,evento);
     },
