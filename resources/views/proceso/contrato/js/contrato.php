@@ -92,6 +92,7 @@ ValidaForm=function(){
 AgregarEditar=function(val,id){
     AddEdit=val;
     $("#btn_buscar_persona").prop("disabled",false);
+    $("#btn_buscar_persona").show();
     ContratoG.id='';
     ContratoG.persona_id='';
     ContratoG.persona='';
@@ -110,6 +111,7 @@ AgregarEditar=function(val,id){
     
     if( val==0 ){
         $("#btn_buscar_persona").prop("disabled",true);
+        $("#btn_buscar_persona").hide();
         ContratoG.id=id;
         ContratoG.persona_id=$("#TableContrato #trid_"+id+" .persona_id").val();
         ContratoG.persona=$("#TableContrato #trid_"+id+" .persona").text();
