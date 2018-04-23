@@ -181,8 +181,10 @@ AgregarEditarAjax=function(){
 HTMLAgregarEditar=function(result){
     if( result.rst==1 ){
         msjG.mensaje('success',result.msj,4000);
-        $('#ModalContrato').modal('hide');
         AjaxContrato.Cargar(HTMLCargarContrato);
+        $("#btn_buscar_persona").prop("disabled",true);
+        $("#btn_buscar_persona").hide();
+        AddEdit=0;
     }else{
         msjG.mensaje('warning',result.msj,3000);
     }
