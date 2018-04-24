@@ -18,18 +18,44 @@ class Evento extends Model
         $evento->save();
         
     }
+    
+        public static function runEditStatusMaster($r)
+    {
+        $evento = Evento::find($r->id);
+        $evento->estado = trim( $r->estadof );
+        $evento->persona_id_updated_at=Auth::user()->id;
+        $evento->save();
+        
+        if($evento){
+            $eveasi= EventoAsistencia::where('evento_id','=',$evento->id)
+                    ->get();
+            foreach ($eveasi as $r){
+                $eveasi= EventoAsistencia::find($r->id);
+                $eveasi->estado=0;
+                $eveasi->persona_id_updated_at=Auth::user()->id;
+                $eveasi->save();
+                
+                $asistencia= Asistencia::find($eveasi->asistencia_id);
+                $asistencia->estado=0;
+                $asistencia->persona_id_updated_at=Auth::user()->id;
+                $asistencia->save();
+            }
+                
+        }
+        
+    }
 
     public static function runNew($r)
     {
 
         $evento = new Evento;
-        $evento->evento_tipo_id = trim( $r->persona_id );
-        $evento->persona_contrato_id = trim( $r->sede_id );
-        $evento->evento_descripcion =trim( $r->consorcio_id );
-        $evento->fecha_inicio = trim( $r->cargo_id );
-        $evento->fecha_fin = trim( $r->regimen_id );
-        $evento->hora_inicio = trim( $r->estado_contrato );
-        $evento->hora_fin = trim( $r->tipo_contrato );
+        $evento->evento_tipo_id = trim( $r->evento_tipo_id );
+        $evento->persona_contrato_id = trim( $r->persona_contrato_id );
+        $evento->evento_descripcion =trim( $r->evento_descripcion );
+        $evento->fecha_inicio = trim( $r->fecha_inicio );
+        $evento->fecha_fin = trim( $r->fecha_fin );
+        $evento->hora_inicio = trim( $r->hora_inicio );
+        $evento->hora_fin = trim( $r->hora_fin );
         $evento->estado = trim( $r->estado );
         $evento->persona_id_created_at=Auth::user()->id;
         $evento->save();

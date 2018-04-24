@@ -22,7 +22,7 @@ var AjaxEvento={
         $("#ModalEventoForm").append("<input type='hidden' value='"+id+"' name='id'>");
         var data=$("#ModalEventoForm").serialize().split("txt_").join("").split("slct_").join("");
         $("#ModalEventoForm input[type='hidden']").not('.mant').remove();
-        url='AjaxDinamic/Proceso.EventoPR@EditStatus';
+        url='AjaxDinamic/Proceso.EventoPR@EditStatusMaster';
         masterG.postAjax(url,data,evento);
     },
     CargarEventoTipo:function(evento){

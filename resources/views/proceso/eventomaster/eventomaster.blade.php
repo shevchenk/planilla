@@ -14,8 +14,8 @@
 {{ Html::script('lib/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js') }}
 {{ Html::script('lib/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.es.js') }}
 
-@include( 'proceso.evento.js.evento_ajax' )
-@include( 'proceso.evento.js.evento' )
+@include( 'proceso.eventomaster.js.eventomaster_ajax' )
+@include( 'proceso.eventomaster.js.eventomaster' )
 @include( 'proceso.evento.js.listapersona_ajax' )
 @include( 'proceso.evento.js.listapersona' )
 

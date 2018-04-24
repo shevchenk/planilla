@@ -23,6 +23,16 @@ class EventoPR extends Controller
             return response()->json($return);
         }
     }
+    
+    public function EditStatusMaster(Request $r )
+    {
+        if ( $r->ajax() ) {
+            Evento::runEditStatusMaster($r);
+            $return['rst'] = 1;
+            $return['msj'] = 'Registro actualizado';
+            return response()->json($return);
+        }
+    }
 
    public function New(Request $r )
     {
