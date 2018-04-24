@@ -155,7 +155,7 @@ LlenarAgregarEditar=function(){
         $('#ModalContratoForm #txt_fecha_fin_contrato').val(ContratoG.fecha_fin_contrato );
         $('#ModalContratoForm #txt_sueldo_mensual').val(ContratoG.sueldo_mensual );
         $('#ModalContratoForm #txt_sueldo_produccion').val(ContratoG.sueldo_produccion );
-        $('#ModalContratoForm #txt_asignacion_familiar').val(ContratoG.asignacion_familiar );
+        $('#ModalContratoForm #slct_asignacion_familiar').selectpicker('val',ContratoG.asignacion_familiar);
         $('#ModalContratoForm #txt_estado').val(ContratoG.estado );
         $('#ModalContratoForm #txt_persona').focus();
         
