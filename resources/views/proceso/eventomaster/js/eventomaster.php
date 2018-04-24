@@ -4,6 +4,13 @@ var EventoG={id:0,evento_tipo_id:0,persona_contrato_id:0,evento_descripcion:"",
     fecha_inicio:"",fecha_fin:"",hora_inicio:"",hora_fin:"",estado:1}; // Datos Globales
 
 $(document).ready(function() {
+    $('[data-mask]').inputmask("hh:mm", {
+        placeholder: "HH:MM", 
+        insertMode: false, 
+        showMaskOnHover: false,
+        hourFormat: 24
+    });
+      
     $(".fecha").datetimepicker({
         format: "yyyy-mm-dd",
         language: 'es',
@@ -32,7 +39,7 @@ $(document).ready(function() {
 });
 
 ValidaForm=function(){
-    var r=true;
+    var r=true; 
     if(  $.trim( $("#ModalEventoForm #txt_fecha_inicio").val() )=='' ){
         r=false;
         msjG.mensaje('warning','Ingrese Fecha de Inicio',4000);
@@ -61,10 +68,13 @@ ValidaForm=function(){
         r=false;
         msjG.mensaje('warning','Fecha de Inicio debe ser menor a Fecha Final',4000);
     }
-    else if( $.trim( $("#ModalEventoForm #txt_hora_inicio").val() )>$.trim( $("#ModalEventoForm #txt_hora_fin").val() )){
-        r=false;
-        msjG.mensaje('warning','Hora de Inicio debe ser menor a Hora Final',4000);
+    else if($.trim( $("#ModalEventoForm #txt_fecha_inicio").val() )==$.trim( $("#ModalEventoForm #txt_fecha_fin").val() )){
+        if( $.trim( $("#ModalEventoForm #txt_hora_inicio").val() )>$.trim( $("#ModalEventoForm #txt_hora_fin").val() )){
+            r=false;
+            msjG.mensaje('warning','Hora de Inicio debe ser menor a Hora Final',4000);
+        }
     }
+
     return r;
 }
 
@@ -100,7 +110,7 @@ AgregarEditar=function(val,id){
         EventoG.id=id;
         EventoG.persona_contrato_id=$("#TableEvento #trid_"+id+" .persona_contrato_id").val();
         EventoG.evento_tipo_id=$("#TableEvento #trid_"+id+" .evento_tipo_id").val();
-        EventoG.evento_descripcion=$("#TableEvento #trid_"+id+" .evento_descripcion").text();
+        EventoG.evento_descripcion=$("#TableEvento #trid_"+id+" .evento_descripcion").val();
         EventoG.fecha_inicio=$("#TableEvento #trid_"+id+" .fecha_inicio").val();
         EventoG.fecha_fin=$("#TableEvento #trid_"+id+" .fecha_fin").val();
         EventoG.hora_inicio=$("#TableEvento #trid_"+id+" .hora_inicio").val();
@@ -173,8 +183,10 @@ HTMLCargarEvento=function(result){
 
         html+="<tr id='trid_"+r.id+"'>"+
             "<td class='evento_tipo'>"+r.evento_tipo+"</td>"+
-            "<td class='evento_descripcion'>"+r.evento_descripcion+"</td>"+
+            "<td class='fecha_hora_inicio'>"+r.fecha_inicio+" "+r.hora_inicio+"</td>"+
+            "<td class='fecha_hora_fin'>"+r.fecha_fin+" "+r.hora_fin+"</td>"+
             "<td>"+
+            "<input type='hidden' class='evento_descripcion' value='"+r.evento_descripcion+"'>"+
             "<input type='hidden' class='evento_tipo_id' value='"+r.evento_tipo_id+"'>"+
             "<input type='hidden' class='persona_contrato_id' value='"+r.persona_contrato_id+"'>"+
             "<input type='hidden' class='fecha_inicio' value='"+r.fecha_inicio+"'>"+
@@ -182,7 +194,7 @@ HTMLCargarEvento=function(result){
             "<input type='hidden' class='hora_inicio' value='"+r.hora_inicio+"'>"+
             "<input type='hidden' class='hora_fin' value='"+r.hora_fin+"'>";
         html+="<input type='hidden' class='estado' value='"+r.estado+"'>"+estadohtml+"</td><td>"+
-            '<a class="btn btn-primary btn-sm" onClick="AgregarEditar(0,'+r.id+')"><i class="fa fa-edit fa-lg"></i> </a></td>';
+            '<a class="btn btn-primary btn-sm" onClick="AgregarEditar(0,'+r.id+')"><i class="fa fa-search fa-lg"></i> </a></td>';
         html+="</tr>";
     });
     $("#TableEvento tbody").html(html); 

@@ -14,6 +14,9 @@
 {{ Html::script('lib/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js') }}
 {{ Html::script('lib/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.es.js') }}
 
+{{ HTML::script('lib/input-mask/js/jquery.inputmask.js') }}
+{{ HTML::script('lib/input-mask/js/jquery.inputmask.date.extensions.js') }}
+
 @include( 'proceso.evento.js.evento_ajax' )
 @include( 'proceso.evento.js.evento' )
 @include( 'proceso.evento.js.listapersona_ajax' )
@@ -76,10 +79,19 @@
                                                     </th>
                                                     <th class="col-xs-2">
                                                         <div class="form-group">
-                                                            <label><h4>Evento Descripcion:</h4></label>
+                                                            <label><h4>Fecha Inicio:</h4></label>
                                                             <div class="input-group">
                                                                 <div class="input-group-addon"><i class="fa fa-search"></i></div>
-                                                                <input type="text" class="form-control" name="txt_evento_descripcion" id="txt_evento_descripcion" placeholder="Evento Descripción" onkeypress="return masterG.enterGlobal(event, '.input-group', 1);">
+                                                                <input type="text" class="form-control" id="txt_fecha_inicio" name="txt_fecha_inicio" placeholder="Fecha Inicio" onkeypress="return masterG.enterGlobal(event, '.input-group', 1);">
+                                                            </div>
+                                                        </div>
+                                                    </th>
+                                                    <th class="col-xs-2">
+                                                        <div class="form-group">
+                                                            <label><h4>Fecha Fin:</h4></label>
+                                                            <div class="input-group">
+                                                                <div class="input-group-addon"><i class="fa fa-search"></i></div>
+                                                                <input type="text" class="form-control" id="txt_fecha_fin" name="txt_fecha_fin" placeholder="Fecha Fin"  onkeypress="return masterG.enterGlobal(event, '.input-group', 1);">
                                                             </div>
                                                         </div>
                                                     </th>
@@ -92,7 +104,8 @@
                                             <tfoot>
                                                 <tr class="cabecera">
                                                     <th>Evento Tipo</th>
-                                                    <th>Evento Descripción</th>
+                                                    <th>Fecha Inicio</th>
+                                                    <th>Fecha Fin</th>
                                                     <th>[-]</th>
                                                     <th>[-]</th>
                                                 </tr>
@@ -137,22 +150,22 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Hora Inicio</label>
-                                            <input type="time" class="form-control" id="txt_hora_inicio" name="txt_hora_inicio" >
+                                            <input type="numeric" class="form-control" id="txt_hora_inicio" name="txt_hora_inicio" data-mask>
                                         </div> 
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label>Hora Fin</label>
-                                            <input type="time" class="form-control" id="txt_hora_fin" name="txt_hora_fin" >
+                                            <input type="numeric" class="form-control" id="txt_hora_fin" name="txt_hora_fin" data-mask>
                                         </div> 
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-9">
                                         <div class="form-group">
                                             <label>Evento Descripción</label>
-                                            <input type="text" class="form-control" id="txt_evento_descripcion" name="txt_evento_descripcion">
+                                            <textarea type="text" class="form-control" id="txt_evento_descripcion" name="txt_evento_descripcion"></textarea>
                                         </div> 
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-3">
                                         <div class="form-group">
                                             <label>Evento Tipo</label>
                                             <select  class="form-control selectpicker show-menu-arrow" data-live-search="true" id="slct_evento_tipo_id" name="slct_evento_tipo_id">

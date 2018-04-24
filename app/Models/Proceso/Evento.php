@@ -65,10 +65,13 @@ class Evento extends Model
     public static function runLoad($r)
     {
         $sql=Evento::select('p_eventos.id','p_eventos.evento_tipo_id','p_eventos.persona_contrato_id','p_eventos.evento_descripcion',
-                'p_eventos.fecha_inicio','p_eventos.fecha_fin','p_eventos.hora_inicio','p_eventos.hora_fin',
+                'p_eventos.fecha_inicio','p_eventos.fecha_fin','p_eventos.hora_inicio','p_eventos.hora_fin','pea.id as evento_asistencia_id',
                 'p_eventos.estado','met.evento_tipo')
             ->join('m_eventos_tipos AS met', function($join){
                 $join->on('met.id','=','p_eventos.evento_tipo_id');
+            })
+            ->leftjoin('p_eventos_asistencias AS pea', function($join){
+                $join->on('pea.evento_id','=','p_eventos.id');
             })
             ->where("p_eventos.persona_contrato_id","=",$r->persona_contrato_id)
             ->where( 
@@ -90,6 +93,18 @@ class Evento extends Model
                         $persona_contrato_id=trim($r->persona_contrato_id);
                         if( $persona_contrato_id !='' ){
                             $query->where('p_eventos.persona_contrato_id',"=",$persona_contrato_id);
+                        }   
+                    }
+                    if( $r->has("fecha_inicio") ){
+                        $fecha_inicio=trim($r->fecha_inicio);
+                        if( $fecha_inicio !='' ){
+                            $query->where('p_eventos.fecha_inicio',"like","%".$fecha_inicio."%");
+                        }   
+                    }
+                    if( $r->has("fecha_fin") ){
+                        $fecha_fin=trim($r->fecha_fin);
+                        if( $fecha_fin !='' ){
+                            $query->where('p_eventos.fecha_fin',"like","%".$fecha_fin."%");
                         }   
                     }
                     $query->where('p_eventos.estado','=',1);
