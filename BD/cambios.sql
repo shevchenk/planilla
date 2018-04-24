@@ -19,3 +19,8 @@ INSERT INTO `privilegios_opciones` VALUES ('5', '1', '5', '1', '2017-05-26 19:05
 INSERT INTO `privilegios_opciones` VALUES ('6', '1', '6', '1', '2017-05-26 19:05:13', null, '1', null);
 
 INSERT INTO `personas_privilegios_sucursales` VALUES ('1', '1', '1', null, null, null, '1', '2017-05-26 19:06:06', null, '1', null);
+
+//*******************23/04/2018*****************//
+ALTER TABLE `p_personas_contratos_historicos`
+CHANGE COLUMN `ultimo_resgistro` `ultimo_registro`  int(11) NOT NULL DEFAULT 1 AFTER `asignacion_familiar`;
+

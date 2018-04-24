@@ -3,11 +3,11 @@ namespace App\Http\Controllers\Proceso;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Proceso\PersonaContrato;
+use App\Models\Proceso\Evento;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 
-class PersonaContratoPR extends Controller
+class EventoPR extends Controller
 {
     public function __construct()
     {
@@ -17,7 +17,7 @@ class PersonaContratoPR extends Controller
     public function EditStatus(Request $r )
     {
         if ( $r->ajax() ) {
-            PersonaContrato::runEditStatus($r);
+            Evento::runEditStatus($r);
             $return['rst'] = 1;
             $return['msj'] = 'Registro actualizado';
             return response()->json($return);
@@ -34,7 +34,7 @@ class PersonaContratoPR extends Controller
             );
 
             $rules = array(
-                'persona_id' => 
+                'persona_contrato_id' => 
                        ['required',
 //                        Rule::unique('m_regimenes','regimen')->where(function ($query) use($r) {
 //                                $query->where('pregunta_id',$r->pregunta_id );
@@ -46,7 +46,7 @@ class PersonaContratoPR extends Controller
             $validator=Validator::make($r->all(), $rules,$mensaje);
 
             if ( !$validator->fails() ) {
-                PersonaContrato::runNew($r);
+                Evento::runNew($r);
                 $return['rst'] = 1;
                 $return['msj'] = 'Registro creado';
             }
@@ -67,7 +67,7 @@ class PersonaContratoPR extends Controller
             );
 
             $rules = array(
-                'persona_id' => 
+                'persona_contrato_id' => 
                        ['required',
 //                        Rule::unique('m_regimenes','regimen')->ignore($r->id)->where(function ($query) use($r) {
                               //  $query->where('pregunta_id',$r->pregunta_id );
@@ -78,7 +78,7 @@ class PersonaContratoPR extends Controller
             $validator=Validator::make($r->all(), $rules,$mensaje);
 
             if ( !$validator->fails() ) {
-                PersonaContrato::runEdit($r);
+                Evento::runEdit($r);
                 $return['rst'] = 1;
                 $return['msj'] = 'Registro actualizado';
             }
@@ -93,23 +93,13 @@ class PersonaContratoPR extends Controller
     public function Load(Request $r )
     {
         if ( $r->ajax() ) {
-            $renturnModel = PersonaContrato::runLoad($r);
+            $renturnModel = Evento::runLoad($r);
             $return['rst'] = 1;
             $return['data'] = $renturnModel;
             $return['msj'] = "No hay registros aún";    
             return response()->json($return);   
         }
     }
-    
-        public function LoadPersonaContrato (Request $r )
-    {
-        if ( $r->ajax() ) {
-            $renturnModel = PersonaContrato::runLoadPersonaContrato($r);
-            $return['rst'] = 1;
-            $return['data'] = $renturnModel;
-            $return['msj'] = "No hay registros aún";
-            return response()->json($return);
-        }
-    }
+
 
 }

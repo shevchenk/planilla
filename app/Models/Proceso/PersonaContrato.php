@@ -137,5 +137,53 @@ class PersonaContrato extends Model
         return $result;
     }
     
+        public static function runLoadPersonaContrato($r)
+    {
+        $sql= PersonaContrato::select('p_personas_contratos.id','mp.paterno','mp.materno','mp.nombre','mp.dni','mp.estado')
+            ->join("m_personas as mp","p_personas_contratos.persona_id","=","mp.id")
+            ->where(
+                function($query) use ($r){
+                    if( $r->has("paterno") ){
+                        $paterno=trim($r->paterno);
+                        if( $paterno !='' ){
+                            $query->where('mp.paterno','like','%'.$paterno.'%');
+                        }
+                    }
+                    if( $r->has("materno") ){
+                        $materno=trim($r->materno);
+                        if( $materno !='' ){
+                            $query->where('mp.materno','like','%'.$materno.'%');
+                        }
+                    }
+                    if( $r->has("nombre") ){
+                        $nombre=trim($r->nombre);
+                        if( $nombre !='' ){
+                            $query->where('mp.nombre','like','%'.$nombre.'%');
+                        }
+                    }
+                    if( $r->has("dni") ){
+                        $dni=trim($r->dni);
+                        if( $dni !='' ){
+                            $query->where('mp.dni','like','%'.$dni.'%');
+                        }
+                    }
+                    if( $r->has("email") ){
+                        $email=trim($r->email);
+                        if( $email !='' ){
+                            $query->where('mp.email','like','%'.$email.'%');
+                        }
+                    }
+                    if( $r->has("estado") ){
+                        $estado=trim($r->estado);
+                        if( $estado !='' ){
+                            $query->where('mp.estado','=',$estado);
+                        }
+                    }
+                }
+            );
+        $result = $sql->orderBy('mp.paterno','asc')->paginate(10);
+        return $result;
+    }
+    
 
 }

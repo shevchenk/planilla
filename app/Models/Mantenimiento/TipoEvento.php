@@ -73,5 +73,13 @@ class TipoEvento extends Model
         return $result;
     }
     
+        public static function ListTipoEvento($r)
+    {
+        $sql= TipoEvento::select('id','evento_tipo','estado')
+            ->where('estado','=','1');
+        $result = $sql->orderBy('evento_tipo','asc')->get();
+        return $result;
+    }
+    
 
 }
