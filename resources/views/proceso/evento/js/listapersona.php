@@ -78,6 +78,7 @@ SeleccionarPersona = function(val,id){
         if(LTBuscarEvento==1){
             AjaxEvento.Cargar(HTMLCargarEvento);
             $("#btn_nuevo").show();
+            $("#Evento").css("display","none");
         }
         
         $('#ModalListapersona').modal('hide');
