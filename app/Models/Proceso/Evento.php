@@ -4,6 +4,7 @@ namespace App\Models\Proceso;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use App\Models\Mantenimiento\TipoEvento;
 use DB;
 
 class Evento extends Model
@@ -21,12 +22,15 @@ class Evento extends Model
     
         public static function runEditStatusMaster($r)
     {
+        DB::beginTransaction();
         $evento = Evento::find($r->id);
         $evento->estado = trim( $r->estadof );
         $evento->persona_id_updated_at=Auth::user()->id;
         $evento->save();
         
-        if($evento){
+        $tipoevento= TipoEvento::find($evento->evento_tipo_id);
+        
+        if($tipoevento->aplica_cambio==0){
             $eveasi= EventoAsistencia::where('evento_id','=',$evento->id)
                     ->get();
             foreach ($eveasi as $r){
@@ -39,9 +43,16 @@ class Evento extends Model
                 $asistencia->estado=0;
                 $asistencia->persona_id_updated_at=Auth::user()->id;
                 $asistencia->save();
+                
+                if($asistencia){
+                    AsistenciaHistorico::runNew($asistencia);
+                }
             }
                 
+        }else if($tipoevento->aplica_cambio==1){
+            
         }
+        DB::commit();
         
     }
 

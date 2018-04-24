@@ -24,3 +24,6 @@ INSERT INTO `personas_privilegios_sucursales` VALUES ('1', '1', '1', null, null,
 ALTER TABLE `p_personas_contratos_historicos`
 CHANGE COLUMN `ultimo_resgistro` `ultimo_registro`  int(11) NOT NULL DEFAULT 1 AFTER `asignacion_familiar`;
 
+ALTER TABLE `m_eventos_tipos`
+ADD COLUMN `aplica_cambio`  int(11) NOT NULL DEFAULT 0 COMMENT '0: Todo' AFTER `aplica_dscto`;
+
