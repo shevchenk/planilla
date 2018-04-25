@@ -7,5 +7,5 @@ use Illuminate\Database\Eloquent\Model;
 
 class PrivilegioOpcion extends Model
 {
-    protected   $table = 'privilegios_opciones';
+    protected   $table = 'm_privilegios_opciones';
 }

@@ -5,6 +5,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use App\Models\SecureAccess\Persona;
+use Auth;
 
 class PersonaSA extends Controller
 {
@@ -15,7 +16,9 @@ class PersonaSA extends Controller
     public function authenticated(Request $r)
     {
         $result['rst']=1;
-        $menu = Persona::Menu();
+        $resultMenu = Persona::Menu($r);
+        $privilegios = $resultMenu[0];
+        $menu = $resultMenu[1];
         $opciones=array();
         $cargo='';
         foreach ($menu as $key => $value) {
@@ -27,7 +30,32 @@ class PersonaSA extends Controller
             'menu'=>$menu,
             'opciones'=>$opciones,
             'dni'=>$r->dni,
-            'cargo'=>$cargo
+            'cargo'=>$cargo,
+            'privilegios'=>$privilegios
+        );
+        session($session);
+        return response()->json($result);
+    }
+
+    public function Privilegio(Request $r)
+    {
+        $result['rst']=1;
+        $resultMenu = Persona::Menu($r);
+        $privilegios = $resultMenu[0];
+        $menu = $resultMenu[1];
+        $opciones=array();
+        $cargo='';
+        foreach ($menu as $key => $value) {
+            array_push($opciones, $value->opciones);
+            $cargo=$value->privilegio;
+        }
+        $opciones=implode("||", $opciones);
+        $session= array(
+            'menu'=>$menu,
+            'opciones'=>$opciones,
+            'dni'=>Auth::user()->dni,
+            'cargo'=>$cargo,
+            'privilegios'=>$privilegios
         );
         session($session);
         return response()->json($result);

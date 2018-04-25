@@ -25,6 +25,7 @@ Route::get(
         ){
             $valores['valida_ruta_url'] = $ruta;
             $valores['menu'] = session('menu');
+            $valores['privilegios'] = session('privilegios');
 
             if( strpos( session('opciones'),$ruta )!==false
                 || $ruta=='secureaccess.inicio'

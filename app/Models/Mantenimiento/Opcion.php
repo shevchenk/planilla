@@ -7,7 +7,7 @@ use DB;
 
 class Opcion extends Model
 {
-    protected   $table = 'opciones';
+    protected   $table = 'm_opciones';
 
     public static function runEditStatus($r)
     {
@@ -43,8 +43,8 @@ class Opcion extends Model
 
         public static function runLoad($r)
     {
-        $sql=DB::table('opciones as o')
-            ->join('menus AS m',function($join){
+        $sql=DB::table('m_opciones as o')
+            ->join('m_menus AS m',function($join){
                 $join->on('m.id','=','o.menu_id')
                 ->where('m.estado','=',1);
             })

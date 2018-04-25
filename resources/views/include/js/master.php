@@ -346,6 +346,18 @@ var masterG ={
         if( pos!= -1 && t.value!='' && t.value.substring(pos+1).length>=2 ){
           t.value = parseFloat(t.value).toFixed(n);
         }
+    },
+    IniciarLogin:function(evento, priv){
+        $("#form_mensajes_modal #privilegio_idMasterG").remove();
+        $("#form_mensajes_modal").append("<input type='hidden' name='privilegio_id' id='privilegio_idMasterG' value='"+priv+"'>");
+        var datos=$("#form_mensajes_modal").serialize();
+        var url='AjaxDinamic/SecureAccess.PersonaSA@Privilegio';
+        masterG.postAjax(url,datos,evento);
+    },
+    HTMLIniciarLogin:function(result){
+        if( result.rst==1 ){
+            window.location='secureaccess.inicio';
+        }
     }
 }
 

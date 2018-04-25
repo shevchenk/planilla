@@ -28,6 +28,21 @@
             </li>
             <li class="dropdown user user-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                    <span class="fa fa-expeditedssl fa-2x"></span>
+                    <span class="hidden-xs">{{ Session('cargo') }}</span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li class="user-footer">
+                        @foreach ( $privilegios as $key => $val)
+                            <div class="col-sm-12">
+                                <a onclick="masterG.IniciarLogin(masterG.HTMLIniciarLogin,{{ $val->id }});" class="btn btn-default btn-flat col-sm-12" style="width: 100% !important">{{ $val->privilegio }}</a>
+                            </div>
+                        @endforeach
+                    </li>
+                </ul>
+            </li>
+            <li class="dropdown user user-menu">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                     <img src="img/user2-160x160.jpg" class="user-image" alt="User Image">
                     <span class="hidden-xs">{{ Auth::user()->paterno.' '.Auth::user()->materno.', '.Auth::user()->nombre }}</span>
                 </a>
