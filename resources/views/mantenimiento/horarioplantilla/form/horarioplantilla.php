@@ -24,20 +24,6 @@
                             </div>
                         </div>  
                     </div>
-
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>Hora Inicio</label>
-                            <input type="time" class="form-control" id="txt_hora_inicio" name="txt_hora_inicio">
-                        </div>
-                    </div>
-                    <div class="col-md-6">
-                        <div class="form-group">
-                            <label>Hora Fin</label>
-                            <input type="time" class="form-control" id="txt_hora_fin" name="txt_hora_fin">
-                        </div>
-                    </div> 
-
                     <div class="col-md-12">
                         <div class="form-group">
                             <label>Horario Amanecida</label>
@@ -49,6 +35,20 @@
                             </div>
                         </div>
                     </div> 
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Hora Inicio</label>
+                            <input type="text" class="form-control time" id="txt_hora_inicio" placeholder="00:00:00" name="txt_hora_inicio">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label>Hora Fin</label>
+                            <input type="text" class="form-control time" id="txt_hora_fin" placeholder="00:00:00" name="txt_hora_fin">
+                        </div>
+                    </div> 
+
+                    
 
                     <div class="col-md-12">
                         <div class="form-group">
