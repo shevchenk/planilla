@@ -30,12 +30,49 @@ class Persona extends Authenticatable
         }
     }
 
-    public static function Menu()
+    public static function Menu($r)
     {
         //if(Auth::check())
         $persona = Auth::user()->id;
+        $priv=array();
+        if( !$r->has("privilegio_id") ){
+            $priv=DB::table('m_privilegios as p')
+                    ->join('m_sedes_privilegios_personas as spp', function($join){
+                            $join->on('spp.privilegio_id','p.id')
+                            ->where('spp.estado',1);
+                    })
+                    ->select('p.id')
+                    ->where('spp.persona_id',$persona)
+                    ->where('p.estado',1)
+                    ->orderBy('p.privilegio')
+                    ->first();
+        }
+        $resultP=DB::table('m_privilegios as p')
+                ->join('m_sedes_privilegios_personas as spp', function($join){
+                        $join->on('spp.privilegio_id','p.id')
+                        ->where('spp.estado',1);
+                })
+                ->select('p.id','p.privilegio')
+                ->where('spp.persona_id',$persona)
+                ->where('p.estado',1)
+                ->where(
+                      function($query) use ($r,$priv){
+                          if( $r->has("privilegio_id") ){
+                            if( trim($r->privilegio_id)!='' ){
+                                $query->where('p.id','!=', $r->privilegio_id);
+                            }
+                          }
+                          else{
+                            $query->where('p.id','!=', $priv->id);
+                          }
+                      }
+                  )
+                ->groupBy('p.id','p.privilegio')
+                ->orderBy('p.privilegio')
+                ->get();
+
         $set=DB::statement('SET group_concat_max_len := @@max_allowed_packet');
-        $result=DB::table('m_opciones as o')
+        $resultM=DB::table('m_opciones as o')
                 ->join('m_menus as m', function($join){
                         $join->on('m.id','o.menu_id')
                         ->where('m.estado',1);
@@ -62,10 +99,22 @@ class Persona extends Authenticatable
                 )
                 ->where('spp.persona_id',$persona)
                 ->where('o.estado',1)
+                ->where(
+                      function($query) use ($r,$priv){
+                          if( $r->has("privilegio_id") ){
+                            if( trim($r->privilegio_id)!='' ){
+                                $query->where('p.id','=', $r->privilegio_id);
+                            }
+                          }
+                          else{
+                            $query->where('p.id','=', $priv->id);
+                          }
+                      }
+                  )
                 ->groupBy('m.menu','p.privilegio')
                 ->orderBy('m.menu')
                 ->get();
 
-        return $result;
+        return array($resultP,$resultM);
     }
 }

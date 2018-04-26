@@ -51,7 +51,7 @@ $(document).ready(function() {
     });
 
     $(document).on('click', '#btnexport', function(event) {
-        $(this).attr('href','ReportDinamic/Mantenimiento.SedeEM@ExportSede?d=1');
+        $(this).attr('href','ReportDinamic/Mantenimiento.SedeMA@ExportSede?d=1');
     });
 
 });
@@ -87,7 +87,7 @@ AgregarEditar=function(val,id){
         SedeG.foto=$("#TableSede #trid_"+id+" .foto").val();
         
         if(SedeG.foto!='undefined'){
-            SedeG.imagen_archivo='img/sucursa/'+SedeG.foto;
+            SedeG.imagen_archivo='img/sede/'+SedeG.foto;
             SedeG.imagen_nombre=SedeG.foto;
         }else {
             SedeG.imagen_archivo='';
@@ -139,7 +139,7 @@ HTMLCargarSede=function(result){
         html+="<tr id='trid_"+r.id+"'>"+
             "<td>";
             if(r.foto!=null){    
-            html+="<a  target='_blank' href='img/sucursa/"+r.foto+"'><img src='img/sucursa/"+r.foto+"' style='height: 40px;width: 40px;'></a>";}
+            html+="<a  target='_blank' href='img/sede/"+r.foto+"'><img src='img/sede/"+r.foto+"' style='height: 40px;width: 40px;'></a>";}
             html+="</td>"+
             "<td class='sede'>"+r.sede+"</td>"+
             "<td class='direccion'>"+r.direccion+"</td>"+

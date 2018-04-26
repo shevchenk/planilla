@@ -53,7 +53,7 @@ class Privilegio extends Model
 
         //ESTO HACE QUE GRABE EN LA TABLE DETALLE LOS CURSOS, LO QUE SE ESCOJE EN EL COMBO CURSO
         if( count($opcion)>0 ){
-            DB::table('privilegios_opciones')
+            DB::table('m_privilegios_opciones')
             ->where('privilegio_id', '=', $privilegio->id)
             ->update(
                 array(
@@ -65,7 +65,7 @@ class Privilegio extends Model
         }
         for($i=0;$i<count($opcion);$i++)
         {
-            $privilegios_opciones=DB::table('privilegios_opciones')
+            $privilegios_opciones=DB::table('m_privilegios_opciones')
             ->where('privilegio_id', '=', $privilegio->id)
             ->where('opcion_id', '=', $opcion[$i])
             ->first();
@@ -87,12 +87,12 @@ class Privilegio extends Model
     public static function runLoad($r)
     {   
         DB::statement(DB::raw('SET @@group_concat_max_len = 4294967295'));
-        $sql=DB::table('privilegios AS p')
-            ->leftJoin('privilegios_opciones AS po',function($join){
+        $sql=DB::table('m_privilegios AS p')
+            ->leftJoin('m_privilegios_opciones AS po',function($join){
                 $join->on('po.privilegio_id','=','p.id')
                 ->where('po.estado','=',1);
             })
-            ->leftJoin('opciones AS o',function($join){
+            ->leftJoin('m_opciones AS o',function($join){
                 $join->on('o.id','=','po.opcion_id')
                 ->where('o.estado','=',1);
             })
