@@ -112,4 +112,16 @@ class PersonaContratoPR extends Controller
         }
     }
 
+        public function LoadReporteHorario (Request $r )
+    {
+        if ( $r->ajax() ) {
+            $renturnModel = PersonaContrato::runLoadReporteHorario($r);
+            
+            $return['rst'] = 1;
+            $return['data'] = $renturnModel['result'];
+            $return['cabecera'] = $renturnModel['cabecera'];
+            $return['msj'] = "No hay registros aún";
+            return response()->json($return);
+        }
+    }
 }

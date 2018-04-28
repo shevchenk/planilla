@@ -77,8 +77,8 @@ class PersonaContrato extends Model
     }
 
 
-    public static function runLoad($r)
-    {
+    public static function runLoad($r){
+        
         $sql=PersonaContrato::select('ms.sede','mc.consorcio','p_personas_contratos.id','p_personas_contratos.persona_id','p_personas_contratos.sede_id','p_personas_contratos.consorcio_id',
                 'p_personas_contratos.cargo_id','p_personas_contratos.regimen_id','p_personas_contratos.estado_contrato','p_personas_contratos.tipo_contrato',
                 'p_personas_contratos.fecha_ini_contrato','p_personas_contratos.fecha_fin_contrato','p_personas_contratos.sueldo_mensual'
@@ -137,8 +137,8 @@ class PersonaContrato extends Model
         return $result;
     }
     
-        public static function runLoadPersonaContrato($r)
-    {
+    public static function runLoadPersonaContrato($r){
+        
         $sql= PersonaContrato::select('p_personas_contratos.id','mp.paterno','mp.materno','mp.nombre','mp.dni','mp.estado')
             ->join("m_personas as mp","p_personas_contratos.persona_id","=","mp.id")
             ->where(
@@ -183,6 +183,53 @@ class PersonaContrato extends Model
             );
         $result = $sql->orderBy('mp.paterno','asc')->paginate(10);
         return $result;
+    }
+    
+    public static function runLoadReporteHorario($r){
+        $cabecera=array();
+        $key=0;
+        
+        $sql= PersonaContrato::select(DB::raw('CONCAT_WS(" ",mp.paterno,mp.materno,mp.nombre) as persona'),'ms.sede','mc.consorcio','mp.dni','p_personas_contratos.id')
+            ->join('m_personas AS mp', function($join){
+                $join->on('mp.id','=','p_personas_contratos.persona_id');
+            })
+            ->join('m_sedes AS ms', function($join){
+                $join->on('ms.id','=','p_personas_contratos.sede_id');
+            })
+            ->join('m_consorcios AS mc', function($join){
+                $join->on('mc.id','=','p_personas_contratos.consorcio_id');
+            });
+            
+            for($i=$r->fecha_inicio;$i<=$r->fecha_final;$i = date("Y-m-d", strtotime($i ."+ 1 days"))){
+                $sql->addSelect(DB::raw("IF(pa$key.id!='',1,0) as pa$key"))
+                    ->leftjoin('p_asistencias as pa'.$key, function($join)use($i,$key){
+                        $join->where('pa'.$key.'.fecha_ingreso','=',$i)
+                             ->on('pa'.$key.'.persona_contrato_id','=','p_personas_contratos.id');
+                    });
+                $key++;
+                array_push($cabecera,$i);
+            }
+            $sql->where(
+                function($query) use ($r){
+                    if( $r->has("consorcio_id") ){
+                        $consorcio_id=trim($r->consorcio_id);
+                        if( $consorcio_id !='0' ){
+                            $query->where('p_personas_contratos.consorcio_id','=',$consorcio_id);
+                        }
+                    }
+                    if( $r->has("sede_id") ){
+                        $sede_id=trim($r->sede_id);
+                        if( $sede_id !='0' ){
+                            $query->where('p_personas_contratos.sede_id','=',$sede_id);
+                        }
+                    }
+                }
+            );
+        $result = $sql->orderBy('mp.paterno','asc')
+                      ->get();
+        $r['result']=$result;
+        $r['cabecera']=$cabecera;
+        return $r;
     }
     
 
