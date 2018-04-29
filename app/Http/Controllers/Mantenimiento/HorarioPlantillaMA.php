@@ -135,4 +135,14 @@ class HorarioPlantillaMA extends Controller
         }
     }
 
+    public function ListHorarioPlantilla (Request $r )
+    {
+        if ( $r->ajax() ) {
+            $renturnModel = HorarioPlantilla::ListHorarioPlantilla($r);
+            $return['rst'] = 1;
+            $return['data'] = $renturnModel;
+            $return['msj'] = "No hay registros aún";
+            return response()->json($return);
+        }
+    }
 }
