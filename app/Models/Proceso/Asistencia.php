@@ -33,6 +33,30 @@ class Asistencia extends Model{
                             $query->where('p_asistencias.estado','=',$estado);
                         }
                     }
+                    if( $r->has("fecha_ingreso") ){
+                        $fecha_ingreso=trim($r->fecha_ingreso);
+                        if( $fecha_ingreso !='' ){
+                            $query->where('p_asistencias.fecha_ingreso','like','%'.$fecha_ingreso.'%');
+                        }
+                    }
+                    if( $r->has("hora_ingreso") ){
+                        $hora_ingreso=trim($r->hora_ingreso);
+                        if( $hora_ingreso !='' ){
+                            $query->where('p_asistencias.hora_ingreso','like','%'.$hora_ingreso.'%');
+                        }
+                    }
+                    if( $r->has("fecha_salida") ){
+                        $fecha_salida=trim($r->fecha_salida);
+                        if( $fecha_salida !='' ){
+                            $query->where('p_asistencias.fecha_salida','like','%'.$fecha_salida.'%');
+                        }
+                    }
+                    if( $r->has("hora_salida") ){
+                        $hora_salida=trim($r->hora_salida);
+                        if( $hora_salida !='' ){
+                            $query->where('p_asistencias.hora_salida','like','%'.$hora_salida.'%');
+                        }
+                    }
                 }
             );
         $result = $sql->orderBy('p_asistencias.id','asc')

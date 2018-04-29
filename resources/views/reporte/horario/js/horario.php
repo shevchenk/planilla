@@ -10,6 +10,24 @@ $(document).ready(function() {
         autoclose: true,
         todayBtn: false
     });
+    
+    $("#TableListaasistencia").DataTable({
+        "paging": true,
+        "lengthChange": false,
+        "searching": false,
+        "ordering": false,
+        "info": true,
+        "autoWidth": false
+    });
+    
+    $("#TableListaevento").DataTable({
+        "paging": true,
+        "lengthChange": false,
+        "searching": false,
+        "ordering": false,
+        "info": true,
+        "autoWidth": false
+    });
     AjaxHorario.CargarSede(SlctCargarSede);
     AjaxHorario.CargarConsorcio(SlctCargarConsorcio);
     
