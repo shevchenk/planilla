@@ -28,7 +28,7 @@
             </li>
             <li class="dropdown user user-menu">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                    <span class="fa fa-expeditedssl fa-2x"></span>
+                    <span class="fa fa-expeditedssl"></span>
                     <span class="hidden-xs">{{ Session('cargo') }}</span>
                 </a>
                 <ul class="dropdown-menu">
