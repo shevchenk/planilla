@@ -59,7 +59,29 @@
                                                     <label><h4>Descripcion:</h4></label>
                                                     <div class="input-group">
                                                         <div class="input-group-addon"><i class="fa fa-search"></i></div>
-                                                        <input type="text" class="form-control" name="txt_hora_fin" id="txt_hora_fin" placeholder="Hora Fin" onkeypress="return masterG.enterGlobal(event, '.input-group', 1);">
+                                                        <input type="text" class="form-control" name="txt_evento_descripcion" id="txt_evento_descripcion" placeholder="Descripción" onkeypress="return masterG.enterGlobal(event, '.input-group', 1);">
+                                                    </div>
+                                                </div>
+                                            </th>
+                                            <th class="col-xs-3">
+                                                <div class="form-group">
+                                                    <label><h4>Tipo Evento:</h4></label>
+                                                    <div class="input-group">
+                                                        <div class="input-group-addon"><i class="fa fa-search"></i></div>
+                                                        <input type="text" class="form-control" name="txt_evento_tipo" id="txt_evento_tipo" placeholder="Evento Tipo" onkeypress="return masterG.enterGlobal(event, '.input-group', 1);">
+                                                    </div>
+                                                </div>
+                                            </th>
+                                            <th class="col-xs-2">
+                                                <div class="form-group">
+                                                    <label><h4>Aplica Cambio:</h4></label>
+                                                    <div class="input-group">
+                                                        <select class="form-control" name="slct_aplica_cambio" id="slct_aplica_cambio">
+                                                            <option value='' selected>.::Todo::.</option>
+                                                            <option value='0'>Cambio a Todo</option>
+                                                            <option value='1'>Fecha Inicio</option>
+                                                            <option value='2'>Fecha Fin</option>
+                                                        </select>
                                                     </div>
                                                 </div>
                                             </th>
@@ -69,10 +91,13 @@
                                     </tbody>
                                     <tfoot>
                                         <tr class="cabecera">
-                                            <th>Fecha Ingreso</th>
-                                            <th>Hora Ingreso</th>
-                                            <th>Fecha Salida</th>
-                                            <th>Hora Salida</th>
+                                            <th>Fecha Inicio</th>
+                                            <th>Hora Inicio</th>
+                                            <th>Fecha Fin</th>
+                                            <th>Hora Fin</th>
+                                            <th>Descripción</th>
+                                            <th>Tipo Evento</th>
+                                            <th>Aplica Cambio</th>
                                         </tr>
                                     </tfoot>
                                 </table>

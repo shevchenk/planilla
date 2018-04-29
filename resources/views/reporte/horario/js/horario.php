@@ -53,6 +53,9 @@ $(document).ready(function() {
     
     $("#ListaAsistenciaForm #TableListaasistencia select").change(function(){ AjaxHorario.CargarAsistencia(HTMLCargarListaAsistencia); });
     $("#ListaAsistenciaForm #TableListaasistencia input").blur(function(){ AjaxHorario.CargarAsistencia(HTMLCargarListaAsistencia); });
+    
+    $("#ListaEventoForm #TableListaevento select").change(function(){ AjaxHorario.CargarEvento(HTMLCargarListaEvento); });
+    $("#ListaEventoForm #TableListaevento input").blur(function(){ AjaxHorario.CargarEvento(HTMLCargarListaEvento); });
 
 });
 
@@ -180,9 +183,7 @@ HTMLCargarListaEvento=function(result){
             "<td class='hora_fin'>"+$.trim(r.hora_fin)+"</td>"+
             "<td class='evento_descripcion'>"+$.trim(r.evento_descripcion)+"</td>"+
             "<td class='evento_tipo'>"+$.trim(r.evento_tipo)+"</td>"+
-            "<td class='aplica_cambio'>"+$.trim(r.aplica_cambio)+"</td>"+
-           '<td>';
-        html+='</td>';
+            "<td class='aplica_cambio'>"+$.trim(r.aplica_cambio)+"</td>";
 
         html+="</tr>";
     });
