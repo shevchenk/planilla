@@ -188,6 +188,7 @@ class PersonaContrato extends Model
     public static function runLoadReporteHorario($r){
         $cabecera=array();
         $key=0;
+        $array_groupby=array('p_personas_contratos.id','ms.sede','mc.consorcio','mp.paterno','mp.materno','mp.nombre');
         
         $sql= PersonaContrato::select(DB::raw('CONCAT_WS(" ",mp.paterno,mp.materno,mp.nombre) as persona'),'ms.sede','mc.consorcio','mp.dni','p_personas_contratos.id')
             ->join('m_personas AS mp', function($join){
@@ -206,9 +207,17 @@ class PersonaContrato extends Model
                         $join->where('pa'.$key.'.fecha_ingreso','=',$i)
                              ->on('pa'.$key.'.persona_contrato_id','=','p_personas_contratos.id');
                     });
-                $key++;
+                array_push($array_groupby,"pa$key.id");
                 array_push($cabecera,$i);
+                $key++;
             }
+            
+            $sql->addSelect(DB::raw("COUNT(pat.id) as pat"))
+                    ->leftjoin('p_asistencias as pat', function($join)use($r){
+                        $join->whereBetween('pat.fecha_ingreso',[$r->fecha_inicio, $r->fecha_final])
+                             ->on('pat.persona_contrato_id','=','p_personas_contratos.id');
+                    });
+                    
             $sql->where(
                 function($query) use ($r){
                     if( $r->has("consorcio_id") ){
@@ -226,7 +235,7 @@ class PersonaContrato extends Model
                 }
             );
         $result = $sql->orderBy('mp.paterno','asc')
-                      ->get();
+                      ->groupBy($array_groupby)->get();
         $r['result']=$result;
         $r['cabecera']=$cabecera;
         return $r;

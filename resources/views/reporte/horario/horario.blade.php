@@ -117,4 +117,7 @@
     </div><!-- .row -->
 </section><!-- .content -->
 @stop
-
+@section('form')
+@include( 'reporte.horario.form.listaasistencia' )
+@include( 'reporte.horario.form.listaevento' )
+@stop
