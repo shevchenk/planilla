@@ -188,7 +188,7 @@ class PersonaContrato extends Model
     public static function runLoadReporteHorario($r){
         $cabecera=array();
         $key=0;
-        $array_groupby=array('p_personas_contratos.id','ms.sede','mc.consorcio','mp.paterno','mp.materno','mp.nombre');
+        $array_groupby=array('p_personas_contratos.id','ms.sede','mc.consorcio','mp.dni','mp.paterno','mp.materno','mp.nombre');
         
         $sql= PersonaContrato::select(DB::raw('CONCAT_WS(" ",mp.paterno,mp.materno,mp.nombre) as persona'),'ms.sede','mc.consorcio','mp.dni','p_personas_contratos.id')
             ->join('m_personas AS mp', function($join){
