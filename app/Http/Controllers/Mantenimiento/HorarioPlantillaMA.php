@@ -65,6 +65,9 @@ class HorarioPlantillaMA extends Controller
                         $return['rst'] = 1;
                         $return['msj'] = 'Registro creado';
                     }*/
+                    HorarioPlantilla::runNew($r);
+                    $return['rst'] = 1;
+                    $return['msj'] = 'Registro creado';
                 }
                 
             }
@@ -114,6 +117,9 @@ class HorarioPlantillaMA extends Controller
                         $return['rst'] = 1;
                         $return['msj'] = 'Registro actualizado';
                     }*/
+                    HorarioPlantilla::runEdit($r);
+                    $return['rst'] = 1;
+                    $return['msj'] = 'Registro actualizado';
                 }
             }
             else{
