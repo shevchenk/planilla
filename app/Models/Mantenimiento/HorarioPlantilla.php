@@ -131,7 +131,15 @@ class HorarioPlantilla extends Model
                                 DB::raw('(SELECT REPLACE(GROUP_CONCAT(d.dia_apocope), ",", " - ") FROM a_dias d WHERE FIND_IN_SET(d.id, dia_ids)) dia_apocope'),
                                 DB::raw('(SELECT GROUP_CONCAT(d.id, "-", d.dia) FROM a_dias d WHERE FIND_IN_SET(d.id, dia_ids)) dias'),
                                 'm_horarios_plantillas.estado')
-            ->where('m_horarios_plantillas.estado','=','1');
+            ->where('m_horarios_plantillas.estado','=','1')
+            ->whereNotExists(function($query)
+                {
+                    $query->select(DB::raw(1))
+                          ->from('p_horarios_programados')
+                          ->whereRaw('p_horarios_programados.horario_plantilla_id = m_horarios_plantillas.id')
+                          ->where('p_horarios_programados.estado','=','1')
+                          ->groupBy('p_horarios_programados.horario_plantilla_id');
+                });
         $result = $sql->orderBy('m_horarios_plantillas.id','asc')->get();
         return $result;
     }

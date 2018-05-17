@@ -43,6 +43,7 @@ class HorarioProgramadoPR extends Controller
             $validator=Validator::make($r->all(), $rules,$mensaje);
 
             if ( !$validator->fails() ) {
+                
 
                 if(count($r->horario_plantilla) > 0)
                 {
@@ -53,7 +54,8 @@ class HorarioProgramadoPR extends Controller
                         {
                             foreach ($arr_dias as  $dia) {
                                 $tolerancia = 'tolerancia'.$hp.$dia;
-                                if(($r->$tolerancia*1) > 0) {
+                                //if(($r->$tolerancia*1) > 0) {
+                                if($r->$tolerancia != '') {
                                     //echo $hp.'.'.$dia.'.'.$t_hp->hora_inicio.'.'.$r->$tolerancia.' - ';
                                     $r['dia_id'] = $dia;
                                     $r['horario_plantilla_id'] = $hp;
@@ -62,7 +64,6 @@ class HorarioProgramadoPR extends Controller
                                     $r['tolerancia'] = $r->$tolerancia;
                                     HorarioProgramado::runNew($r);
                                 }
-
                             }
                         }
                     }

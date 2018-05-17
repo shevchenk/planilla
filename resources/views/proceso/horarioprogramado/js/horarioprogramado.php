@@ -126,9 +126,11 @@ AgregarEditarAjax=function(){
 marcarCheck=function(id){
     // Si esta seleccionado (si la propiedad checked es igual a true)
     if ($('#hp'+id).prop('checked')) {
+        $('.input_tolera'+id).val(0);
         $('.input_tolera'+id).prop('readonly', false);
     } else {
         $('.input_tolera'+id).prop('readonly', true);
+        $('.input_tolera'+id).val('');
     }
 }
 cancelarHP=function(){
