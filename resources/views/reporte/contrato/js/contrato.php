@@ -75,10 +75,10 @@ ListContratos=function(idPersona){
             contratoDetalle[cData[i].id].consorcio = cData[i].consorcio;
             contratoDetalle[cData[i].id].cargo = cData[i].cargo;
             contratoDetalle[cData[i].id].regimen = cData[i].regimen;
-            contratoDetalle[cData[i].id].estado = cData[i].estado;
+            contratoDetalle[cData[i].id].estado = mEstado;
             contratoDetalle[cData[i].id].fecha_ini_contrato = cData[i].fecha_ini_contrato;
             contratoDetalle[cData[i].id].fecha_fin_contrato = cData[i].fecha_fin_contrato;
-            contratoDetalle[cData[i].id].tipo = cData[i].tipo_contrato;
+            contratoDetalle[cData[i].id].tipo = (cData[i].tipo_contrato==1?'Produccion':'Regular');
             contratoDetalle[cData[i].id].asignacion_familiar = cData[i].asignacion_familiar;
             contratoDetalle[cData[i].id].sueldo_mensual = cData[i].sueldo_mensual;
             contratoDetalle[cData[i].id].sueldo_produccion = cData[i].sueldo_produccion;
