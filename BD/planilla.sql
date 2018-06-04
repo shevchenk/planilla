@@ -17,7 +17,14 @@ SELECT hp.id, hp.plantilla_descripcion, hp.hora_inicio, hp.hora_fin, hp.horario_
 	FROM a_dias d 
 	WHERE FIND_IN_SET(d.id, dia_ids)) dias
 FROM m_horarios_plantillas hp
-WHERE hp.estado = 1;
+WHERE hp.estado = 1
+	AND NOT EXISTS (
+								SELECT 1
+									FROM p_horarios_programados php
+									WHERE php.horario_plantilla_id = hp.id
+									AND php.estado = 1
+									GROUP BY php.horario_plantilla_id
+             );
 
 SELECT hp.id, hp.dia_ids, hp.hora_inicio, hora_fin
 	FROM m_horarios_plantillas hp
@@ -32,4 +39,6 @@ FROM p_horarios_programados hpro
 INNER JOIN a_dias d ON d.id = hpro.dia_id
 INNER JOIN m_horarios_plantillas hp ON hp.id = hpro.horario_plantilla_id
 WHERE hpro.estado = 1
-GROUP BY hpro.horario_plantilla_id, hpro.estado;
+GROUP BY hpro.horario_plantilla_id,  hpro.hora_inicio, hpro.estado;
+
+
