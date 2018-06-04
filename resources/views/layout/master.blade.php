@@ -61,7 +61,7 @@
                 <div class="pull-right hidden-xs">
                   <b>Version</b> 1.0
                 </div>
-                <strong>Copyright &copy; 2017-2018 <a href="http://jssoluciones.com">JS</a>.</strong> All rights
+                <strong>Copyright &copy; 2017-2018 <a href="http://jssoluciones.pe" target="_blank">JS</a>.</strong> All rights
                 reserved.
             </footer>
         </div><!-- ./wrapper -->
