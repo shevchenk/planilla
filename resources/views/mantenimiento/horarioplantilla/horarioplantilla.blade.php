@@ -14,6 +14,8 @@
     {{ Html::script('lib/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js') }}
     {{ Html::script('lib/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.es.js') }}
 
+    {{ Html::script('lib/input-mask/jquery.mask.js') }}
+
     @include( 'mantenimiento.horarioplantilla.js.horarioplantilla_ajax' )
     @include( 'mantenimiento.horarioplantilla.js.horarioplantilla' )
     

@@ -57,10 +57,10 @@ ValidaForm=function(){
         r=false;
         msjG.mensaje('warning','Ingrese la Fecha',4000);
     }
-    else if( $.trim( $("#ModalDiaNoLaboralForm #slct_sede_ids").val() )=='' ){
+    /*else if( $.trim( $("#ModalDiaNoLaboralForm #slct_sede_ids").val() )=='' ){
         r=false;
         msjG.mensaje('warning','Seleccione almenos 1 Sede',4000);
-    }
+    }*/
     return r;
 }
 
@@ -108,6 +108,7 @@ HTMLAgregarEditar=function(result){
 
 HTMLCargarDatos=function(result){
     var html="";
+    var sede='';
     $('#TableDatos').DataTable().destroy();
     
     $.each(result.data.data,function(index,r){
@@ -116,9 +117,14 @@ HTMLCargarDatos=function(result){
             estadohtml='<span id="'+r.id+'" onClick="CambiarEstado(0,'+r.id+')" class="btn btn-success">Activo</span>';
         }
 
+        if($.trim(r.sede)*1==0)
+            sede = '';
+        else
+            sede = r.sede;
+
         html+="<tr id='trid_"+r.id+"'>"+
             "<td class='fecha'>"+r.fecha+"</td>"+
-            "<td class='sede'>"+r.sede+"</td>"+
+            "<td class='sede'>"+sede+"</td>"+
             "<td>"+
             "<input type='hidden' class='sede_ids' value='"+r.sede_ids+"'>";
         html+="<input type='hidden' class='estado' value='"+r.estado+"'>"+estadohtml+"</td>"+

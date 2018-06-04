@@ -42,14 +42,34 @@ class HorarioPlantillaMA extends Controller
                         }),
                         ],
             );
-
-            
+                        
             $validator=Validator::make($r->all(), $rules,$mensaje);
 
             if ( !$validator->fails() ) {
-                HorarioPlantilla::runNew($r);
-                $return['rst'] = 1;
-                $return['msj'] = 'Registro creado';
+
+                if($r->horario_amanecida == 0) {
+                    if($r->hora_inicio > $r->hora_fin) {
+                        $return['rst'] = 2;
+                        $return['msj'] = 'Hora inicio debe ser menor a Hora Fin';
+                    } else {
+                        HorarioPlantilla::runNew($r);
+                        $return['rst'] = 1;
+                        $return['msj'] = 'Registro creado';
+                    }
+                } else {
+                    /*if($r->hora_fin > $r->hora_inicio) {
+                        $return['rst'] = 2;
+                        $return['msj'] = 'Hora Fin debe ser menor a Hora Inicio';
+                    } else {
+                        HorarioPlantilla::runNew($r);
+                        $return['rst'] = 1;
+                        $return['msj'] = 'Registro creado';
+                    }*/
+                    HorarioPlantilla::runNew($r);
+                    $return['rst'] = 1;
+                    $return['msj'] = 'Registro creado';
+                }
+                
             }
             else{
                 $return['rst'] = 2;
@@ -78,9 +98,29 @@ class HorarioPlantillaMA extends Controller
             $validator=Validator::make($r->all(), $rules,$mensaje);
 
             if ( !$validator->fails() ) {
-                HorarioPlantilla::runEdit($r);
-                $return['rst'] = 1;
-                $return['msj'] = 'Registro actualizado';
+                                
+                if($r->horario_amanecida == 0) {
+                    if($r->hora_inicio > $r->hora_fin) {
+                        $return['rst'] = 2;
+                        $return['msj'] = 'Hora inicio debe ser menor a Hora Fin';
+                    } else {
+                        HorarioPlantilla::runEdit($r);
+                        $return['rst'] = 1;
+                        $return['msj'] = 'Registro actualizado';
+                    }
+                } else {
+                    /*if($r->hora_fin > $r->hora_inicio) {
+                        $return['rst'] = 2;
+                        $return['msj'] = 'Hora Fin debe ser menor a Hora Inicio';
+                    } else {
+                        HorarioPlantilla::runEdit($r);
+                        $return['rst'] = 1;
+                        $return['msj'] = 'Registro actualizado';
+                    }*/
+                    HorarioPlantilla::runEdit($r);
+                    $return['rst'] = 1;
+                    $return['msj'] = 'Registro actualizado';
+                }
             }
             else{
                 $return['rst'] = 2;
@@ -101,4 +141,14 @@ class HorarioPlantillaMA extends Controller
         }
     }
 
+    public function ListHorarioPlantilla (Request $r )
+    {
+        if ( $r->ajax() ) {
+            $renturnModel = HorarioPlantilla::ListHorarioPlantilla($r);
+            $return['rst'] = 1;
+            $return['data'] = $renturnModel;
+            $return['msj'] = "No hay registros aún";
+            return response()->json($return);
+        }
+    }
 }

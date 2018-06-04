@@ -3,6 +3,8 @@ var AddEdit=0; //0: Editar | 1: Agregar
 var DatosG={id:0,plantilla_descripcion:"",dia_ids:0, hora_inicio:"", hora_fin:"", horario_amanecida:0, estado:1}; // Datos Globales
 $(document).ready(function() {
 
+    $('.time').mask('00:00:00');
+
     $(".fecha").datetimepicker({
         format: "yyyy-mm-dd",
         language: 'es',

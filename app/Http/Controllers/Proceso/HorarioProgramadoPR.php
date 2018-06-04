@@ -3,11 +3,13 @@ namespace App\Http\Controllers\Proceso;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Models\Proceso\PersonaContrato;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
 
-class PersonaContratoPR extends Controller
+use App\Models\Proceso\HorarioProgramado;
+
+class HorarioProgramadoPR extends Controller
 {
     public function __construct()
     {
@@ -17,7 +19,7 @@ class PersonaContratoPR extends Controller
     public function EditStatus(Request $r )
     {
         if ( $r->ajax() ) {
-            PersonaContrato::runEditStatus($r);
+            HorarioProgramado::runEditStatus($r);
             $return['rst'] = 1;
             $return['msj'] = 'Registro actualizado';
             return response()->json($return);
@@ -27,28 +29,47 @@ class PersonaContratoPR extends Controller
    public function New(Request $r )
     {
         if ( $r->ajax() ) {
-
             $mensaje= array(
                 'required'    => ':attribute es requerido',
                 'unique'      => ':attribute solo debe ser único',
             );
 
             $rules = array(
-                'persona_id' => 
+                'persona_contrato_id' =>
                        ['required',
-//                        Rule::unique('m_regimenes','regimen')->where(function ($query) use($r) {
-//                                $query->where('pregunta_id',$r->pregunta_id );
-//                        }),
                         ],
             );
 
-            
             $validator=Validator::make($r->all(), $rules,$mensaje);
 
             if ( !$validator->fails() ) {
-                PersonaContrato::runNew($r);
-                $return['rst'] = 1;
-                $return['msj'] = 'Registro creado';
+                
+
+                if(count($r->horario_plantilla) > 0)
+                {
+                    foreach ($r->horario_plantilla as $key => $hp) {                    
+                        $t_hp = DB::table('m_horarios_plantillas')->select('id', 'dia_ids', 'hora_inicio', 'hora_fin')->where('id', '=', $hp)->first();
+                        $arr_dias = explode(',', $t_hp->dia_ids);
+                        if(count($arr_dias) > 0)
+                        {
+                            foreach ($arr_dias as  $dia) {
+                                $tolerancia = 'tolerancia'.$hp.$dia;
+                                //if(($r->$tolerancia*1) > 0) {
+                                if($r->$tolerancia != '') {
+                                    //echo $hp.'.'.$dia.'.'.$t_hp->hora_inicio.'.'.$r->$tolerancia.' - ';
+                                    $r['dia_id'] = $dia;
+                                    $r['horario_plantilla_id'] = $hp;
+                                    $r['hora_inicio'] = $t_hp->hora_inicio;
+                                    $r['hora_fin'] = $t_hp->hora_fin;
+                                    $r['tolerancia'] = $r->$tolerancia;
+                                    HorarioProgramado::runNew($r);
+                                }
+                            }
+                        }
+                    }
+                    $return['rst'] = 1;
+                    $return['msj'] = 'Registro creado';
+                }                
             }
             else{
                 $return['rst'] = 2;
@@ -67,18 +88,15 @@ class PersonaContratoPR extends Controller
             );
 
             $rules = array(
-                'persona_id' => 
+                'persona_contrato_id' => 
                        ['required',
-//                        Rule::unique('m_regimenes','regimen')->ignore($r->id)->where(function ($query) use($r) {
-                              //  $query->where('pregunta_id',$r->pregunta_id );
-//                        }),
                         ],
             );
 
             $validator=Validator::make($r->all(), $rules,$mensaje);
 
             if ( !$validator->fails() ) {
-                PersonaContrato::runEdit($r);
+                HorarioProgramado::runEdit($r);
                 $return['rst'] = 1;
                 $return['msj'] = 'Registro actualizado';
             }
@@ -93,35 +111,12 @@ class PersonaContratoPR extends Controller
     public function Load(Request $r )
     {
         if ( $r->ajax() ) {
-            $renturnModel = PersonaContrato::runLoad($r);
+            $renturnModel = HorarioProgramado::runLoad($r);
             $return['rst'] = 1;
             $return['data'] = $renturnModel;
             $return['msj'] = "No hay registros aún";    
             return response()->json($return);   
         }
     }
-    
-        public function LoadPersonaContrato (Request $r )
-    {
-        if ( $r->ajax() ) {
-            $renturnModel = PersonaContrato::runLoadPersonaContrato($r);
-            $return['rst'] = 1;
-            $return['data'] = $renturnModel;
-            $return['msj'] = "No hay registros aún";
-            return response()->json($return);
-        }
-    }
 
-        public function LoadReporteHorario (Request $r )
-    {
-        if ( $r->ajax() ) {
-            $renturnModel = PersonaContrato::runLoadReporteHorario($r);
-            
-            $return['rst'] = 1;
-            $return['data'] = $renturnModel['result'];
-            $return['cabecera'] = $renturnModel['cabecera'];
-            $return['msj'] = "No hay registros aún";
-            return response()->json($return);
-        }
-    }
 }
