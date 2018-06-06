@@ -278,7 +278,7 @@ var masterG ={
                     '</li>';
         }
 
-        if(result.current_page==1 ){
+        if( result.current_page==result.last_page ){
             html+=  '<li class="paginate_button next disabled">'+
                         '<a>Siguiente</a>'+
                     '</li>';
