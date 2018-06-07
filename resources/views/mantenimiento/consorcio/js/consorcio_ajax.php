@@ -2,9 +2,9 @@
 var Ajaxconsorcio={
     AgregarEditar:function(evento){
         var data=$("#ModalConsorcioForm").serialize().split("txt_").join("").split("slct_").join("");
-        url='AjaxDinamic/Mantenimiento.consorcioMA@New';
+        url='AjaxDinamic/Mantenimiento.ConsorcioMA@New';
         if(AddEdit==0){
-            url='AjaxDinamic/Mantenimiento.consorcioMA@Edit';
+            url='AjaxDinamic/Mantenimiento.ConsorcioMA@Edit';
         }
         masterG.postAjax(url,data,evento);
     },
@@ -14,7 +14,7 @@ var Ajaxconsorcio={
         }
         data=$("#consorcioForm").serialize().split("txt_").join("").split("slct_").join("");
         $("#consorcioForm input[type='hidden']").not('.mant').remove();
-        url='AjaxDinamic/Mantenimiento.consorcioMA@Load';
+        url='AjaxDinamic/Mantenimiento.ConsorcioMA@Load';
         masterG.postAjax(url,data,evento);
     },
     CambiarEstado:function(evento,AI,id){
@@ -22,7 +22,7 @@ var Ajaxconsorcio={
         $("#ModalConsorcioForm").append("<input type='hidden' value='"+id+"' name='id'>");
         var data=$("#ModalConsorcioForm").serialize().split("txt_").join("").split("slct_").join("");
         $("#ModalConsorcioForm input[type='hidden']").not('.mant').remove();
-        url='AjaxDinamic/Mantenimiento.consorcioMA@EditStatus';
+        url='AjaxDinamic/Mantenimiento.ConsorcioMA@EditStatus';
         masterG.postAjax(url,data,evento);
     }
 };
