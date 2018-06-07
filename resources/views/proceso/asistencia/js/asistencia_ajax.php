@@ -23,13 +23,12 @@ var AjaxHorario={
         url='AjaxDinamic/Proceso.AsistenciaPR@LoadAsistencia';
         masterG.postAjax(url,data,evento);
     },
-    CargarEvento:function(evento,pag){
-        if( typeof(pag)!='undefined' ){
-            $("#ListaEventoForm").append("<input type='hidden' value='"+pag+"' name='page'>");
+    AgregarEditar:function(evento){
+        var data=$("#ModalEventoForm").serialize().split("txt_").join("").split("slct_").join("");
+        url='AjaxDinamic/Proceso.EventoPR@New';
+        if(AddEdit==0){
+            url='AjaxDinamic/Proceso.EventoPR@Edit';
         }
-        data=$("#ListaEventoForm").serialize().split("txt_").join("").split("slct_").join("");
-        $("#ListaEventoForm input[type='hidden']").not('.mant').remove();
-        url='AjaxDinamic/Proceso.AsistenciaPR@LoadEvento';
         masterG.postAjax(url,data,evento);
     },
 };

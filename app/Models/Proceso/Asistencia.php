@@ -273,7 +273,7 @@ class Asistencia extends Model{
                     }
                 }
             );
-        $result = $sql->orderBy('p_asistencias.id','asc')
+        $result = $sql->orderBy('p_asistencias.fecha_ingreso','asc')
                       ->groupBy('p_asistencias.id','p_asistencias.fecha_ingreso','p_asistencias.hora_ingreso','p_asistencias.fecha_salida','p_asistencias.hora_salida','pea.id')->paginate(10);
         return $result;
     }

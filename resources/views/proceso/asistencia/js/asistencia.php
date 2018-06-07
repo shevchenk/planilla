@@ -88,7 +88,8 @@ HTMLCargarHorario=function(result){
         for(i=0;i<result.cabecera.length;i++){
             html+="<td onClick='DetalleAsistencia(\"" + result.cabecera[i] + "\","+r.id+")'>"+r['pa'+i]+"</td>";
         }
-        html+="<td onClick='DetalleAsistencia(null,"+r.id+")'>"+r.pat+"</td>";
+//        html+="<td onClick='DetalleAsistencia(null,"+r.id+")'>"+r.pat+"</td>";
+        html+="<td>"+r.pat+"</td>";
         html+="</tr>";
     });
     $("#TableHorario tbody").html(html); 
@@ -134,22 +135,40 @@ DetalleAsistencia=function(fecha,persona_contrato_id=null){
 HTMLCargarListaAsistencia=function(result){
     var html="";
     $('#TableListaasistencia').DataTable().destroy();
+    <?php
+    $fi = "<script>$('#txt_fecha_inicio').val()</script>";
+    $ff = "<script>$('#txt_fecha_final').val()</script>";
 
-    $.each(result.data.data,function(index,r){
+    ?>
+    if(result.data.data==0 && $.trim($("#ListaAsistenciaForm #txt_fecha").val())!=''){
+        html+="<tr>"+
+        "<td class='fecha_ingreso'><input type='text' class='form-control fecha' id='txt_fecha_ingreso' value='' readonly></td>"+
+        "<td class='hora_ingreso'><input type='numeric' class='form-control' id='txt_hora_ingreso' data-mask='' value=''></td>"+
+        "<td class='fecha_salida'><input type='text' class='form-control fecha' id='txt_fecha_salida' value='' readonly></td>"+
+        "<td class='hora_salida'><input type='numeric' class='form-control' id='txt_hora_salida' data-mask='' value=''></td>"+
+       '<td>';
+       html+='<span class="btn btn-primary btn-sm" onClick="DetalleEvento()"+><i class="fa fa-save fa-lg"></i></span>';
+       html+='</td>';
+       html+="</tr>";
+    }else{
+        $.each(result.data.data,function(index,r){
+            if($.trim($("#ListaAsistenciaForm #txt_fecha").val())!=''){
+                html+="<tr id='trid_"+r.id+"'>"+
+                "<td class='fecha_ingreso'><input type='text' class='form-control fecha' id='txt_fecha_ingreso' value='"+$.trim(r.fecha_ingreso)+"' readonly></td>"+
+                "<td class='hora_ingreso'><input type='numeric' class='form-control' id='txt_hora_ingreso' data-mask='' value='"+$.trim(r.hora_ingreso)+"'></td>"+
+                "<td class='fecha_salida'><input type='text' class='form-control fecha' id='txt_fecha_salida' value='"+$.trim(r.fecha_salida)+"' readonly></td>"+
+                "<td class='hora_salida'><input type='numeric' class='form-control' id='txt_hora_salida' data-mask='' value='"+$.trim(r.hora_salida)+"'></td>"+
+               '<td>';
+                html+='<span class="btn btn-primary btn-sm" onClick="DetalleEvento('+r.id+')"+><i class="fa fa-edit fa-lg"></i></span>';
+                html+='</td>';
+                html+="</tr>";
+            }else{
+                <?php  for ($i=$fi;$i<=$ff;$i = date("Y-m-d", strtotime($i ."+ 1 days"))){?>
+                <?php  }?>
+            }
+        });
+    }
 
-        html+="<tr id='trid_"+r.id+"'>"+
-            "<td class='fecha_ingreso'>"+$.trim(r.fecha_ingreso)+"</td>"+
-            "<td class='hora_ingreso'>"+$.trim(r.hora_ingreso)+"</td>"+
-            "<td class='fecha_salida'>"+$.trim(r.fecha_salida)+"</td>"+
-            "<td class='hora_salida'>"+$.trim(r.hora_salida)+"</td>"+
-           '<td>';
-        if(r.evento_asistencia_id!=null){
-           html+='<span class="btn btn-primary btn-sm" onClick="DetalleEvento('+r.id+')"+><i class="fa fa-search fa-lg"></i></span>';
-        }
-        html+='</td>';
-
-        html+="</tr>";
-    });
     $("#TableListaasistencia tbody").html(html); 
     $("#TableListaasistencia").DataTable({
         "paging": true,
@@ -168,12 +187,39 @@ HTMLCargarListaAsistencia=function(result){
             masterG.CargarPaginacion('HTMLCargarListaAsistencia','AjaxHorario',result.data,'#TableListaasistencia_paginate');
         } 
     });
+    
+    $(".fecha").datetimepicker({
+        format: "yyyy-mm-dd",
+        language: 'es',
+        showMeridian: true,
+        time:true,
+        minView:2,
+        autoclose: true,
+        todayBtn: false
+    });
+    
+    $('[data-mask]').inputmask("hh:mm", {
+        placeholder: "HH:MM", 
+        insertMode: false, 
+        showMaskOnHover: false,
+        hourFormat: 24
+    });
 };
 
 DetalleEvento=function(asistencia_id){
-    $("#ListaEventoForm #txt_asistencia_id").val(asistencia_id);
-    AjaxHorario.CargarEvento(HTMLCargarListaEvento);
+    var persona_contrato_id=$("#ListaAsistenciaForm #txt_persona_contrato_id").val();
+    AjaxHorario.AgregarEditar(HTMLAgregarEditar);
     $('#ModalListaEvento').modal('show');
 };
 
+HTMLAgregarEditar=function(result){
+    if( result.rst==1 ){
+        msjG.mensaje('success',result.msj,4000);
+        AjaxEvento.Cargar(HTMLCargarEvento);
+        AgregarEditar(1);
+        AddEdit=1;
+    }else{
+        msjG.mensaje('warning',result.msj,3000);
+    }
+}
 </script>

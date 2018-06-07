@@ -55,7 +55,7 @@
                                                     </div>
                                                 </div>
                                             </th>                                   
-                                            <th class="col-xs-1">[Eventos]</th>
+                                            <th class="col-xs-1">[]</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -66,7 +66,7 @@
                                             <th>Hora Ingreso</th>
                                             <th>Fecha Salida</th>
                                             <th>Hora Salida</th>
-                                            <th>[Eventos]</th>
+                                            <th>[]</th>
                                         </tr>
                                     </tfoot>
                                 </table>

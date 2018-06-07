@@ -14,8 +14,11 @@
 {{ Html::script('lib/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js') }}
 {{ Html::script('lib/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.es.js') }}
 
-@include( 'reporte.horario.js.horario_ajax' )
-@include( 'reporte.horario.js.horario' )
+{{ HTML::script('lib/input-mask/js/jquery.inputmask.js') }}
+{{ HTML::script('lib/input-mask/js/jquery.inputmask.date.extensions.js') }}
+
+@include( 'proceso.asistencia.js.asistencia_ajax' )
+@include( 'proceso.asistencia.js.asistencia' )
 @stop
 
 @section('content')
@@ -117,7 +120,6 @@
     </div><!-- .row -->
 </section><!-- .content -->
 @stop
-<!--@section('form')
-@include( 'reporte.horario.form.listaasistencia' )
-@include( 'reporte.horario.form.listaevento' )
-@stop-->
+@section('form')
+@include( 'proceso.asistencia.form.listaasistencia' )
+@stop
