@@ -23,11 +23,10 @@ var AjaxHorario={
         url='AjaxDinamic/Proceso.AsistenciaPR@LoadAsistencia';
         masterG.postAjax(url,data,evento);
     },
-    AgregarEditar:function(evento){
-        var data=$("#ModalEventoForm").serialize().split("txt_").join("").split("slct_").join("");
-        url='AjaxDinamic/Proceso.EventoPR@New';
+    AgregarEditar:function(evento,data){
+        url='AjaxDinamic/Proceso.AsistenciaPR@New';
         if(AddEdit==0){
-            url='AjaxDinamic/Proceso.EventoPR@Edit';
+            url='AjaxDinamic/Proceso.AsistenciaPR@Edit';
         }
         masterG.postAjax(url,data,evento);
     },

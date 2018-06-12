@@ -1,4 +1,5 @@
 <script type="text/javascript">
+var AddEdit=1;
 $(document).ready(function() {
 
     $(".fecha").datetimepicker({
@@ -135,36 +136,29 @@ DetalleAsistencia=function(fecha,persona_contrato_id=null){
 HTMLCargarListaAsistencia=function(result){
     var html="";
     $('#TableListaasistencia').DataTable().destroy();
-    <?php
-    $fi = "<script>$('#txt_fecha_inicio').val()</script>";
-    $ff = "<script>$('#txt_fecha_final').val()</script>";
-
-    ?>
+    
     if(result.data.data==0 && $.trim($("#ListaAsistenciaForm #txt_fecha").val())!=''){
         html+="<tr>"+
-        "<td class='fecha_ingreso'><input type='text' class='form-control fecha' id='txt_fecha_ingreso' value='' readonly></td>"+
-        "<td class='hora_ingreso'><input type='numeric' class='form-control' id='txt_hora_ingreso' data-mask='' value=''></td>"+
-        "<td class='fecha_salida'><input type='text' class='form-control fecha' id='txt_fecha_salida' value='' readonly></td>"+
-        "<td class='hora_salida'><input type='numeric' class='form-control' id='txt_hora_salida' data-mask='' value=''></td>"+
+        "<td class='fecha_ingreso'><input type='text' class='form-control fecha' id='txt_fecha_ingreso_0' value='' readonly></td>"+
+        "<td class='hora_ingreso'><input type='numeric' class='form-control' id='txt_hora_ingreso_0' data-mask='' value=''></td>"+
+        "<td class='fecha_salida'><input type='text' class='form-control fecha' id='txt_fecha_salida_0' value='' readonly></td>"+
+        "<td class='hora_salida'><input type='numeric' class='form-control' id='txt_hora_salida_0' data-mask='' value=''></td>"+
        '<td>';
-       html+='<span class="btn btn-primary btn-sm" onClick="DetalleEvento()"+><i class="fa fa-save fa-lg"></i></span>';
+       html+='<span class="btn btn-primary btn-sm" onClick="AgregarEditar(0,0)"+><i class="fa fa-save fa-lg"></i></span>';
        html+='</td>';
        html+="</tr>";
     }else{
         $.each(result.data.data,function(index,r){
             if($.trim($("#ListaAsistenciaForm #txt_fecha").val())!=''){
                 html+="<tr id='trid_"+r.id+"'>"+
-                "<td class='fecha_ingreso'><input type='text' class='form-control fecha' id='txt_fecha_ingreso' value='"+$.trim(r.fecha_ingreso)+"' readonly></td>"+
-                "<td class='hora_ingreso'><input type='numeric' class='form-control' id='txt_hora_ingreso' data-mask='' value='"+$.trim(r.hora_ingreso)+"'></td>"+
-                "<td class='fecha_salida'><input type='text' class='form-control fecha' id='txt_fecha_salida' value='"+$.trim(r.fecha_salida)+"' readonly></td>"+
-                "<td class='hora_salida'><input type='numeric' class='form-control' id='txt_hora_salida' data-mask='' value='"+$.trim(r.hora_salida)+"'></td>"+
+                "<td class='fecha_ingreso'><input type='text' class='form-control fecha' id='txt_fecha_ingreso_"+index+"' value='"+$.trim(r.fecha_ingreso)+"' readonly></td>"+
+                "<td class='hora_ingreso'><input type='numeric' class='form-control' id='txt_hora_ingreso_"+index+"' data-mask='' value='"+$.trim(r.hora_ingreso)+"'></td>"+
+                "<td class='fecha_salida'><input type='text' class='form-control fecha' id='txt_fecha_salida_"+index+"' value='"+$.trim(r.fecha_salida)+"' readonly></td>"+
+                "<td class='hora_salida'><input type='numeric' class='form-control' id='txt_hora_salida_"+index+"' data-mask='' value='"+$.trim(r.hora_salida)+"'></td>"+
                '<td>';
-                html+='<span class="btn btn-primary btn-sm" onClick="DetalleEvento('+r.id+')"+><i class="fa fa-edit fa-lg"></i></span>';
+                html+='<span class="btn btn-primary btn-sm" onClick="AgregarEditar('+index+','+r.id+')"+><i class="fa fa-edit fa-lg"></i></span>';
                 html+='</td>';
                 html+="</tr>";
-            }else{
-                <?php  for ($i=$fi;$i<=$ff;$i = date("Y-m-d", strtotime($i ."+ 1 days"))){?>
-                <?php  }?>
             }
         });
     }
@@ -206,18 +200,24 @@ HTMLCargarListaAsistencia=function(result){
     });
 };
 
-DetalleEvento=function(asistencia_id){
+AgregarEditar=function(index,id){
+    if(id==0){AddEdit=1;}else{ AddEdit=0;}
     var persona_contrato_id=$("#ListaAsistenciaForm #txt_persona_contrato_id").val();
-    AjaxHorario.AgregarEditar(HTMLAgregarEditar);
-    $('#ModalListaEvento').modal('show');
+    var fecha_ingreso=$("#TableListaasistencia tbody #txt_fecha_ingreso_"+index).val();
+    var fecha_salida=$("#TableListaasistencia tbody #txt_fecha_salida_"+index).val();
+    var hora_ingreso=$("#TableListaasistencia tbody #txt_hora_ingreso_"+index).val();
+    var hora_salida=$("#TableListaasistencia tbody #txt_hora_salida_"+index).val();
+
+    var dataG={persona_contrato_id:persona_contrato_id,id:id,fecha_ingreso:fecha_ingreso,fecha_salida:fecha_salida,hora_ingreso:hora_ingreso,hora_salida:hora_salida};
+    AjaxHorario.AgregarEditar(HTMLAgregarEditar,dataG);
 };
 
 HTMLAgregarEditar=function(result){
     if( result.rst==1 ){
         msjG.mensaje('success',result.msj,4000);
-        AjaxEvento.Cargar(HTMLCargarEvento);
-        AgregarEditar(1);
         AddEdit=1;
+        $('#ModalListaAsistencia').modal('hide');
+        $("#btn_generar").click();
     }else{
         msjG.mensaje('warning',result.msj,3000);
     }

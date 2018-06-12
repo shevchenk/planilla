@@ -278,4 +278,31 @@ class Asistencia extends Model{
         return $result;
     }
     
+    public static function runEdit($r)
+    {
+        $asistencia = Asistencia::find($r->id);
+        // $asistencia->fecha_ingreso = trim( $r->fecha_ingreso );
+        $asistencia->fecha_salida = trim( $r->fecha_salida );
+        $asistencia->hora_ingreso = trim( $r->hora_ingreso );
+        $asistencia->hora_salida = trim( $r->hora_salida );
+        $asistencia->persona_id_updated_at=Auth::user()->id;
+        $asistencia->save();
+ 
+    }
+
+    public static function runNew($r)
+    {
+
+        $asistencia = new Asistencia;
+        $asistencia->fecha_ingreso = trim( $r->fecha_ingreso );
+        $asistencia->fecha_salida = trim( $r->fecha_salida );
+        $asistencia->hora_ingreso = trim( $r->hora_ingreso );
+        $asistencia->hora_salida = trim( $r->hora_salida );
+        $asistencia->persona_contrato_id = trim( $r->persona_contrato_id );
+        $asistencia->horario_programado_id = trim( 1 );
+        $asistencia->persona_id_created_at=Auth::user()->id;
+        $asistencia->save();
+
+    }
+    
 }
