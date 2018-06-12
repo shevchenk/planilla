@@ -51,7 +51,7 @@ class Asistencia extends Model{
             $evento=
             DB::table('p_eventos AS pe')
             ->join('m_eventos_tipos AS met',function($join){
-                $join->on('met.id','=','pe.evento_tipo _id');
+                $join->on('met.id','=','pe.evento_tipo_id');
             })
             ->leftJoin('p_eventos_asistencias AS pea',function($join){
                 $join->on('pea.evento_id','=','pe.id')
