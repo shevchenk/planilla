@@ -66,35 +66,84 @@ class Asistencia extends Model{
             ->first();
 
             DB::beginTransaction();
-            if( count($evento)>0 AND count($asistencia)>0 ){ //Validando los eventos
+            if( count($evento)>0 ){ //Validando los eventos
                 
                 $asistencia_estado_ini=3; // 3 significa cancelado
                 $asistencia_estado_fin=3; // 3 significa cancelado
 
                 $total_hora_tardanza=0;
                 if( $asistencia->fecha_ingreso==$fechahoy AND trim($asistencia->fecha_salida)=='' 
-                    count($horarioprogramado)>0 AND $horarioprogramado->horario_amanecida==0 ){ // Asistencia Hoy
-                    $asistencia['fecha_salida']=$fechahoy;
-                    $asistencia['hora_salida']=$horahoy;
+                    AND count($horarioprogramado)>0 AND $horarioprogramado->horario_amanecida==0 ){ 
+                    // Debería marcar la salida con evento
+                    if( $evento->aplica_cambio==0 ){ // Aplica a todo
+                        $asistencia_estado_fin=0;
+                        $asistencia['fecha_ingreso']=$evento->fecha_inicio;
+                        $asistencia['hora_ingreso']=$evento->hora_inicio;
+                        $asistencia['fecha_salida']=$evento->fecha_fin;
+                        $asistencia['hora_salida']=$evento->hora_fin;
+                        $asistencia['asistencia_estado_fin']=$asistencia_estado_fin;
+                        
+                        $asistencia['fecha_salida']=$fechahoy;
+                        $asistencia['hora_salida']=$horahoy;
+                    }
+                    elseif( $evento->aplica_cambio==1 ){ // Aplica Inicio
+                        $asistencia['fecha_ingreso']=$evento->fecha_inicio;
+                        $asistencia['hora_ingreso']=$evento->hora_inicio;
+
+                        $evento['ini_marcado']=$fechahoy." ".$horahoy;
+                        $evento['persona_id_updated_at']=Auth::user()->id;
+                        $evento->save();
+                    }
+                    elseif( $evento->aplica_cambio==2 ){ // Aplica Final
+                        $asistencia['fecha_salida']=$evento->fecha_salida;
+                        $asistencia['hora_salida']=$evento->hora_salida;
+
+                        $evento['marcado']=$fechahoy." ".$horahoy;
+                        $evento['persona_id_updated_at']=Auth::user()->id;
+                        $evento->save();
+                    }
                 }
                 elseif( $asistencia->fecha_ingreso==$fechahoy AND trim($asistencia->fecha_salida)=='' 
-                        count($horarioprogramado)>0 AND $horarioprogramado->horario_amanecida==1 ){ // Asistencia Hoy
-                    //No aplica cambios solo afecta al registro actual
-                }
-                elseif( $asistencia->fecha_ingreso==$fechahoy AND trim($asistencia->fecha_salida)=='' 
-                        count($horarioprogramado)==0 ){ // Asistencia Hoy
+                        AND count($horarioprogramado)>0 AND $horarioprogramado->horario_amanecida==1 ){ // Asistencia Hoy
                     //No aplica cambios solo afecta al registro actual
                 }
                 elseif( $asistencia->fecha_ingreso==$fechahoy AND trim($asistencia->fecha_salida)!='' ){ // Asistencia Hoy
+                    //No aplica cambios solo afecta al registro actual
+                }
+                elseif( $asistencia->fecha_ingreso==$fechahoy AND trim($asistencia->fecha_salida)=='' 
+                        AND count($horarioprogramado)==0 ){ 
+                    //Este caso no deberia darse con los scripts automáticos de rellenos
+                    //No aplica cambios solo afecta al registro actual
+                }//Corte de fecha Hoy
+                elseif( $asistencia->fecha_ingreso==$fechaayer AND trim($asistencia->fecha_salida)!='' 
+                        AND count($horarioprogramado)>0){ // Asistencia Hoy
                     // No aplica cambios solo afecta al registro actual
                 }
-                elseif( $asistencia->fecha_ingreso<$fechahoy AND trim($asistencia->fecha_salida)=='' 
-                    count($horarioprogramado)>0 AND $horarioprogramado->horario_amanecida==1
-                    $horarioprogramado->hora_fin<=$horahoy ){ // Asistencia Salida
-                    $asistencia['fecha_salida']=$fechahoy;
-                    $asistencia['hora_salida']=$horahoy;
+                elseif( $asistencia->fecha_ingreso==$fechaayer AND trim($asistencia->fecha_salida)!='' 
+                        AND count($horarioprogramado)==0){ // Asistencia Hoy
+                    // No aplica cambios solo afecta al registro actual
                 }
-                elseif( $asistencia->fecha_ingreso<$fechahoy AND trim($asistencia->fecha_salida)!='' AND count($horarioprogramado)>0 ){ // Asistencia Nuevo
+                elseif( $asistencia->fecha_ingreso==$fechaayer AND trim($asistencia->fecha_salida)=='' 
+                        AND count($horarioprogramadoayer)>0 AND $horarioprogramadoayer->horario_amanecida==1 ){ // Asistencia Hoy
+                    //No aplica cambios solo afecta al registro actual
+                }
+                elseif( $asistencia->fecha_ingreso==$fechaayer AND trim($asistencia->fecha_salida)=='' 
+                        AND count($horarioprogramadoayer)>0 AND $horarioprogramadoayer->horario_amanecida==0 ){ // Asistencia Hoy
+                    //No aplica cambios solo afecta al registro actual
+                }
+                elseif( $asistencia->fecha_ingreso==$fechaayer AND trim($asistencia->fecha_salida)=='' 
+                        AND count($horarioprogramadoayer)==0 ){ // Asistencia Hoy
+                    //No aplica cambios solo afecta al registro actual
+                }//Corte de fecha ayer
+                elseif( count($asistencia)==0 count($horarioprogramado)>0 ){ // Asistencia Hoy
+                    //No aplica cambios solo afecta al registro actual
+                }
+                elseif( count($asistencia)==0 count($horarioprogramado)==0 ){ // Asistencia Hoy
+                    //No aplica cambios solo afecta al registro actual
+                }
+
+
+                if( $asistencia->fecha_ingreso<$fechahoy AND trim($asistencia->fecha_salida)!='' AND count($horarioprogramado)>0 ){ // Asistencia Nuevo
                     $asistencia= new Asistencia;
                     $asistencia['persona_contrato_id']=$contrato->id;
                     $asistencia['fecha_ingreso']=$fechahoy;
@@ -124,31 +173,6 @@ class Asistencia extends Model{
                     $return['msj']='Ud no cuenta con el horario programado para el día de hoy';
                 }
 
-                if( $evento->aplica_cambio==0 ){ // Aplica a todo
-                    $asistencia_estado_fin=0;
-                    $asistencia['fecha_ingreso']=$evento->fecha_inicio;
-                    $asistencia['hora_ingreso']=$evento->hora_inicio;
-                    $asistencia['fecha_salida']=$evento->fecha_fin;
-                    $asistencia['hora_salida']=$evento->hora_fin;
-                    $asistencia['asistencia_estado_fin']=$asistencia_estado_fin;
-                }
-                elseif( $evento->aplica_cambio==1 ){ // Aplica Inicio
-                    $asistencia['fecha_ingreso']=$evento->fecha_inicio;
-                    $asistencia['hora_ingreso']=$evento->hora_inicio;
-
-                    $evento['ini_marcado']=$fechahoy." ".$horahoy;
-                    $evento['persona_id_updated_at']=Auth::user()->id;
-                    $evento->save();
-                }
-                elseif( $evento->aplica_cambio==2 ){ // Aplica Final
-                    $asistencia['fecha_salida']=$evento->fecha_salida;
-                    $asistencia['hora_salida']=$evento->hora_salida;
-
-                    $evento['ini_marcado']=$fechahoy." ".$horahoy;
-                    $evento['persona_id_updated_at']=Auth::user()->id;
-                    $evento->save();
-                }
-
                 $eventoasistencia= new EventoAsistencia;
                 $eventoasistencia['asistencia_id']=$asistencia->id;
                 $eventoasistencia['evento_id']=$evento->id;
@@ -156,6 +180,51 @@ class Asistencia extends Model{
                 $eventoasistencia->save();
 
             }
+            else{
+                if( $asistencia->fecha_ingreso==$fechahoy AND trim($asistencia->fecha_salida)=='' 
+                    AND count($horarioprogramado)>0 AND $horarioprogramado->horario_amanecida==0 ){ 
+                    // Debería marcar la salida con evento
+                }
+                elseif( $asistencia->fecha_ingreso==$fechahoy AND trim($asistencia->fecha_salida)=='' 
+                        AND count($horarioprogramado)>0 AND $horarioprogramado->horario_amanecida==1 ){ // Asistencia Hoy
+                    //No aplica cambios solo afecta al registro actual
+                }
+                elseif( $asistencia->fecha_ingreso==$fechahoy AND trim($asistencia->fecha_salida)!='' ){ // Asistencia Hoy
+                    //No aplica cambios solo afecta al registro actual
+                }
+                elseif( $asistencia->fecha_ingreso==$fechahoy AND trim($asistencia->fecha_salida)=='' 
+                        AND count($horarioprogramado)==0 ){ 
+                    //Este caso no deberia darse con los scripts automáticos de rellenos
+                    //No aplica cambios solo afecta al registro actual
+                }//Corte de fecha Hoy
+                elseif( $asistencia->fecha_ingreso==$fechaayer AND trim($asistencia->fecha_salida)!='' 
+                        AND count($horarioprogramado)>0){ // Asistencia Hoy
+                    // No aplica cambios solo afecta al registro actual
+                }
+                elseif( $asistencia->fecha_ingreso==$fechaayer AND trim($asistencia->fecha_salida)!='' 
+                        AND count($horarioprogramado)==0){ // Asistencia Hoy
+                    // No aplica cambios solo afecta al registro actual
+                }
+                elseif( $asistencia->fecha_ingreso==$fechaayer AND trim($asistencia->fecha_salida)=='' 
+                        AND count($horarioprogramadoayer)>0 AND $horarioprogramadoayer->horario_amanecida==1 ){ // Asistencia Hoy
+                    //No aplica cambios solo afecta al registro actual
+                }
+                elseif( $asistencia->fecha_ingreso==$fechaayer AND trim($asistencia->fecha_salida)=='' 
+                        AND count($horarioprogramadoayer)>0 AND $horarioprogramadoayer->horario_amanecida==0 ){ // Asistencia Hoy
+                    //No aplica cambios solo afecta al registro actual
+                }
+                elseif( $asistencia->fecha_ingreso==$fechaayer AND trim($asistencia->fecha_salida)=='' 
+                        AND count($horarioprogramadoayer)==0 ){ // Asistencia Hoy
+                    //No aplica cambios solo afecta al registro actual
+                }//Corte de fecha ayer
+                elseif( count($asistencia)==0 count($horarioprogramado)>0 ){ // Asistencia Hoy
+                    //No aplica cambios solo afecta al registro actual
+                }
+                elseif( count($asistencia)==0 count($horarioprogramado)==0 ){ // Asistencia Hoy
+                    //No aplica cambios solo afecta al registro actual
+                }
+            }
+            
             if( count($asistencia)>0 AND $asistencia->asistencia_estado_fin<2 AND $asistencia->fecha_ingreso==$diahoy AND count($horarioprogramado)>0 ){
                 
                 $asistencia['fecha_salida']=$fechahoy;
