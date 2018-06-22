@@ -57,14 +57,31 @@ class HorarioProgramado extends Model
         $result = $sql->orderBy('p_horarios_programados.id','asc')->get();
         return $result;
         */
+
+        /*
         $sql= HorarioProgramado::select('p_horarios_programados.horario_plantilla_id',
                                 DB::raw('(REPLACE(GROUP_CONCAT(d.dia, "-", p_horarios_programados.hora_inicio, "-", hp.hora_fin, "-", p_horarios_programados.tolerancia), ",", "|")) as horas_programadas'),
                                 'p_horarios_programados.estado')
             ->join('a_dias as d','d.id','=','p_horarios_programados.dia_id')
             ->join('m_horarios_plantillas as hp','hp.id','=','p_horarios_programados.horario_plantilla_id')
             ->where('p_horarios_programados.estado','=','1')
-            ->groupBy('p_horarios_programados.horario_plantilla_id', 'p_horarios_programados.hora_inicio','p_horarios_programados.estado');
+            ->groupBy('p_horarios_programados.horario_plantilla_id', 
+                            'p_horarios_programados.hora_inicio',
+                        'p_horarios_programados.estado');
         $result = $sql->orderBy('p_horarios_programados.id','asc')->get();
+        return $result;
+        */
+
+        $sql= HorarioProgramado::select('p_horarios_programados.horario_plantilla_id',
+                                DB::raw('(REPLACE(GROUP_CONCAT(d.dia, "-", p_horarios_programados.hora_inicio, "-", hp.hora_fin, "-", p_horarios_programados.tolerancia), ",", "|")) as horas_programadas'),
+                                'p_horarios_programados.estado')
+            ->join('a_dias as d','d.id','=','p_horarios_programados.dia_id')
+            ->join('m_horarios_plantillas as hp','hp.id','=','p_horarios_programados.horario_plantilla_id')
+            ->where('p_horarios_programados.estado','=','1')
+            ->groupBy('p_horarios_programados.horario_plantilla_id',
+                            'p_horarios_programados.hora_inicio',
+                        'p_horarios_programados.estado');
+        $result = $sql->get();
         return $result;
     }    
     
