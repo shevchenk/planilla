@@ -19,7 +19,7 @@ DEFINE('FALTA',3);
 DEFINE('CAMBIA_AMBAS',0);
 DEFINE('CAMBIA_INGRESO',1);
 DEFINE('CAMBIA_SALIDA',2);
-DEFINE('SIN_RETORNO',3);
+DEFINE('EVENTO_CON_RETORNO',3);
 
 
 class Asistencia extends Model{
@@ -31,8 +31,7 @@ class Asistencia extends Model{
 
         $caso = new Casuistica($r->dni);
 
-
-
+        $updatedOrAddeded = false;
         $guardarEventoAsistencia = false;
 
         if($caso->contratoActivo === false){
@@ -51,21 +50,24 @@ class Asistencia extends Model{
         $return['msj'] = 'Se registró correctamente';
 
         $log ="";
-        DB::beginTransaction();
-        
-        if($caso->estadoAsistencia()==MARCA_INGRESO){ // NO TIENE ASISTENCIA.   
+        DB::beginTransaction();;
+
+        if($caso->estadoAsistencia()==MARCA_INGRESO && $caso->reglaAmanecida()){ // NO TIENE ASISTENCIA.   
 
             $asistencia = new Asistencia;
             $asistencia['total_hora_tardanza']=0;
             $asistencia['persona_contrato_id']=$caso->contratoActivo;
             $asistencia['persona_id_created_at']=Auth::user()->id;
-            $log.="NO TIENE ASISTENCIA. ";
+            
+            $updatedOrAddeded=true;
+
+            $log.=" :NO TIENE ASISTENCIA: ";
 
             if($caso->tieneEvento( array(0,1,2))){
                 $guardarEventoAsistencia = true;
-                $log.="TIENE EVENTO";
+                $log.=" :TIENE EVENTO: ";
                 // GUARDAR ASISTENCIA, Y ACTUALIZAR EVENTO
-                $log.="AC:".$caso->eventoActivo->aplica_cambio;
+                $log.=" :EVENTO TIPO {$caso->eventoActivo->aplica_cambio}: ";
                 
                 if($caso->eventoActivo->aplica_cambio == CAMBIA_AMBAS){
                     //APLICA A INRESO Y SALIDA.
@@ -89,25 +91,29 @@ class Asistencia extends Model{
                         $asistencia->hora_salida=$caso->horahoy;
                         $asistencia->asistencia_estado_fin=0;
                 }
-            }else{
-                $log .= " NO TIENE EVENTO";
-                $tiempoMarcado = $caso->tiempoMarcado();
 
-                    $asistencia->fecha_ingreso=$caso->fechahoy;
-                    $asistencia->hora_ingreso=$caso->horahoy;
+                $updatedOrAddeded=true;
+
+
+            }else{
+                $log .= " :NO TIENE EVENTO: ";
+                $tiempoMarcado = $caso->tiempoMarcado();
+                $updatedOrAddeded=true;
+                $asistencia->fecha_ingreso=$caso->fechahoy;
+                $asistencia->hora_ingreso=$caso->horahoy;
                 if($tiempoMarcado == A_TIEMPO){
                     //MARCO A TIEMPO
-                    $log .= " :IN TIME:";
+                    $log .= " :IN TIME: ";
                     $asistencia->asistencia_estado_ini=0;
 
                 }elseif($tiempoMarcado == TARDANZA){
                     //MARCO CON TARDANZA
-                    $log .= " :LITTLE LATE:";
+                    $log .= " :LITTLE LATE: ";
                     $asistencia->asistencia_estado_ini=1;
                     $asistencia->total_hora_tardanza=$caso->tardanza;
                 }elseif($tiempoMarcado == FALTA){
                     //MARCO CON FALTA
-                    $log .= " :TOO LATE:";
+                    $log .= " :TOO LATE: ";
                     $asistencia->asistencia_estado_ini=2;
                     $asistencia->total_hora_tardanza=$caso->tardanza;
                 }
@@ -118,45 +124,71 @@ class Asistencia extends Model{
             
             $asistencia = Asistencia::find($caso->asistenciaActivo);
             
-            $log .= " YA HA MARCADO:";
+            $log .= " :YA HA MARCADO: ";
 
             if($caso->tieneEvento(array(0,2,3))){
                 $guardarEventoAsistencia = true;
-               $log .= "  SALIENDO : TIENE EVENTO";
+               $log .= " :SALIENDO : TIENE EVENTO: ";
                 // ACTUALIZAR EVENTO
                     if($caso->eventoActivo->aplica_cambio == CAMBIA_AMBAS){
-                        $log .= " :SALIENDO TEMPRANO:";
+                        $log .= " :SALIENDO TEMPRANO: ";
                         //APLICA A LA SALIDA.
                         $asistencia->fecha_salida=$caso->fechahoy;
                         $asistencia->hora_salida=$caso->horahoy;
                         $asistencia->asistencia_estado_fin=0;
+                        $updatedOrAddeded=true;
                     }elseif($caso->eventoActivo->aplica_cambio == CAMBIA_SALIDA){
-                        $log .= " :SALIENDO TEMPRANO:";
+                        $log .= " :SALIENDO TEMPRANO: ";
                         //APLICA A LA SALIDA.
                         $asistencia->fecha_salida=$caso->fechahoy;
                         $asistencia->hora_salida=$caso->horahoy;
                         $asistencia->asistencia_estado_fin=0;
-                    }elseif($caso->eventoActivo->aplica_cambio == SIN_RETORNO){
-                        $log .= " :PAPELETA CON RETORNO:";
+                        $updatedOrAddeded=true;
+                    }elseif($caso->eventoActivo->aplica_cambio == EVENTO_CON_RETORNO){
+                        $guardarEventoAsistencia = true;
+                        $log .= " :PAPELETA CON RETORNO: ";
+
+
                     }
             }else{ 
-                $log .= " NO EVENT: ";
+                $log .= " :NO EVENT: ";
 
                 if( $asistencia->asistencia_estado_ini == 3){
                     
-                    $log .= " :ACTUALIZANDO:";
+                    $log .= " :ACTUALIZANDO: ";
+
+                    $tiempoMarcado = $caso->tiempoMarcado();
+                    $updatedOrAddeded=true;
                     $asistencia->fecha_ingreso=$caso->fechahoy;
                     $asistencia->hora_ingreso=$caso->horahoy;
-                    $asistencia->asistencia_estado_ini=0;
+                    if($tiempoMarcado == A_TIEMPO){
+                        //MARCO A TIEMPO
+                        $log .= " :IN TIME: ";
+                        $asistencia->asistencia_estado_ini=0;
+
+                    }elseif($tiempoMarcado == TARDANZA){
+                        //MARCO CON TARDANZA
+                        $log .= " :LITTLE LATE: ";
+                        $asistencia->asistencia_estado_ini=1;
+                        $asistencia->total_hora_tardanza=$caso->tardanza;
+                    }elseif($tiempoMarcado == FALTA){
+                        //MARCO CON FALTA
+                        $log .= " :TOO LATE: ";
+                        $asistencia->asistencia_estado_ini=2;
+                        $asistencia->total_hora_tardanza=$caso->tardanza;
+                    }
+
+                    $asistencia->asistencia_estado_fin=0;
 
                 }elseif($caso->horaSalida()){
 
                     if($asistencia->hora_salida == NULL || $asistencia->hora_salida == ''){
 
-                        $log .= " :SALIENDO:";
+                        $log .= " :SALIENDO: ";
                         $asistencia->fecha_salida=$caso->fechahoy;
                         $asistencia->hora_salida=$caso->horahoy;
                         $asistencia->asistencia_estado_fin=0;
+                        $updatedOrAddeded=true;
 
                     }else{
 
@@ -164,15 +196,15 @@ class Asistencia extends Model{
 
                     }
                 }else{
-                    $log.=":NO SE SALE AÚN:";
+                    $log.=" :NO SE SALE AÚN: ";
                 }
             }
 
         }elseif($caso->estadoAsistencia()==-1){ // NO TIENE HORARIO ASIGNADO
             
-            $log .= " SIN HORARIO PROGRAMADO: ";
+            $log .= " SIN HORARIO PROGRAMADO PRAR EL DÍA: ";
 
-            if($caso->asistenciaActivo == NULL){
+            if($caso->asistenciaAux !== false){
 
                 $asistencia= new Asistencia;
                 $asistencia['persona_contrato_id']=$caso->contratoActivo;
@@ -183,6 +215,10 @@ class Asistencia extends Model{
                 $asistencia['asistencia_estado_ini']=3; // CANCELADO
                 $asistencia['asistencia_estado_fin']=3; // CANCELADO
                 $asistencia['persona_id_created_at']=Auth::user()->id;
+                $updatedOrAddeded=true;
+
+            }else{
+                $asistencia = Asistencia::find($caso->asistenciaActivo);
 
             }
 
@@ -193,10 +229,11 @@ class Asistencia extends Model{
             //echo "asd";
 
         }
-
+        
         $asistencia->save();
 
         if($guardarEventoAsistencia){
+            $log.=" - GEA++ ";
             $eventoasistencia= new EventoAsistencia;
             $eventoasistencia['asistencia_id']=$asistencia->id;
             $eventoasistencia['evento_id']=$caso->eventoActivo->id;
@@ -204,23 +241,25 @@ class Asistencia extends Model{
             $eventoasistencia->save();
         }
 
+        if($updatedOrAddeded){
+            $log.=" - AH++ ";
+            $asistenciahistorico = new AsistenciaHistorico;
+            $asistenciahistorico['asistencia_id']=$asistencia->id;
+            $asistenciahistorico['persona_contrato_id']=$asistencia->persona_contrato_id;
+            $asistenciahistorico['horario_programado_id']=$asistencia->horario_programado_id;
+            $asistenciahistorico['fecha_ingreso']=$asistencia->fecha_ingreso;
+            $asistenciahistorico['fecha_salida']=$asistencia->fecha_salida;
+            $asistenciahistorico['hora_ingreso']=$asistencia->hora_ingreso;
+            $asistenciahistorico['hora_salida']=$asistencia->hora_salida;
+            $asistenciahistorico['total_hora_tardanza']=$asistencia->total_hora_tardanza;
+            $asistenciahistorico['total_hora']=$asistencia->total_hora;
+            $asistenciahistorico['asistencia_estado_ini']=$asistencia->asistencia_estado_ini;
+            $asistenciahistorico['asistencia_estado_fin']=$asistencia->asistencia_estado_fin;
+            $asistenciahistorico['persona_id_created_at']=Auth::user()->id;
+            $asistenciahistorico->save();
+        }
 
-        $asistenciahistorico= new AsistenciaHistorico;
-        $asistenciahistorico['asistencia_id']=$asistencia->id;
-        $asistenciahistorico['persona_contrato_id']=$asistencia->persona_contrato_id;
-        $asistenciahistorico['horario_programado_id']=$asistencia->horario_programado_id;
-        $asistenciahistorico['fecha_ingreso']=$asistencia->fecha_ingreso;
-        $asistenciahistorico['fecha_salida']=$asistencia->fecha_salida;
-        $asistenciahistorico['hora_ingreso']=$asistencia->hora_ingreso;
-        $asistenciahistorico['hora_salida']=$asistencia->hora_salida;
-        $asistenciahistorico['total_hora_tardanza']=$asistencia->total_hora_tardanza;
-        $asistenciahistorico['total_hora']=$asistencia->total_hora;
-        $asistenciahistorico['asistencia_estado_ini']=$asistencia->asistencia_estado_ini;
-        $asistenciahistorico['asistencia_estado_fin']=$asistencia->asistencia_estado_fin;
-        $asistenciahistorico['persona_id_created_at']=Auth::user()->id;
-        $asistenciahistorico->save();
-
-        $asistenciamarcacion= new AsistenciaMarcacion;
+        $asistenciamarcacion = new AsistenciaMarcacion;
         $asistenciamarcacion['asistencia_id']=$asistencia->id;
         $asistenciamarcacion['persona_contrato_id']=$caso->contratoActivo;
         $asistenciamarcacion['fecha_marcada']=$caso->fechahoy;
@@ -342,7 +381,7 @@ Class Casuistica{
     private $contrato;
     private $asistencia;
     private $evento;
-    private $horarioprogramado;
+    public $horarioprogramado;
     public $fechahoy;
     public $fechaayer;
     public $horahoy;
@@ -351,15 +390,17 @@ Class Casuistica{
     public $eventoActivo;
     public $asistenciaActivo;
     public $contratoActivo;
-
+    public $asistenciaAux;
 
     public function __construct($DNI){
         
+        $this->asistenciaAux = 0;
         $this->DNI = $DNI;
         $this->fechahoy=date("Y-m-d");
         $this->fechaayer=date("Y-m-d",strtotime("-1 day"));
         $this->horahoy=date("H:i:s");
         $this->diahoy=date("N");
+        $this->diaAyer=date("N",strtotime("-1 day"));
 
 
         $this->contrato=
@@ -381,7 +422,8 @@ Class Casuistica{
             ->where('php.dia_id',$this->diahoy)
             ->where('php.estado',1)
             ->first();
-            var_dump($this->horarioprogramado);
+
+            //var_dump($this->horarioprogramado);
 
             $this->asistencia = DB::table('p_asistencias AS pa')
             ->select('pa.id','pa.fecha_ingreso','pa.fecha_salida','asistencia_estado_fin','asistencia_estado_ini','persona_contrato_id','horario_programado_id','hora_ingreso','hora_salida','fecha_salida','total_hora_tardanza','total_hora')
@@ -391,6 +433,15 @@ Class Casuistica{
             ->orderBy('pa.fecha_ingreso','DESC')
             ->first();
 
+            if($this->asistencia->fecha_ingreso == $this->fechaayer && ($this->asistencia->fecha_salida == NULL || $this->asistencia->fecha_salida == '')){
+                $this->horarioprogramado = DB::table('p_horarios_programados AS php')
+                ->select('php.id','php.hora_inicio','php.hora_fin','php.horario_amanecida','php.tolerancia')
+                ->where('php.persona_contrato_id',$this->contrato->id)
+                ->where('php.dia_id',$this->diaAyer)
+                ->where('php.horario_amanecida',1)
+                ->where('php.estado',1)
+                ->first();
+            }
 
             $this->evento = DB::table('p_eventos AS pe')
             ->join('m_eventos_tipos AS met',function($join){
@@ -411,6 +462,7 @@ Class Casuistica{
             $this->contratoActivo = false;
         }
 
+        //echo "Construct ends.";
     }
 
     public function tieneEvento($mode=array()){
@@ -439,7 +491,10 @@ Class Casuistica{
 
     public function estadoAsistencia(){
 
-        if(count($this->horarioprogramado)<=0){
+
+        if(count($this->horarioprogramado)==0){
+            $this->asistenciaAux = false;
+            if(count($this->asistencia)>0)$this->asistenciaActivo = $this->asistencia->id;
             return -1; // NO TIENE HORARIO ASIGNADO.
         }
 
@@ -447,7 +502,7 @@ Class Casuistica{
             $this->asistenciaActivo = $this->asistencia->id;
             return MARCA_SALIDA; // ENTRO, NO HA SALIDO - HORARIO REGULAR
 
-        }elseif($this->horarioprogramado->horario_amanecida==1 && $this->asistencia != NULL && ($this->asistencia->fecha_ingreso==$this->fechahoy || $this->asistencia->fecha_ingreso==$this->fechaayer)){
+        }elseif($this->horarioprogramado->horario_amanecida==1 && count($this->asistencia)>0 && $this->asistencia->fecha_ingreso==$this->fechaayer){
             $this->asistenciaActivo = $this->asistencia->id;
             return MARCA_SALIDA; // ENTRO, NO HA SALIDO - HORARIO REGULAR
         }else{
@@ -479,8 +534,7 @@ Class Casuistica{
 
     public function horaSalida(){
 
-        $d2 = strtotime(date("Y-m-d"))-strtotime($this->fechaayer);
-        $amanecidaValida =((strtotime("-1 day")+$d2) == strtotime(date("Y-m-d")) ? true : false);
+        $amanecidaValida = trim($this->asistencia->fecha_salida) == '' && $this->fechaayer == $this->asistencia->fecha_ingreso;
 
         if($this->compararFechasHoras($this->horahoy,$this->horarioprogramado->hora_fin) && $this->horarioprogramado->horario_amanecida == 0){
             return true;
@@ -498,6 +552,16 @@ Class Casuistica{
             return false;
         }
     }    
+
+
+    public function reglaAmanecida(){
+
+        if(count($this->horarioprogramado)>0 && $this->horarioprogramado->horario_amanecida == 1){
+            return strtotime(date("H:i:s")) >= strtotime($this->horarioprogramado->hora_inicio." -1 hour");
+        }else{
+            return true;
+        }
+    }
 
 
     function full_var_dump(){
