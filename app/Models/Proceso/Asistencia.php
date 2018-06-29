@@ -268,7 +268,7 @@ class Asistencia extends Model{
         $asistenciamarcacion->save();
 
         
-        $return['msj'] .= $log;
+        //$return['msj'] .= $log;
 
         DB::commit();
 
