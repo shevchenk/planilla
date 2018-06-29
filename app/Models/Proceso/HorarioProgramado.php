@@ -27,6 +27,7 @@ class HorarioProgramado extends Model
         $horarioprogramdo->horario_plantilla_id = trim( $r->horario_plantilla_id );
         $horarioprogramdo->hora_inicio = trim( $r->hora_inicio );
         $horarioprogramdo->hora_fin = trim( $r->hora_fin );
+        $horarioprogramdo->horario_amanecida = trim( $r->horario_amanecida );
         $horarioprogramdo->tolerancia = trim( $r->tolerancia );
         $horarioprogramdo->estado = 1;
         $horarioprogramdo->persona_id_created_at=Auth::user()->id;
@@ -45,20 +46,6 @@ class HorarioProgramado extends Model
     public static function runLoad($r)
     {
         /*
-       $sql= HorarioProgramado::select('p_horarios_programados.id',
-                                'p_horarios_programados.horario_plantilla_id',
-                                'p_horarios_programados.hora_inicio',
-                                'p_horarios_programados.hora_fin',
-                                DB::raw('(SELECT GROUP_CONCAT(d.id, "-", d.dia) FROM a_dias d WHERE FIND_IN_SET(d.id, dia_ids)) dias'),
-                                'p_horarios_programados.tolerancia',
-                                'p_horarios_programados.estado')
-            ->join('m_horarios_plantillas as hp','hp.id','=','p_horarios_programados.horario_plantilla_id')
-            ->where('p_horarios_programados.estado','=','1');
-        $result = $sql->orderBy('p_horarios_programados.id','asc')->get();
-        return $result;
-        */
-
-        /*
         $sql= HorarioProgramado::select('p_horarios_programados.horario_plantilla_id',
                                 DB::raw('(REPLACE(GROUP_CONCAT(d.dia, "-", p_horarios_programados.hora_inicio, "-", hp.hora_fin, "-", p_horarios_programados.tolerancia), ",", "|")) as horas_programadas'),
                                 'p_horarios_programados.estado')
@@ -71,13 +58,14 @@ class HorarioProgramado extends Model
         $result = $sql->orderBy('p_horarios_programados.id','asc')->get();
         return $result;
         */
-
+        
         $sql= HorarioProgramado::select('p_horarios_programados.horario_plantilla_id',
-                                DB::raw('(REPLACE(GROUP_CONCAT(d.dia, "-", p_horarios_programados.hora_inicio, "-", hp.hora_fin, "-", p_horarios_programados.tolerancia), ",", "|")) as horas_programadas'),
+                                DB::raw('GROUP_CONCAT(d.dia, "-", p_horarios_programados.hora_inicio, "-", hp.hora_fin, "-", p_horarios_programados.tolerancia  SEPARATOR "|") as horas_programadas'),
                                 'p_horarios_programados.estado')
             ->join('a_dias as d','d.id','=','p_horarios_programados.dia_id')
             ->join('m_horarios_plantillas as hp','hp.id','=','p_horarios_programados.horario_plantilla_id')
             ->where('p_horarios_programados.estado','=','1')
+            ->where('p_horarios_programados.persona_contrato_id','=',$r->persona_contrato_id)
             ->groupBy('p_horarios_programados.horario_plantilla_id',
                             'p_horarios_programados.hora_inicio',
                         'p_horarios_programados.estado');

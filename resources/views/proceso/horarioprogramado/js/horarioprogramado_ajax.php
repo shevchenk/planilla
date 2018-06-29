@@ -6,7 +6,7 @@ var AjaxDato={
         masterG.postAjax(url,data,evento);
     },
     Cargar:function(evento,pag){
-        data={};
+        data={ persona_contrato_id : $('#txt_persona_contrato_id').val()};
         url='AjaxDinamic/Proceso.HorarioProgramadoPR@Load';
         masterG.postAjax(url,data,evento);
     },

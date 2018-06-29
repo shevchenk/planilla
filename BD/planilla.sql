@@ -33,12 +33,12 @@ SELECT hp.id, hp.dia_ids, hp.hora_inicio, hora_fin
 
 -- Muestra Horario Programados
 SELECT hpro.horario_plantilla_id,
-			(REPLACE(GROUP_CONCAT(d.dia, "-", hpro.hora_inicio, "-", hp.hora_fin, "-", hpro.tolerancia), ",", "|")) as horas_programadas, 
+			GROUP_CONCAT(d.dia, "-", hpro.hora_inicio, "-", hp.hora_fin, "-", hpro.tolerancia SEPARATOR '|') as horas_programadas, 
 			hpro.estado
 FROM p_horarios_programados hpro
 INNER JOIN a_dias d ON d.id = hpro.dia_id
 INNER JOIN m_horarios_plantillas hp ON hp.id = hpro.horario_plantilla_id
 WHERE hpro.estado = 1
+			AND hpro.persona_contrato_id = 1
 GROUP BY hpro.horario_plantilla_id,  hpro.hora_inicio, hpro.estado;
-
 

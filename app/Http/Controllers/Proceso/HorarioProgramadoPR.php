@@ -48,7 +48,8 @@ class HorarioProgramadoPR extends Controller
                 if(count($r->horario_plantilla) > 0)
                 {
                     foreach ($r->horario_plantilla as $key => $hp) {                    
-                        $t_hp = DB::table('m_horarios_plantillas')->select('id', 'dia_ids', 'hora_inicio', 'hora_fin')->where('id', '=', $hp)->first();
+                        $t_hp = DB::table('m_horarios_plantillas')->select('id', 'dia_ids', 'hora_inicio', 'hora_fin', 'horario_amanecida')->where('id', '=', $hp)->first();
+                        
                         $arr_dias = explode(',', $t_hp->dia_ids);
                         if(count($arr_dias) > 0)
                         {
@@ -61,6 +62,7 @@ class HorarioProgramadoPR extends Controller
                                     $r['horario_plantilla_id'] = $hp;
                                     $r['hora_inicio'] = $t_hp->hora_inicio;
                                     $r['hora_fin'] = $t_hp->hora_fin;
+                                    $r['horario_amanecida'] = $t_hp->horario_amanecida;
                                     $r['tolerancia'] = $r->$tolerancia;
                                     HorarioProgramado::runNew($r);
                                 }
