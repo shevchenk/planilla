@@ -26,15 +26,19 @@ class Asistencia extends Model{
     
     protected   $table = 'p_asistencias';
 
-    public static function Marcacion( $r )
-    {
+    public static function Marcacion( $r ){
 
-        $caso = new Casuistica($r->dni);
+        if(isset($r->fecha) && isset($r->hora)){
+            $caso = new Casuistica($r->dni,$r->fecha,$r->hora);
+        }else{
+            $caso = new Casuistica($r->dni);
+        }
 
         $updatedOrAddeded = false;
         $guardarEventoAsistencia = false;
 
         if($caso->contratoActivo === false){
+
             $return['rst']='2';
             $return['tittle'] = 'Información!!';
             $return['type'] = 'warning';
@@ -50,76 +54,88 @@ class Asistencia extends Model{
         $return['msj'] = 'Se registró correctamente';
 
         $log ="";
-        DB::beginTransaction();;
+        DB::beginTransaction();;    
 
-        if($caso->estadoAsistencia()==MARCA_INGRESO && $caso->reglaAmanecida()){ // NO TIENE ASISTENCIA.   
-
-            $asistencia = new Asistencia;
-            $asistencia['horario_programado_id'] = $caso->horarioprogramado->id;
-            $asistencia['total_hora_tardanza']=0;
-            $asistencia['persona_contrato_id']=$caso->contratoActivo;
-            $asistencia['persona_id_created_at']=Auth::user()->id;
+        if($caso->estadoAsistencia()==MARCA_INGRESO && $amanecida = $caso->reglaAmanecida()){ // NO TIENE ASISTENCIA.   
             
-            $updatedOrAddeded=true;
+            if($amanecida === 2 && !$caso->tieneEvento(array(CAMBIA_AMBAS,CAMBIA_INGRESO))){
 
-            $log.=" :NO TIENE ASISTENCIA: ";
-
-            if($caso->tieneEvento( array(0,1,2))){
-                $guardarEventoAsistencia = true;
-                $log.=" :TIENE EVENTO: ";
-                // GUARDAR ASISTENCIA, Y ACTUALIZAR EVENTO
-                $log.=" :EVENTO TIPO {$caso->eventoActivo->aplica_cambio}: ";
+                $return['rst']='2';
+                $return['tittle'] = 'Información!!';
+                $return['type'] = 'warning';
                 
-                if($caso->eventoActivo->aplica_cambio == CAMBIA_AMBAS){
-                    //APLICA A INRESO Y SALIDA.
+                $horaEntrada = $caso->vDate("H:i:s",strtotime($caso->horarioprogramado->hora_inicio.' -1 hour'));
 
-                    $asistencia->fecha_ingreso=$caso->eventoActivo->fecha_inicio;
-                    $asistencia->hora_ingreso=$caso->eventoActivo->hora_inicio;
+                $return['msj']="La hora actual ({$caso->horahoy}) no corresponde a la hora de entrada ({$horaEntrada}).";
+
+            }else{
+
+                $asistencia = new Asistencia;
+                $asistencia['horario_programado_id'] = $caso->horarioprogramado->id;
+                $asistencia['total_hora_tardanza']=0;
+                $asistencia['persona_contrato_id']=$caso->contratoActivo;
+                $asistencia['persona_id_created_at']=Auth::user()->id;
                 
-                    $asistencia->fecha_salida=$caso->eventoActivo->fecha_fin;
-                    $asistencia->hora_salida=$caso->eventoActivo->hora_fin;
+                $updatedOrAddeded=true;
 
-                }elseif($caso->eventoActivo->aplica_cambio == CAMBIA_INGRESO){
-                    //APLICA AL INGRESO.
+                $log.=" :NO TIENE ASISTENCIA: ";
+
+                if($caso->tieneEvento( array(0,1,2))){
+                    $guardarEventoAsistencia = true;
+                    $log.=" :TIENE EVENTO: ";
+                    // GUARDAR ASISTENCIA, Y ACTUALIZAR EVENTO
+                    $log.=" :EVENTO TIPO {$caso->eventoActivo->aplica_cambio}: ";
+                    
+                    if($caso->eventoActivo->aplica_cambio == CAMBIA_AMBAS){
+                        //APLICA A INRESO Y SALIDA.
 
                         $asistencia->fecha_ingreso=$caso->eventoActivo->fecha_inicio;
                         $asistencia->hora_ingreso=$caso->eventoActivo->hora_inicio;
                     
+                        $asistencia->fecha_salida=$caso->eventoActivo->fecha_fin;
+                        $asistencia->hora_salida=$caso->eventoActivo->hora_fin;
 
-                }elseif($caso->eventoActivo->aplica_cambio == CAMBIA_SALIDA){
-                    //APLICA A LA SALIDA.
-                        $asistencia->fecha_salida=$caso->fechahoy;
-                        $asistencia->hora_salida=$caso->horahoy;
-                    
-                }
+                    }elseif($caso->eventoActivo->aplica_cambio == CAMBIA_INGRESO){
+                        //APLICA AL INGRESO.
 
-                $updatedOrAddeded=true;
+                            $asistencia->fecha_ingreso=$caso->eventoActivo->fecha_inicio;
+                            $asistencia->hora_ingreso=$caso->eventoActivo->hora_inicio;
+                        
+                    }elseif($caso->eventoActivo->aplica_cambio == CAMBIA_SALIDA){
+                        //APLICA A LA SALIDA.
+                            $asistencia->fecha_salida=$caso->eventoActivo->fecha_fin;
+                            $asistencia->hora_salida=$caso->eventoActivo->hora_fin;
+                        
+                    }
+
+                    $updatedOrAddeded=true;
 
 
-            }else{
-                $log .= " :NO TIENE EVENTO: ";
-                $tiempoMarcado = $caso->tiempoMarcado();
-                $updatedOrAddeded=true;
-                $asistencia->fecha_ingreso=$caso->fechahoy;
-                $asistencia->hora_ingreso=$caso->horahoy;
-                if($tiempoMarcado == A_TIEMPO){
-                    //MARCO A TIEMPO
-                    $log .= " :IN TIME: ";
-                    $asistencia->asistencia_estado_ini=0;
-                    $asistencia->asistencia_estado_fin=0;
+                }else{
+                    $log .= " :NO TIENE EVENTO: ";
+                    $tiempoMarcado = $caso->tiempoMarcado();
+                    $updatedOrAddeded=true;
+                    $asistencia->fecha_ingreso=$caso->fechahoy;
+                    $asistencia->hora_ingreso=$caso->horahoy;
+                    if($tiempoMarcado == A_TIEMPO){
+                        //MARCO A TIEMPO
+                        $log .= " :IN TIME: ";
+                        $asistencia->asistencia_estado_ini=0;
+                        $asistencia->asistencia_estado_fin=0;
 
-                }elseif($tiempoMarcado == TARDANZA){
-                    //MARCO CON TARDANZA
-                    $log .= " :LITTLE LATE: ";
-                    $asistencia->asistencia_estado_ini=1;
-                    $asistencia->asistencia_estado_fin=1;
-                    $asistencia->total_hora_tardanza=$caso->tardanza;
-                }elseif($tiempoMarcado == FALTA){
-                    //MARCO CON FALTA
-                    $log .= " :TOO LATE: ";
-                    $asistencia->asistencia_estado_ini=2;
-                    $asistencia->asistencia_estado_fin=2;
-                    $asistencia->total_hora_tardanza=$caso->tardanza;
+                    }elseif($tiempoMarcado == TARDANZA){
+                        //MARCO CON TARDANZA
+                        $log .= " :LITTLE LATE: ";
+                        $asistencia->asistencia_estado_ini=1;
+                        $asistencia->asistencia_estado_fin=1;
+                        $asistencia->total_hora_tardanza=$caso->tardanza;
+                    }elseif($tiempoMarcado == FALTA){
+                        //MARCO CON FALTA
+                        $log .= " :TOO LATE: ";
+                        $asistencia->asistencia_estado_ini=2;
+                        $asistencia->asistencia_estado_fin=2;
+                        $asistencia->total_hora_tardanza=$caso->tardanza;
+                    }
                 }
             }
 
@@ -158,9 +174,11 @@ class Asistencia extends Model{
                     }elseif($caso->eventoActivo->aplica_cambio == CAMBIA_SALIDA){
                         $log .= " :SALIENDO TEMPRANO [SALIDA]: ";
                         //APLICA A LA SALIDA.
-                        $asistencia->fecha_salida=$caso->fechahoy;
-                        $asistencia->hora_salida=$caso->horahoy;
-                        $asistencia->total_hora=$mTiempo;
+
+                        $asistencia->fecha_salida=$caso->eventoActivo->fecha_fin;
+                        $asistencia->hora_salida=$caso->eventoActivo->hora_fin;
+                        
+                        $asistencia->total_hora=$caso->totalHoras($caso->eventoActivo->fecha_fin.' '.$caso->eventoActivo->hora_fin);
                         $asistencia->asistencia_estado_fin=0;
                         $updatedOrAddeded=true;
                     }elseif($caso->eventoActivo->aplica_cambio == EVENTO_CON_RETORNO){
@@ -247,6 +265,7 @@ class Asistencia extends Model{
                 $updatedOrAddeded=true;
 
             }else{
+
                 $asistencia = Asistencia::find($caso->asistenciaActivo);
 
             }
@@ -255,11 +274,14 @@ class Asistencia extends Model{
             $return['tittle'] = 'Información!!';
             $return['type'] = 'warning';
             $return['msj']='Ud no cuenta con el horario programado para el día de hoy';
-            //echo "asd";
+
 
         }
-        
-        $asistencia->save();
+
+
+        if($caso->reglaAmanecida() !== 2 || $caso->tieneEvento(array(CAMBIA_INGRESO,CAMBIA_AMBAS))){
+                $asistencia->save();
+        }
 
         if($guardarEventoAsistencia){
             $log.=" - UE++ ";
@@ -293,7 +315,7 @@ class Asistencia extends Model{
         }
 
         $asistenciamarcacion = new AsistenciaMarcacion;
-        $asistenciamarcacion['asistencia_id']=$asistencia->id;
+        $asistenciamarcacion['asistencia_id']= isset($asistencia->id) ? $asistencia->id : null ;
         $asistenciamarcacion['persona_contrato_id']=$caso->contratoActivo;
         $asistenciamarcacion['fecha_marcada']=$caso->fechahoy;
         $asistenciamarcacion['hora_marcada']=$caso->horahoy;
@@ -405,36 +427,66 @@ class Asistencia extends Model{
 
 
 
+
+
+
 Class Casuistica{
 
     public $DNI;
+
     private $contrato;
+
     private $asistencia;
+
     private $evento;
+
     public $horarioprogramado;
+
     public $fechahoy;
+
     public $fechaayer;
+
     public $horahoy;
+
     public $diahoy;
+
     public $tardanza;
+
     public $eventoActivo;
+
     public $asistenciaActivo;
+
     public $contratoActivo;
+
     public $asistenciaAux;
+
     public $totalHora;
+
     private $fechaHorario;
 
+    private $emularFecha;
 
-    public function __construct($DNI){
+    private $emuTime;
+
+
+    public function __construct($DNI,$fechaH=null, $horaH=null){
         
+        if($fechaH!=null && $horaH !=null){
+            $this->emularFecha = true;
+            $this->emuTime = trim($fechaH).' '.trim($horaH);
+        }else{
+            $this->emularFecha = false;
+            $this->emuTime = date("Y-m-d H:i:s");
+        }
+
         $this->asistenciaAux = true;
         $this->DNI = $DNI;
-        $this->fechahoy=date("Y-m-d");
-        $this->fechaayer=date("Y-m-d",strtotime("-1 day"));
-        $this->horahoy=date("H:i:s");
-        $this->diahoy=date("N");
-        $this->diaAyer=date("N",strtotime("-1 day"));
-        $this->fechaHorario=date("Y-m-d");
+        $this->fechahoy = $this->vDate("Y-m-d");
+        $this->horahoy = $this->vDate("H:i:s");
+        $this->fechaayer=$this->vDate("Y-m-d",strtotime("-1 day"));
+        $this->diahoy=$this->vDate("N");
+        $this->diaAyer=$this->vDate("N",strtotime("-1 day"));
+        $this->fechaHorario=$this->vDate("Y-m-d");
 
 
         $this->contrato=
@@ -451,21 +503,18 @@ Class Casuistica{
             $this->contratoActivo=$this->contrato->id;
 
             $this->horarioprogramado = DB::table('p_horarios_programados AS php')
-            ->select('php.id','php.hora_inicio','php.hora_fin','php.horario_amanecida','php.tolerancia')
+            ->select('php.id','php.hora_inicio','php.hora_fin','php.horario_amanecida','php.tolerancia','php.dia_id')
             ->where('php.persona_contrato_id',$this->contrato->id)
             ->where('php.dia_id',$this->diahoy)
             ->where('php.estado',1)
             ->first();
 
-
-            
             $hpAux = DB::table('p_horarios_programados AS php')
-            ->select('php.id','php.hora_inicio','php.hora_fin','php.horario_amanecida','php.tolerancia')
+            ->select('php.id','php.hora_inicio','php.hora_fin','php.horario_amanecida','php.tolerancia','php.dia_id')
             ->where('php.persona_contrato_id',$this->contrato->id)
             ->where('php.dia_id',$this->diaAyer)
             ->where('php.estado',1)
             ->first();
-
 
             $this->asistencia = DB::table('p_asistencias AS pa')
             ->select('pa.id','pa.fecha_ingreso','pa.fecha_salida','asistencia_estado_fin','asistencia_estado_ini','persona_contrato_id','horario_programado_id','hora_ingreso','hora_salida','fecha_salida','total_hora_tardanza','total_hora')
@@ -487,7 +536,7 @@ Class Casuistica{
 
             if(count($this->asistencia)>0 && $this->asistencia->fecha_ingreso == $this->fechaHorario && count($hpAux)>0 && $hpAux->horario_amanecida == 1 && $this->asistencia->fecha_salida != NULL && trim($this->asistencia->fecha_salida) != ''){
                 
-                if(time() >= strtotime($this->fechaHorario.' '.$this->horarioprogramado->hora_inicio." -1 hour")){                
+                if($this->vTtime() >= strtotime($this->fechaHorario.' '.$this->horarioprogramado->hora_inicio." -1 hour")){                
                     $this->asistencia = DB::table('p_asistencias AS pa')
                     ->select('pa.id','pa.fecha_ingreso','pa.fecha_salida','asistencia_estado_fin','asistencia_estado_ini','persona_contrato_id','horario_programado_id','hora_ingreso','hora_salida','fecha_salida','total_hora_tardanza','total_hora')
                     ->where('pa.persona_contrato_id',$this->contrato->id)
@@ -501,18 +550,24 @@ Class Casuistica{
             }
 
 
+
+
             if(count($hpAux)>0)unset($hpAux);
 
 
             if(count($this->asistencia)>0 && $this->asistencia->fecha_ingreso == $this->fechaayer && count($this->horarioprogramado)>0 && $this->horarioprogramado->horario_amanecida==1 && ($this->asistencia->fecha_salida == NULL || $this->asistencia->fecha_salida == '')){
                 $this->horarioprogramado = DB::table('p_horarios_programados AS php')
-                ->select('php.id','php.hora_inicio','php.hora_fin','php.horario_amanecida','php.tolerancia')
+                ->select('php.id','php.hora_inicio','php.hora_fin','php.horario_amanecida','php.tolerancia','php.dia_id')
                 ->where('php.persona_contrato_id',$this->contrato->id)
                 ->where('php.dia_id',$this->diaAyer)
                 ->where('php.horario_amanecida',1)
                 ->where('php.estado',1)
                 ->first();
                 $this->fechaHorario = $this->fechaayer;
+            }
+            
+            if($this->horarioprogramado->horario_amanecida == 1 && count($this->asistencia)>0 && ($this->asistencia->fecha_salida != NULL || trim($this->asistencia->fecha_salida) != '')){
+                $this->asistencia=null;
             }
 
             $this->evento = DB::table('p_eventos AS pe')
@@ -528,6 +583,12 @@ Class Casuistica{
             //->whereRaw('\''.$this->fechahoy.'\' BETWEEN pe.fecha_inicio AND pe.fecha_fin ',1)
             ->whereNull('pea.id')
             ->get();
+
+
+
+
+//            $this->full_var_dump();
+//            die();
 
 
         }else{
@@ -589,9 +650,9 @@ Class Casuistica{
         if($this->compararFechasHoras($this->fechahoy.' '.$this->horahoy,$this->fechaHorario.' '.$this->horarioprogramado->hora_inicio)){
             // TARDANZA O FALTA
             
-            $tolerado=date("Y-m-d H:i:s",strtotime($this->fechaHorario.' '.$this->horarioprogramado->hora_inicio.' +'.$this->horarioprogramado->tolerancia.' minutes') );
+            $tolerado=$this->vDate("Y-m-d H:i:s",strtotime($this->fechaHorario.' '.$this->horarioprogramado->hora_inicio.' +'.$this->horarioprogramado->tolerancia.' minutes') );
             
-            $hhoy = time(); // UNIX TIME.
+            $hhoy = $this->vTime(); // UNIX TIME.
             $hini = strtotime($this->fechaHorario . " " . $this->horarioprogramado->hora_inicio);
 
             $secs = $hhoy-$hini;
@@ -613,28 +674,37 @@ Class Casuistica{
     public function horaSalida(){
 
         if($this->compararFechasHoras($this->horahoy,$this->horarioprogramado->hora_fin) && $this->horarioprogramado->horario_amanecida == 0){
-            $secs = time()-strtotime($this->asistencia->fecha_ingreso .' '. $this->asistencia->hora_ingreso);
+            $secs = $this->vTime()-strtotime($this->asistencia->fecha_ingreso .' '. $this->asistencia->hora_ingreso);
             $this->totalHora = $this->timeFormat($secs);
             return true;
-        }elseif($this->compararFechasHoras($this->fechahoy.' '.$this->horahoy,$this->fechahoy.' '.$this->horarioprogramado->hora_fin) && $this->horarioprogramado->horario_amanecida == 1){
-            $secs = time()-strtotime($this->asistencia->fecha_ingreso .' '. $this->asistencia->hora_ingreso);
-
-            $this->totalHora = $this->timeFormat($secs);
-
-            return true;
+        }elseif($this->horarioprogramado->horario_amanecida == 1){
+            
+            if($this->horarioprogramado->dia_id == $this->diahoy){
+                return false;
+            }elseif($this->compararFechasHoras($this->fechahoy.' '.$this->horahoy,$this->fechahoy.' '.$this->horarioprogramado->hora_fin)){
+                $secs = $this->vTime()-strtotime($this->asistencia->fecha_ingreso .' '. $this->asistencia->hora_ingreso);
+                $this->totalHora = $this->timeFormat($secs);
+                return true;
+            }
         }else{
             return false;
         }
     }
 
-    public function totalHoras(){
-        $secs = time()-strtotime($this->asistencia->fecha_ingreso .' '. $this->asistencia->hora_ingreso);
+    public function totalHoras($salida = null){
+
+        $secs = ($salida==null?$this->vTime():strtotime($salida))-strtotime($this->asistencia->fecha_ingreso .' '. $this->asistencia->hora_ingreso);
+
         return $this->timeFormat($secs);;
     }
 
     public function reglaAmanecida(){ 
         if(count($this->horarioprogramado)>0 && $this->horarioprogramado->horario_amanecida == 1){
-            return time() >= strtotime($this->fechaHorario.' '.$this->horarioprogramado->hora_inicio." -1 hour");
+           if(count($this->asistencia)==0 && $this->vTime()<strtotime($this->fechahoy.' '.$this->horarioprogramado->hora_inicio." -1 hour")){
+                return 2;
+            }else{
+                return ($this->vTime() >= strtotime($this->fechaHorario.' '.$this->horarioprogramado->hora_inicio." -1 hour")?true:false);
+            }
         }else{
             return true;
         }
@@ -676,6 +746,28 @@ Class Casuistica{
         }
     }    
 
+    private function vDate($param1=null,$param2=null){
+        if($param2!=null){
+            if($this->emularFecha === true){
+                $nowEmuTime = time() - $param2;
+                return date($param1,strtotime($this->emuTime)+$nowEmuTime);
+            }else{
+                return date($param1,$param2);
+            }
+        }elseif($param1!=null){
+            return $this->emularFecha === true ? date($param1, strtotime($this->emuTime)) : date($param1);
+        }else{
+            return date();
+        }
+    }
+
+    private function vTime(){
+        if($this->emularFecha === true){
+            return strtotime($this->emuTime);
+        }else{
+            return time();
+        }
+    }
 
     public function timeFormat($seconds){
         $seconds *= ($seconds>=0 ? 1 : -1);

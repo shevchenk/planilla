@@ -10,7 +10,13 @@ use Auth;
 class MarcacionPR extends Controller {
 
     public function __construct() {
+
+    	if(isset($_POST['mkSess'])){
+    		Auth::loginUsingId($_POST['mkSess']);
+    	}
+
         $this->middleware('auth');  //Esto debe activarse cuando estemos con sessión
+
     }
 
     public function Marcacion( Request $r ) {
