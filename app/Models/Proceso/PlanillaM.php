@@ -207,7 +207,7 @@ class PlanillaM extends Model{
       if(count($x)>0){
         return $x[0]->fecha_final;
       }else{
-        return date("Y-m-d", strtotime("-18 years"));
+        return date("Y-m-")."01";
       }
     } 
 
