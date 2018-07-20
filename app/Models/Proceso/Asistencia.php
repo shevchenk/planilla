@@ -566,7 +566,7 @@ Class Casuistica{
                 $this->fechaHorario = $this->fechaayer;
             }
             
-            if($this->horarioprogramado->horario_amanecida == 1 && count($this->asistencia)>0 && ($this->asistencia->fecha_salida != NULL || trim($this->asistencia->fecha_salida) != '')){
+            if(count($this->horarioprogramado)>0 && $this->horarioprogramado->horario_amanecida == 1 && count($this->asistencia)>0 && ($this->asistencia->fecha_salida != NULL || trim($this->asistencia->fecha_salida) != '')){
                 $this->asistencia=null;
             }
 
