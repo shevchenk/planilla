@@ -7,11 +7,9 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Input;
 use DB;
 
-class PlanillaM extends Model
-{
+class PlanillaM extends Model{
 
     protected   $table = 'p_planilla';
-
 
     public function __construct($x=''){
         if($x!='')$this->table=$x;
@@ -96,9 +94,8 @@ class PlanillaM extends Model
         $fechaUtimaPlanilla = PlanillaM::ultimaPlanilla();
         $fecha_inicio = date("Y-m-d");
         
-        $date = $fechaUtimaPlanilla;
         $end = date('D-y-m');
-        $diasLaborables = 0;
+        $rangoDias = 0;
 
         $diasEnElMes=array(
           1=>0, // LUNES
@@ -110,11 +107,13 @@ class PlanillaM extends Model
           7=>0  //DOMINGO
         );
 
-        while(strtotime($date) <= strtotime($end)){
-            $day_num = date('d', strtotime($date));
-            $date = date("Y-m-d", strtotime("+1 day", strtotime($date)));
-            $diasLaborables++;
-            $diasEnElMes[date("N", strtotime($date))]++;
+        $fechaUtimaPlanillaAux=$fechaUtimaPlanilla;
+
+        while(strtotime($fechaUtimaPlanillaAux) <= strtotime($end)){
+            $day_num = date('d', strtotime($fechaUtimaPlanillaAux));
+            $fechaUtimaPlanillaAux = date("Y-m-d", strtotime("+1 day", strtotime($fechaUtimaPlanillaAux)));
+            $rangoDias++;
+            $diasEnElMes[date("N", strtotime($fechaUtimaPlanillaAux))]++;
         }
 
         foreach ($data as $key => $value) {
@@ -127,17 +126,18 @@ class PlanillaM extends Model
             }
 
             //$valorPorJornada = $value->sueldo_mensual / $totalDiasMes;
-
             $valorPorJornada = $value->sueldo_mensual / 30;
 
+            $pagoBruto = $value->rangoDias*$valorPorJornada;
+
             $diasNoLaborados = ($totalDiasMes-$value->dias_laborados);
-            
-            $descuentoDias = $valorPorJornada*$diasNoLaborados;
+            $descuentoDias = $valorPorJornada*$value->dias_laborados;
             //$descuentoDias = $valorPorJornada*$diasNoLaborados;
             $aporte = $value->sueldo_mensual * ($value->aporte/100);
             $comision = $value->sueldo_mensual * ($value->comision/100);
             $prima = $value->sueldo_mensual * ($value->prima/100);
             $seguro = $value->sueldo_mensual * ($value->seguro/100);
+            $regimen = $value->regimen_id;
 
             $descuentoTotal = $aporte+$comision+$prima+$seguro+$descuentoDias;
 
@@ -146,7 +146,7 @@ class PlanillaM extends Model
                 'persona_id' => $value->persona_id,
                 'contrato_id' => $value->contrato_id,
                 'sueldo_bruto' => $value->sueldo_mensual,
-                'sueldo_neto' => $value->sueldo_mensual-$descuentoTotal,
+                'sueldo_neto' => $pagoBruto-$descuentoTotal,
                 'aporte' => $aporte,
                 'comision' => $comision,
                 'prima' => $prima,
@@ -156,7 +156,8 @@ class PlanillaM extends Model
                 'descuento' => $descuentoTotal,
                 'total_tardanza' => number_format($value->totalTardanzas,2),
                 'dias_laborados' => $value->dias_laborados,
-                'dias_no_laborados' => $diasNoLaborados
+                'dias_no_laborados' => $diasNoLaborados,
+                'tipo_regimen' => $regimen
             ];
 
 
@@ -173,7 +174,7 @@ class PlanillaM extends Model
           if($trabajadores > 0){
 
             $planilla = new PlanillaM("p_planilla");
-            $planilla->fecha_inicial = date("Y-m-d");
+            $planilla->fecha_inicial = $fechaUtimaPlanilla;
             $planilla->fecha_final = date("Y-m-d");
             $planilla->fecha_generada  = date("Y-m-d");
             $planilla->total_trabajadores  = $trabajadores;
@@ -216,7 +217,7 @@ class PlanillaM extends Model
     public static function planillaDetalle($idPlanilla){
         return array(
           'data'=>DB::select(DB::raw("SELECT * FROM p_planilla WHERE id=$idPlanilla AND estado = 1")),
-          'detalle'=>DB::select(DB::raw("SELECT * FROM p_planilla_detalle WHERE planilla_id=$idPlanilla AND estado = 1")),
+          'detalle'=>DB::select(DB::raw("SELECT pd.*, concat(mp.nombre,' ', mp.paterno,' ', mp.materno) as persona FROM p_planilla_detalle as pd INNER JOIN m_personas as mp WHERE planilla_id=$idPlanilla AND mp.estado = 1 AND pd.estado = 1 AND mp.id = pd.persona_id")),
         );
     }
 

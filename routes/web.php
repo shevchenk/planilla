@@ -18,8 +18,15 @@ Route::get('/', function () {
 
 Route::get('/salir','SecureAccess\PersonaSA@logout');
 
+Route::get('/verPlanillaDetalle/{id}','Proceso\Planilla@verPlanillaDetalle');
+
+Route::get('/ReportDinamic/{ruta}','SecureAccess\PersonaSA@Menu');
+Route::post('/AjaxDinamic/{ruta}','SecureAccess\PersonaSA@Menu');
+
+Route::post('/marcacionRemota','Proceso\MarcacionPR@Marcacion');
+
 Route::get(
-    '/{ruta}', function ($ruta) {
+    '/{ruta}', function ($ruta) {        
         if( session()->has('dni') && session()->has('menu')
             && session()->has('opciones')
         ){
@@ -42,5 +49,4 @@ Route::get(
     }
 );
 
-Route::get('/ReportDinamic/{ruta}','SecureAccess\PersonaSA@Menu');
-Route::post('/AjaxDinamic/{ruta}','SecureAccess\PersonaSA@Menu');
+

@@ -81,46 +81,52 @@ class Planilla extends Controller{
 ?>
 
 <table width="100%" border=1>
-	<tr>
-		<th width="20%">Fecha Inicial</th>
-		<th width="20%">Fecha Final</th>
-		<th width="20%">Fecha Generado</th>
-		<th width="20%">Total Pagado</th>
-		<th width="20%">Total Aporte</th>
-		<th width="20%">Total Descuentos</th>
-	</tr>
-</table>
+    <tr>
+        <th width="20%">Fecha Inicial</th>
+        <th width="20%">Fecha Final</th>
+        <th width="20%">Fecha Generado</th>
+        <th width="20%">Total Pagado</th>
+        <th width="20%">Total Aporte</th>
+        <th width="20%">Total Descuentos</th>
+    </tr>
 
 
 <?php
 
-		$html="<tr><td>Fecha generada</td><td>Fecha inicial</td><td>Fecha final</td><td></td><td></td></tr>";
 
-echo "AS";
-
-		$html .="<table border=1>";
-
-
-
-
+		$html="";
 
 		if(count($list['detalle'])>0){
 
+            $html.="<tr><td>".$list['data'][0]->fecha_inicial."</td><td>".$list['data'][0]->fecha_final."</td><td>".$list['data'][0]->fecha_generada."</td><td>".$list['data'][0]->total_neto."</td><td>".$list['data'][0]->total_aporte."</td><td>".$list['data'][0]->total_descuentos."</td></tr>";
 
-			$html .= '<tr><th>'.implode("</th><th>", array_keys((array)$list['data'][0])).'</th></tr>';
-			$html .= '<tr><th>'.implode("</th><th>", ((array)$list['data'][0])).'</th></tr>';
+			//$html .= '<tr><th>'.implode("</th><th>", array_keys((array)$list['data'][0])).'</th></tr>';
+			//$html .= '<tr><th>'.implode("</th><th>", ((array)$list['data'][0])).'</th></tr>';
 
 
+            $html .= "</table><br><br><br><table width='100%' border=1>";
 
-			$html .= '<tr><th></th><th>v</th></tr>';
 
-			
-
-			$html .= '<tr><th>'.implode("</th><th>", array_keys((array)$list['detalle'][0])).'</th></tr>';
+            $html.='<tr>
+            <th>Persona</th>
+            <th>Sueldo Bruto</th>
+            <th>Tipo regimen</th>
+            <th>Descuento</th>
+            <th>Seguro</th>
+            <th>Aporte</th>
+            <th>Comisión</th>
+            <th>Tardanza</th>
+            <th>Prima</th>
+            <th>Días laborados</th>
+            <th>Días no laborados</th>
+            <th>Valor Día</th>
+            <th>Neto</th>
+            </tr>';
 
 			foreach ($list['detalle'] as $key => $value) {
-				$html .= '<tr><td>'.implode("</td><td>", (array)$value).'</td></tr>';
+				$html .= "<tr><td>".$value->persona."</td><td>".$value->sueldo_bruto."</td><td>".$value->tipo_regimen."</td><td>".$value->descuento."</td><td>".$value->seguro."</td><td>".$value->aporte."</td><td>".$value->comision."</td><td>".$value->total_tardanza."</td><td>".$value->prima."</td><td>".$value->dias_laborados."</td><td>".$value->dias_no_laborados."</td><td>".$value->valor_por_jornada."</td><td>".$value->sueldo_neto."</td></tr>";
 			}
+
 
 		}else{
 			$html.="<tr><td>Sin registros</td></tr>";
