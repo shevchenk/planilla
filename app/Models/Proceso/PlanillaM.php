@@ -198,20 +198,22 @@ class PlanillaM extends Model{
 
 
 
-
     }
 
     private static function ultimaPlanilla(){
 
-      $x = DB::select( DB::raw("SELECT fecha_final FROM p_planilla WHERE estado=1 ORDER BY fecha_generada DESC LIMIT 1"))[0]->fecha_final;
-      
-      return $x;
+      $x = DB::select( DB::raw("SELECT fecha_final FROM p_planilla WHERE estado=1 ORDER BY fecha_generada DESC LIMIT 1"));
 
+      if(count($x)>0){
+        return $x[0]->fecha_final;
+      }else{
+        return date("Y-m-d", strtotime("-18 years"));
+      }
     } 
 
 
     public static function listPlanillas(){
-        return DB::select(DB::raw("SELECT * FROM p_planilla WHERE estado = 1"));
+        return DB::select(DB::raw("SELECT * FROM p_planilla as p WHERE p.estado=1"));
     }
 
     public static function planillaDetalle($idPlanilla){
