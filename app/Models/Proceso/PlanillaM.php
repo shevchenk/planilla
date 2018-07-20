@@ -128,7 +128,7 @@ class PlanillaM extends Model{
             //$valorPorJornada = $value->sueldo_mensual / $totalDiasMes;
             $valorPorJornada = $value->sueldo_mensual / 30;
 
-            $pagoBruto = $value->rangoDias*$valorPorJornada;
+            $pagoBruto = $rangoDias*$valorPorJornada;
 
             $diasNoLaborados = ($totalDiasMes-$value->dias_laborados);
             $descuentoDias = $valorPorJornada*$value->dias_laborados;
