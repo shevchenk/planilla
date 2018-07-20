@@ -203,7 +203,7 @@ class PlanillaM extends Model{
 
     private static function ultimaPlanilla(){
 
-      $x = DB::select( DB::raw("SELECT fecha_final FROM p_planilla ORDER BY fecha_generada DESC LIMIT 1"))[0]->fecha_final;
+      $x = DB::select( DB::raw("SELECT fecha_final FROM p_planilla WHERE estado=1 ORDER BY fecha_generada DESC LIMIT 1"))[0]->fecha_final;
       
       return $x;
 
