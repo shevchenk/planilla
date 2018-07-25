@@ -71,6 +71,8 @@ class PlanillaM extends Model{
           PC.sueldo_produccion  
       ";
 
+      die($sql);
+
       $data = DB::select( DB::raw($sql));
 
       $cr = PlanillaM::crearPlanilla($data);
@@ -107,36 +109,43 @@ class PlanillaM extends Model{
           7=>0  //DOMINGO
         );
 
-        $fechaUtimaPlanillaAux=$fechaUtimaPlanilla;
+        $fechaIt=$fechaUtimaPlanilla;
 
-        while(strtotime($fechaUtimaPlanillaAux) <= strtotime($end)){
-            $day_num = date('d', strtotime($fechaUtimaPlanillaAux));
-            $fechaUtimaPlanillaAux = date("Y-m-d", strtotime("+1 day", strtotime($fechaUtimaPlanillaAux)));
+        while(strtotime($fechaIt) <= strtotime($end)){
+            $day_num = date('d', strtotime($fechaIt));
+            $fechaIt = date("Y-m-d", strtotime("+1 day", strtotime($fechaIt)));
             $rangoDias++;
-            $diasEnElMes[date("N", strtotime($fechaUtimaPlanillaAux))]++;
+            $diasEnElMes[date("N", strtotime($fechaIt))]++;
         }
 
         foreach ($data as $key => $value) {
 
-            $dh = explode(",",$value->dias_en_horario);
+            $diasHorario = explode(",",$value->dias_en_horario);
             $totalDiasMes=0;
 
-            foreach ($dh as $da) {
-                $totalDiasMes+=$diasEnElMes[$da];
+            foreach ($diasHorario as $diaNum) {
+                $totalDiasMes+=$diasEnElMes[$diaNum];
             }
 
-            //$valorPorJornada = $value->sueldo_mensual / $totalDiasMes;
-            $valorPorJornada = $value->sueldo_mensual / 30;
+            $sueldo =0;
+
+            if($tipo_contrato == 1){
+              $sueldo =$value->sueldo_produccion;
+              $valorPorJornada = $sueldo / $totalDiasMes;
+            }else{
+              $sueldo = $value->sueldo_mensual;
+              $valorPorJornada = $sueldo / 30;
+            }
 
             $pagoBruto = $rangoDias*$valorPorJornada;
 
             $diasNoLaborados = ($totalDiasMes-$value->dias_laborados);
-            $descuentoDias = $valorPorJornada*$value->dias_laborados;
-            //$descuentoDias = $valorPorJornada*$diasNoLaborados;
-            $aporte = $value->sueldo_mensual * ($value->aporte/100);
-            $comision = $value->sueldo_mensual * ($value->comision/100);
-            $prima = $value->sueldo_mensual * ($value->prima/100);
-            $seguro = $value->sueldo_mensual * ($value->seguro/100);
+            //$descuentoDias = $valorPorJornada*$value->dias_laborados;
+            $descuentoDias = $valorPorJornada*$diasNoLaborados;
+            $aporte = $sueldo * ($value->aporte/100);
+            $comision = $sueldo * ($value->comision/100);
+            $prima = $sueldo * ($value->prima/100);
+            $seguro = $sueldo * ($value->seguro/100);
             $regimen = $value->regimen_id;
 
             $descuentoTotal = $aporte+$comision+$prima+$seguro+$descuentoDias;
@@ -145,7 +154,7 @@ class PlanillaM extends Model{
                 'planilla_id'=>0,
                 'persona_id' => $value->persona_id,
                 'contrato_id' => $value->contrato_id,
-                'sueldo_bruto' => $value->sueldo_mensual,
+                'sueldo_bruto' => $sueldo,
                 'sueldo_neto' => $pagoBruto-$descuentoTotal,
                 'aporte' => $aporte,
                 'comision' => $comision,
@@ -163,8 +172,8 @@ class PlanillaM extends Model{
 
             if($value->dias_laborados > 0){
               $iData[] = $iDataTmp;               
-              $totalBruto += $value->sueldo_mensual;
-              $totalNeto += $value->sueldo_mensual-$descuentoTotal;
+              $totalBruto += $sueldo;
+              $totalNeto += $sueldo-$descuentoTotal;
               $descuentos += $descuentoTotal;
               $totalAporte += $aporte;
               $trabajadores++;
