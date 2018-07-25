@@ -50,7 +50,7 @@ if(!$conexion = mysqli_connect(MySQL_S, MySQL_U, MySQL_P)) {
 
 $conexion->select_db(MySQL_DB);
 
-$qry = "SELECT * FROM `REG_SEDE_LINCE` WHERE estado = 0 LIMIT 1";
+$qry = "SELECT * FROM `REG_SEDE_LINCE` WHERE estado = 0";
 
 $marcaciones = getData($qry,$conexion,true);
 
