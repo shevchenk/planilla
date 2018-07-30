@@ -124,4 +124,41 @@ class PersonaContratoPR extends Controller
             return response()->json($return);
         }
     }
+    
+        public function LoadBoleta (Request $r )
+    {
+        if ( $r->ajax() ) {
+            $renturnModel = PersonaContrato::runLoadBoleta($r);
+            $return['rst'] = 1;
+            $return['data'] = $renturnModel;
+            $return['msj'] = "No hay registros aún";
+            return response()->json($return);
+        }
+    }
+    
+    public function GenerarPDF(Request $r) {
+
+        $renturnModel = PersonaContrato::runLoadBoletaFind($r);
+//        $HeadBallotPdf=Balotario::runHeadBallotPdf($r);
+        var_dump($renturnModel);exit();
+        $preguntas = array();
+        foreach ($renturnModel as $data) {
+        $pregunta = $data->pregunta.'|'.$data->imagen;
+            if (isset($preguntas[$pregunta])) {
+                $preguntas[$pregunta][] = $data;
+            } else {
+                $preguntas[$pregunta] = array($data);
+            }
+        }
+        
+        $data = ['preguntas' => $preguntas,'head'=>$HeadBallotPdf];
+
+	$pdf = PDF::Make();
+        $pdf->SetHeader('TELESUP|Balotario de Preguntas|{PAGENO}');
+        $pdf->SetFooter('TELESUP');
+
+	$pdf->loadView('mantenimiento.plantilla.plantillapdf', $data);
+	return $pdf->Stream('document.pdf');
+
+    }
 }
