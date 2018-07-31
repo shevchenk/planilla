@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Proceso\PersonaContrato;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use PDF;
 
 class PersonaContratoPR extends Controller
 {
@@ -140,24 +141,14 @@ class PersonaContratoPR extends Controller
 
         $renturnModel = PersonaContrato::runLoadBoletaFind($r);
 //        $HeadBallotPdf=Balotario::runHeadBallotPdf($r);
-        var_dump($renturnModel);exit();
-        $preguntas = array();
-        foreach ($renturnModel as $data) {
-        $pregunta = $data->pregunta.'|'.$data->imagen;
-            if (isset($preguntas[$pregunta])) {
-                $preguntas[$pregunta][] = $data;
-            } else {
-                $preguntas[$pregunta] = array($data);
-            }
-        }
         
-        $data = ['preguntas' => $preguntas,'head'=>$HeadBallotPdf];
+        $data = ['boletas' => $renturnModel];
 
 	$pdf = PDF::Make();
-        $pdf->SetHeader('TELESUP|Balotario de Preguntas|{PAGENO}');
+        $pdf->SetHeader('TELESUP|Boletas|{PAGENO}');
         $pdf->SetFooter('TELESUP');
 
-	$pdf->loadView('mantenimiento.plantilla.plantillapdf', $data);
+	$pdf->loadView('mantenimiento.plantilla.boletapdf', $data);
 	return $pdf->Stream('document.pdf');
 
     }
