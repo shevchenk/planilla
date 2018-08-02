@@ -5,6 +5,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Input;
+use App\Models\Mantenimiento\Consorcio;
+
 use DB;
 
 class PlanillaM extends Model{
@@ -15,10 +17,9 @@ class PlanillaM extends Model{
         if($x!='')$this->table=$x;
     }
 
-    public static function infoPlanilla(){
+    public static function infoPlanilla($consorcio,$fecha){
 
-
-      $ultimaPlanilla = PlanillaM::ultimaPlanilla();
+      $ultimaPlanilla = PlanillaM::ultimaPlanilla($consorcio,$fecha);
 
       $sql = "
         SELECT 
@@ -52,6 +53,7 @@ class PlanillaM extends Model{
           AND PA.fecha_ingreso between DATE('$ultimaPlanilla') AND DATE(NOW())
         WHERE 
           PC.estado_contrato = 1 
+          AND PC.consorcio_id = $consorcio
           AND PC.estado = 1
         GROUP BY PC.persona_id,PC.id ,
           P.nombre,
@@ -71,11 +73,9 @@ class PlanillaM extends Model{
           PC.sueldo_produccion  
       ";
 
-      die($sql);
-
       $data = DB::select( DB::raw($sql));
 
-      $cr = PlanillaM::crearPlanilla($data);
+      $cr = PlanillaM::crearPlanilla($data,$consorcio,$fecha);
 
       return $cr;
 
@@ -83,7 +83,7 @@ class PlanillaM extends Model{
 
 
 
-    private static function crearPlanilla($data){
+    private static function crearPlanilla($data,$consorcio,$fecha){
         
         $iData=array();
         $totalBruto =0;
@@ -93,7 +93,7 @@ class PlanillaM extends Model{
         $descuentos = 0;
 
 
-        $fechaUtimaPlanilla = PlanillaM::ultimaPlanilla();
+        $fechaUtimaPlanilla = PlanillaM::ultimaPlanilla($consorcio,$fecha);
         $fecha_inicio = date("Y-m-d");
         
         $end = date('D-y-m');
@@ -129,32 +129,36 @@ class PlanillaM extends Model{
 
             $sueldo =0;
 
-            if($tipo_contrato == 1){
+            if($value->tipo_contrato == 1){
               $sueldo =$value->sueldo_produccion;
               $valorPorJornada = $sueldo / $totalDiasMes;
+              $pagoBruto = $totalDiasMes*$valorPorJornada;
             }else{
               $sueldo = $value->sueldo_mensual;
               $valorPorJornada = $sueldo / 30;
+              $pagoBruto = $rangoDias*$valorPorJornada;
             }
 
-            $pagoBruto = $rangoDias*$valorPorJornada;
 
             $diasNoLaborados = ($totalDiasMes-$value->dias_laborados);
+
             //$descuentoDias = $valorPorJornada*$value->dias_laborados;
+            
             $descuentoDias = $valorPorJornada*$diasNoLaborados;
-            $aporte = $sueldo * ($value->aporte/100);
-            $comision = $sueldo * ($value->comision/100);
-            $prima = $sueldo * ($value->prima/100);
-            $seguro = $sueldo * ($value->seguro/100);
+
+            $aporte = $pagoBruto * ($value->aporte/100);
+            $comision = $pagoBruto * ($value->comision/100);
+            $prima = $pagoBruto * ($value->prima/100);
+            $seguro = $pagoBruto * ($value->seguro/100);
             $regimen = $value->regimen_id;
 
-            $descuentoTotal = $aporte+$comision+$prima+$seguro+$descuentoDias;
+            $descuentoTotal = $comision+$prima+$seguro+$descuentoDias;
 
             $iDataTmp = (object) [
                 'planilla_id'=>0,
                 'persona_id' => $value->persona_id,
                 'contrato_id' => $value->contrato_id,
-                'sueldo_bruto' => $sueldo,
+                'sueldo_bruto' => $pagoBruto,
                 'sueldo_neto' => $pagoBruto-$descuentoTotal,
                 'aporte' => $aporte,
                 'comision' => $comision,
@@ -162,18 +166,18 @@ class PlanillaM extends Model{
                 'seguro' => $seguro,
                 'valor_por_jornada' => $valorPorJornada,
                 'estado' => 1,
-                'descuento' => $descuentoTotal,
+                'descuento' => $descuentoDias,
                 'total_tardanza' => number_format($value->totalTardanzas,2),
                 'dias_laborados' => $value->dias_laborados,
                 'dias_no_laborados' => $diasNoLaborados,
-                'tipo_regimen' => $regimen
+                'tipo_regimen' => $value->tipo_contrato
             ];
 
 
             if($value->dias_laborados > 0){
               $iData[] = $iDataTmp;               
-              $totalBruto += $sueldo;
-              $totalNeto += $sueldo-$descuentoTotal;
+              $totalBruto += $pagoBruto;
+              $totalNeto += $pagoBruto-$descuentoTotal;
               $descuentos += $descuentoTotal;
               $totalAporte += $aporte;
               $trabajadores++;
@@ -192,9 +196,13 @@ class PlanillaM extends Model{
             $planilla->total_neto  = $totalNeto;
             $planilla->total_descuentos  = $descuentos;
             $planilla->estado  = 1;
-            $planilla->generado_por  = Auth::user()->id;
+            $planilla->consorcio_id = $consorcio;
+            $planilla->generado_por = Auth::user()->id;
             $planilla->save();
 
+            $actConsorcio = Consorcio::find($consorcio);
+            $actConsorcio->fecha_ultima_planilla = date("Y-m-d");
+            $actConsorcio->save();
 
             foreach ($iData as $key => $value) {
               $value->planilla_id = $planilla->id;
@@ -205,24 +213,30 @@ class PlanillaM extends Model{
             return false;
           }
 
-
-
     }
 
-    private static function ultimaPlanilla(){
+    private static function ultimaPlanilla($consorcio,$fecha){
 
-      $x = DB::select( DB::raw("SELECT fecha_final FROM p_planilla WHERE estado=1 ORDER BY fecha_generada DESC LIMIT 1"));
-
-      if(count($x)>0){
-        return $x[0]->fecha_final;
+      $x = DB::select( DB::raw("SELECT fecha_ultima_planilla FROM planilla.m_consorcios WHERE estado = 1 AND id = '$consorcio';"));
+      
+      if(count($x)>0 && $x[0]->fecha_ultima_planilla != null){
+        return $x[0]->fecha_ultima_planilla;
       }else{
-        return date("Y-m-")."01";
+        return $fecha;
       }
     } 
 
+    public static function listPlanillas($filters){
+        $auxQry="";
+        if(is_array($filters))foreach ($filters as $k => $v) {
+          $auxQry .= 'AND '.$k.'=\''.$v.'\' ';
+        }
 
-    public static function listPlanillas(){
-        return DB::select(DB::raw("SELECT * FROM p_planilla as p WHERE p.estado=1"));
+        return DB::select(DB::raw("SELECT p.*,c.consorcio,c.ruc FROM p_planilla as p INNER JOIN m_consorcios as c ON c.id = p.consorcio_id WHERE p.estado=1 $auxQry"));
+    }
+
+    public static function listConsorcios(){
+        return DB::select(DB::raw("SELECT `id`, `consorcio`, `consorcio_apocope`, `logo`, `ruc`, `fecha_ultima_planilla` FROM m_consorcios as p WHERE p.estado=1"));
     }
 
     public static function planillaDetalle($idPlanilla){

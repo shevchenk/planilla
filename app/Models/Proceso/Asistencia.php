@@ -551,7 +551,6 @@ Class Casuistica{
 
 
 
-
             if(count($hpAux)>0)unset($hpAux);
 
 
