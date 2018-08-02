@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Proceso\PersonaContrato;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
+use PDF;
 
 class PersonaContratoPR extends Controller
 {
@@ -123,5 +124,32 @@ class PersonaContratoPR extends Controller
             $return['msj'] = "No hay registros aún";
             return response()->json($return);
         }
+    }
+    
+        public function LoadBoleta (Request $r )
+    {
+        if ( $r->ajax() ) {
+            $renturnModel = PersonaContrato::runLoadBoleta($r);
+            $return['rst'] = 1;
+            $return['data'] = $renturnModel;
+            $return['msj'] = "No hay registros aún";
+            return response()->json($return);
+        }
+    }
+    
+    public function GenerarPDF(Request $r) {
+
+        $renturnModel = PersonaContrato::runLoadBoletaFind($r);
+//        $HeadBallotPdf=Balotario::runHeadBallotPdf($r);
+        
+        $data = ['boletas' => $renturnModel];
+
+	$pdf = PDF::Make();
+        $pdf->SetHeader('TELESUP|Boletas|{PAGENO}');
+        $pdf->SetFooter('TELESUP');
+
+	$pdf->loadView('mantenimiento.plantilla.boletapdf', $data);
+	return $pdf->Stream('document.pdf');
+
     }
 }

@@ -139,7 +139,7 @@ class PersonaContrato extends Model
     
     public static function runLoadPersonaContrato($r){
         
-        $sql= PersonaContrato::select('p_personas_contratos.id','mp.paterno','mp.materno','mp.nombre','mp.dni','mp.estado')
+        $sql= PersonaContrato::select('p_personas_contratos.id','mp.paterno','mp.materno','mp.nombre','mp.dni','mp.estado','mp.id as persona_id')
             ->join("m_personas as mp","p_personas_contratos.persona_id","=","mp.id")
             ->where(
                 function($query) use ($r){
@@ -241,5 +241,72 @@ class PersonaContrato extends Model
         return $r;
     }
     
-
+    public static function runLoadBoleta($r){
+        $sql= DB::table("p_planilla_detalle as ppd")
+            ->select('ppd.*')
+//            ->join("m_personas as mp","p_personas_contratos.persona_id","=","mp.id")
+            ->where(
+                function($query) use ($r){
+                    if( $r->has("persona_id") ){
+                        $persona_id=trim($r->persona_id);
+                        if( $persona_id !='' ){
+                            $query->where('ppd.persona_id','=',$persona_id);
+                        }
+                    }
+                    if( $r->has("id") ){
+                        $id=trim($r->id);
+                        if( $id !='' ){
+                            $query->where('ppd.id','=',$id);
+                        }
+                    }
+                    if( $r->has("sueldo_bruto") ){
+                        $sueldo_bruto=trim($r->sueldo_bruto);
+                        if( $sueldo_bruto !='' ){
+                            $query->where('ppd.sueldo_bruto','like','%'.$sueldo_bruto.'%');
+                        }
+                    }
+                    if( $r->has("sueldo_neto") ){
+                        $sueldo_neto=trim($r->sueldo_neto);
+                        if( $sueldo_neto !='' ){
+                            $query->where('ppd.sueldo_neto','like','%'.$sueldo_neto.'%');
+                        }
+                    }
+                    if( $r->has("descuento") ){
+                        $descuento=trim($r->descuento);
+                        if( $descuento !='' ){
+                            $query->where('ppd.descuento','like','%'.$descuento.'%');
+                        }
+                    }
+                }
+            );
+        $result = $sql->orderBy('ppd.id','asc')->paginate(10);
+        return $result;
+        
+    }
+    
+    public static function runLoadBoletaFind($r){
+        $sql= DB::table("p_planilla_detalle as ppd")
+            ->select('ppd.*','mp.dni',DB::raw("CONCAT_WS(' ',mp.paterno,mp.materno,mp.nombre) as colaborador"))
+            ->join("m_personas as mp","ppd.persona_id","=","mp.id")
+            ->where(
+                function($query) use ($r){
+                    if( $r->has("persona_id") ){
+                        $persona_id=trim($r->persona_id);
+                        if( $persona_id !='' ){
+                            $query->where('ppd.persona_id','=',$persona_id);
+                        }
+                    }
+                    if( $r->has("id") ){
+                        $id=trim($r->id);
+                        if( $id !='' ){
+                            $query->where('ppd.id','=',$id);
+                        }
+                    }
+                }
+            );
+        $result = $sql->orderBy('ppd.id','asc')->get();
+        return $result;
+        
+    }
+    
 }
