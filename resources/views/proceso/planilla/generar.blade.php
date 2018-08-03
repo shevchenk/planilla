@@ -6,6 +6,10 @@
     {{ Html::style('css/multi-select.css') }}
 
 
+    {{ Html::style('lib/bootstrap-datetimepicker/css/bootstrap-datetimepicker.min.css') }}
+    {{ Html::script('lib/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js') }}
+    {{ Html::script('lib/bootstrap-datetimepicker/js/locales/bootstrap-datetimepicker.es.js') }}
+
     {{ Html::script('js/jquery.multi-select.js') }}
 @stop
 
@@ -30,10 +34,44 @@
                 </div>
 
                 <div class="box-body with-border">
+                	<div class="row" align="center">
+                		<div class="col-md-3">
+	                		<b>Consorcio</b>
+	                	</div>
+	                	<div class="col-md-4">
+		                	<div class="col-md-6">
+		                		<b>Fecha Inicial</b>
+		                	</div>
+		                	<div class="col-md-6">
+		                		<b>Fecha Final</b>
+		                	</div>
+	                	</div>
+                	</div>
+
+                	<div class="row">
+                		<div class="col-md-3">
+	                		<select class="form-control" id="fconsorcio">
+		                	</select>
+	                	</div>
+	                	<div class="col-md-4">
+		                	<div class="col-md-6">
+		                		<input type="text" id="ffecha_ini" class="form-control fecha" placeholder="Año-Mes-Día">
+		                	</div>
+		                	<div class="col-md-6">
+		                		<input type="text" id="ffecha_fin" class="form-control fecha" placeholder="Año-Mes-Día">
+		                	</div>
+	                	</div>
+
+		                	<div class="col-md-2">
+		                		<button class="btn btn-success">Filtrar</button>
+		                	</div>
+                	</div>
+<div class="row">&nbsp;</div>
                 	<table class="table table-hover table-stripped">
                 		<thead>
                 			<tr>
                 				<th>ID</th>
+                				<th>Consorcio</th>
                 				<th>Fecha</th>
                 				<th>Trabajadores</th>
                 				<th>Total Neto</th>
@@ -64,7 +102,25 @@
 <br>
 
 <div class="form-group">
-	<button onClick="generarPlanilla();">Generar Planilla</button>
+	<p>Seleccione consorcio.</p>
+	<div class="col-md-6">
+		<select id="gconsorcio" class="form-control" onchange="loadFecha(this.value);">
+			<option value=""> - Consorcios - </option>	
+		</select>
+	</div>
+	
+	<div class="col-md-2">
+		<input type="text" id="gfecha" class="form-control fecha" placeholder="Año-Mes-Día">
+	</div>
+
+
+	<div class="col-md-12">&nbsp;</div>
+	<div class="col-md-12">
+		<div align="center">
+			<button onClick="generarPlanilla();" class="btn btn-success">Generar Planilla</button>
+		</div>
+	</div>
+
 	<br>
 
 	<span id="result"></span>
@@ -75,10 +131,31 @@
 
 <script type="text/javascript">
 	
-	function generarPlanilla(){
-		console.log("generar planilla");
+	var consorcios = [];
 
-		$.post("AjaxDinamic/Proceso.Planilla@generar",function(data){
+	function cargarConsorcios(){
+		$.post("AjaxDinamic/Proceso.Planilla@verConsorcios",function(data){
+			
+			var xhtml = "<option value=\"\"> - Seleccione consorcio - </option>";
+			var xhtml2 = "<option value=\"\"> - Seleccione consorcio - </option>";
+
+
+			for (var i = data.length - 1; i >= 0; i--){
+				var fech = data[i].fecha_ultima_planilla == null ? 'Nuevo' : data[i].fecha_ultima_planilla;
+				consorcios[data[i].id] = data[i].fecha_ultima_planilla;
+				xhtml = xhtml+"<option value="+data[i].id+">"+data[i].consorcio+" - "+fech+"</option>";
+				xhtml2 = xhtml2+"<option value="+data[i].id+">"+data[i].consorcio+"</option>";
+			}			
+
+			$("#gconsorcio").html(xhtml);
+			$("#fconsorcio").html(xhtml2);
+		});
+	}
+
+
+	function generarPlanilla(){
+
+		$.post("AjaxDinamic/Proceso.Planilla@generar",{consorcio:$("#gconsorcio").val(),fecha:$("#gfecha").val()},function(data){
 			
 			$("#result").html(data);
 			cargarPlanillas();
@@ -92,12 +169,13 @@
 		return false;
 	}
 
+	function cargarPlanillas(filtrar=0){
+		var params = {};
+		if(filtrar=!0){
+			var params = {ffecha_ini:$("#ffecha_ini").val(),ffecha_fin:$("#ffecha_fin").val(),fconsorcio:$("#fconsorcio").val()}
+		}
 
-
-
-	function cargarPlanillas(){
-
-		$.post("AjaxDinamic/Proceso.Planilla@verPlanillas",function(data){
+		$.post("AjaxDinamic/Proceso.Planilla@verPlanillas",params,function(data){
 			var mTr = "";
 			var totalBruto = 0;
 			var totalAporte = 0;
@@ -113,6 +191,7 @@
 
 				mTr = mTr + "<tr>";
 				mTr = mTr + "	<td>"+data[i].id+"</td>";
+				mTr = mTr + "	<td>"+data[i].consorcio+"</td>";
 				mTr = mTr + "	<td>"+data[i].fecha_generada+"</td>";
 				mTr = mTr + "	<td>"+data[i].total_trabajadores+"</td>";
 				mTr = mTr + "	<td>S./ "+totalNeto+"</td>";
@@ -129,8 +208,38 @@
 		});
 	}
 
-	cargarPlanillas();
+	function filtrar(){
 
+	}
+
+	function loadFecha(val){
+		var currentDate = new Date();
+		var day = currentDate.getDate();
+		var month = currentDate.getMonth() + 1;
+		var year = currentDate.getFullYear();
+		console.log(consorcios[val]);
+		$('#gfecha').val(consorcios[val] == null || consorcios[val] == 'undefined' ? year+'-'+pad(month,2)+'-'+pad(day,2) : consorcios[val]);
+	}
+
+	function pad(n, width, z) {
+	  z = z || '0';
+	  n = n + '';
+	  return n.length >= width ? n : new Array(width - n.length + 1).join(z) + n;
+	}
+
+
+	cargarPlanillas();
+	cargarConsorcios();
+
+    $(".fecha").datetimepicker({
+        format: "yyyy-mm-dd",
+        language: 'es',
+        showMeridian: true,
+        time:true,
+        minView:2,
+        autoclose: true,
+        todayBtn: false
+    });
 
 </script>
 

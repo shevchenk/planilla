@@ -5,7 +5,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Controllers\Api\Api;
 use App\Models\Proceso\PlanillaM;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Auth; 
 use DB;
 
 class Planilla extends Controller{
@@ -23,11 +23,12 @@ class Planilla extends Controller{
 
             $idcliente = session('idcliente');
 
-            $param_data = array('programacion_unica_id' => $r->programacion_unica_id);
+            if(!isset($r->consorcio)){
+                die("Petición invalida.");
+            }
 
-
-            $x = PlanillaM::infoPlanilla();
-
+            $x = PlanillaM::infoPlanilla($r->consorcio,$r->fecha);
+                
             $return['rst'] = 1;
             $return['data'] = ( $x ? array('result'=>1) : array('result'=>0) );
             $return['msj'] = ( $x ? 'Planilla generada correctamente' : 'No se ha generado la planilla.' );
@@ -40,23 +41,45 @@ class Planilla extends Controller{
     public function verPlanillas(Request $r ){
         if ( $r->ajax() ) {
             $idcliente = session('idcliente');
-            $list = PlanillaM::listPlanillas();
 
-    		$months = array('01' => 'Enero','02' => 'Febrero','03' => 'Marzo','04' => 'Abril','05' => 'Mayo','06' => 'Junio','07' => 'Julio','08' => 'Agosto','09' => 'Septiembre','10' => 'Octubre','11' => 'Noviembre','12' => 'Diciembre');
+            $filters = array();
 
-            	function nxFormat($str){$x=explode(",",$str);return $x[0].'</b>,<small>'.$x[1].'</small>';}
+            if(isset($r->consorcio) && $r->consorcio=!'' && $r->consorcio=!'0')
+                $filters['c.consorcio'] = $r->consorcio;
+            if(isset($r->ffecha_ini) && $r->ffecha_ini=!'' && $r->ffecha_ini=!'0')
+                $filters['p.fini'] = $r->ffecha_ini;
+            if(isset($r->ffecha_fin) && $r->ffecha_fin=!'' && $r->ffecha_fin=!'0')
+                $filters['p.ffin'] = $r->ffecha_fin;
+
+            $list = PlanillaM::listPlanillas($filters);
+
+            $months = array('01' => 'Enero','02' => 'Febrero','03' => 'Marzo','04' => 'Abril','05' => 'Mayo','06' => 'Junio','07' => 'Julio','08' => 'Agosto','09' => 'Septiembre','10' => 'Octubre','11' => 'Noviembre','12' => 'Diciembre');
+
+                function nxFormat($str){$x=explode(",",$str);return $x[0].'</b>,<small>'.$x[1].'</small>';}
+
             foreach ($list as $key => $value) {
-    			$date = explode('-',date("Y-m-d",strtotime($value->fecha_generada)));
-            	$list[$key]->fecha_generada = $date[2].' de '.$months[$date[1]].' de '.$date[0];
-
-
-            	$list[$key]->total_neto = nxFormat(number_format($list[$key]->total_neto,2,',','.'));
-            	$list[$key]->total_descuentos = nxFormat(number_format($list[$key]->total_descuentos,2,',','.'));
-
+                $date = explode('-',date("Y-m-d",strtotime($value->fecha_generada)));
+                $list[$key]->fecha_generada = $date[2].' de '.$months[$date[1]].' de '.$date[0];
+                $list[$key]->total_neto = nxFormat(number_format($list[$key]->total_neto,2,',','.'));
+                $list[$key]->total_descuentos = nxFormat(number_format($list[$key]->total_descuentos,2,',','.'));
             }
+
+            return response()->json($list);
+
+        }
+    }
+
+    public function verConsorcios(Request $r ){
+        if ( $r->ajax() ) {
+            $idcliente = session('idcliente');
+            $list = PlanillaM::listConsorcios();
+
+            $months = array('01' => 'Enero','02' => 'Febrero','03' => 'Marzo','04' => 'Abril','05' => 'Mayo','06' => 'Junio','07' => 'Julio','08' => 'Agosto','09' => 'Septiembre','10' => 'Octubre','11' => 'Noviembre','12' => 'Diciembre');  
+
             return response()->json($list);
         }
     }
+
 
 
     public function verPlanillaDetalle(Request $r, $idPlanilla){
