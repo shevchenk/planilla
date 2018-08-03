@@ -12,11 +12,12 @@ $(document).ready(function() {
     });
       
     $(".fecha").datetimepicker({
-        format: "yyyy-mm-dd",
+        format: "yyyy-mm",
         language: 'es',
         showMeridian: true,
         time:true,
-        minView:2,
+        minView:3,
+        startView:3,
         autoclose: true,
         todayBtn: false
     });

@@ -244,7 +244,7 @@ class PersonaContrato extends Model
     public static function runLoadBoleta($r){
         $sql= DB::table("p_planilla_detalle as ppd")
             ->select('ppd.*')
-//            ->join("m_personas as mp","p_personas_contratos.persona_id","=","mp.id")
+            ->join("p_planilla as pp","pp.id","=","ppd.planilla_id")
             ->where(
                 function($query) use ($r){
                     if( $r->has("persona_id") ){
@@ -253,10 +253,11 @@ class PersonaContrato extends Model
                             $query->where('ppd.persona_id','=',$persona_id);
                         }
                     }
-                    if( $r->has("id") ){
-                        $id=trim($r->id);
-                        if( $id !='' ){
-                            $query->where('ppd.id','=',$id);
+                    if( $r->has("fecha_inicio") AND $r->has("fecha_final") ){
+                        $fecha_inicio=trim($r->fecha_inicio);
+                        $fecha_final=trim($r->fecha_final);
+                        if( $fecha_inicio !='' AND  $fecha_final!=''){
+                            $query->whereRaw(" DATE_FORMAT(pp.fecha_generada,'%Y-%m') BETWEEN '$fecha_inicio' AND '$fecha_final'");
                         }
                     }
                     if( $r->has("sueldo_bruto") ){

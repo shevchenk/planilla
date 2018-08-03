@@ -48,6 +48,20 @@
                             <div class="panel panel-primary">
                                 <div class="panel-heading"><center>Buscar Boletas de Persona</center></div>
                                 <div class="panel-body">
+                                    <div class="col-sm-2">
+                                        <label class="control-label">Fecha Inicio</label>
+                                        <div class="input-group">
+                                            <span id="spn_fecha_ini" class="input-group-addon" style="cursor: pointer;"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></span>
+                                            <input type="text" class="form-control fecha"  id="txt_fecha_inicio" name="txt_fecha_inicio" readonly/>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-2">
+                                        <label class="control-label">Fecha Final</label>
+                                        <div class="input-group">
+                                            <span id="spn_fecha_fin" class="input-group-addon" style="cursor: pointer;"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span></span>
+                                            <input type="text" class="form-control fecha"  id="txt_fecha_final" name="txt_fecha_final" readonly/>
+                                        </div>
+                                    </div>
                                     <div class="col-md-4">
                                         <div class="form-group">
                                             <label>Nombre Completo</label>
@@ -64,7 +78,7 @@
                                             </span>
                                         </div> 
                                     </div>
-                                    <div class="col-md-6">
+                                    <div class="col-md-2">
                                         <div class="form-group">
                                             <label>&nbsp;&nbsp;&nbsp;</label>
                                             <a class="btn btn-white pull-right" onclick="VerBoleta(0)"><i class="fa fa-search fa-lg"></i>Ver Todas las Boletas</a>
@@ -115,9 +129,9 @@
                                                 </tr>
                                             </tfoot>
                                         </table>
-<!--                                        <div class='btn btn-primary btn-sm' class="btn btn-primary" onClick="AgregarEditar(1)" style="display: none" id="btn_nuevo">
-                                            <i class="fa fa-plus fa-lg"></i>&nbsp;Nuevo</a>
-                                        </div>-->
+                                        <!--                                        <div class='btn btn-primary btn-sm' class="btn btn-primary" onClick="AgregarEditar(1)" style="display: none" id="btn_nuevo">
+                                                                                    <i class="fa fa-plus fa-lg"></i>&nbsp;Nuevo</a>
+                                                                                </div>-->
                                     </div><!-- .col -->
                                 </div>
                             </div>
