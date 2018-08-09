@@ -41,17 +41,17 @@ class Planilla extends Controller{
     public function verPlanillas(Request $r ){
         if ( $r->ajax() ) {
             $idcliente = session('idcliente');
+            $mfilt = array();
 
-            $filters = array();
+            if(isset($r->fconsorcio) && $r->fconsorcio!='' && $r->fconsorcio!='0'){
+                $mfilt['consorcio'] = $r->fconsorcio;
+            }
+            if(isset($r->ffecha_ini) && $r->ffecha_ini!='' && $r->ffecha_ini!='0'){                
+                $mfilt['fini'] = $r->ffecha_ini;
+                $mfilt['ffin'] = $r->ffecha_fin;
+            }
 
-            if(isset($r->consorcio) && $r->consorcio=!'' && $r->consorcio=!'0')
-                $filters['c.consorcio'] = $r->consorcio;
-            if(isset($r->ffecha_ini) && $r->ffecha_ini=!'' && $r->ffecha_ini=!'0')
-                $filters['p.fini'] = $r->ffecha_ini;
-            if(isset($r->ffecha_fin) && $r->ffecha_fin=!'' && $r->ffecha_fin=!'0')
-                $filters['p.ffin'] = $r->ffecha_fin;
-
-            $list = PlanillaM::listPlanillas($filters);
+            $list = PlanillaM::listPlanillas($mfilt);
 
             $months = array('01' => 'Enero','02' => 'Febrero','03' => 'Marzo','04' => 'Abril','05' => 'Mayo','06' => 'Junio','07' => 'Julio','08' => 'Agosto','09' => 'Septiembre','10' => 'Octubre','11' => 'Noviembre','12' => 'Diciembre');
 

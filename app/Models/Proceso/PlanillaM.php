@@ -227,12 +227,19 @@ class PlanillaM extends Model{
     } 
 
     public static function listPlanillas($filters){
-        $auxQry="";
-        if(is_array($filters))foreach ($filters as $k => $v) {
-          $auxQry .= 'AND '.$k.'=\''.$v.'\' ';
-        }
 
-        return DB::select(DB::raw("SELECT p.*,c.consorcio,c.ruc FROM p_planilla as p INNER JOIN m_consorcios as c ON c.id = p.consorcio_id WHERE p.estado=1 $auxQry"));
+      if(isset($filters['consorcio']) && isset($filters['fini']) && isset($filters['ffin']))
+        $auxQry=" AND c.id = '".$filters['consorcio']."' AND p.fecha_generada BETWEEN DATE('".$filters['fini']."') AND DATE('".$filters['ffin']."')";
+      else
+        $auxQry ="";
+
+
+      $qry = "SELECT p.*,c.consorcio,c.ruc FROM p_planilla as p INNER JOIN m_consorcios as c ON c.id = p.consorcio_id WHERE p.estado=1 $auxQry";
+
+     // echo $qry;
+
+
+        return DB::select(DB::raw($qry));
     }
 
     public static function listConsorcios(){

@@ -63,7 +63,7 @@
 	                	</div>
 
 		                	<div class="col-md-2">
-		                		<button class="btn btn-success">Filtrar</button>
+		                		<button class="btn btn-success" onClick="cargarPlanillas(1);">Filtrar</button>
 		                	</div>
                 	</div>
 <div class="row">&nbsp;</div>
@@ -158,7 +158,7 @@
 		$.post("AjaxDinamic/Proceso.Planilla@generar",{consorcio:$("#gconsorcio").val(),fecha:$("#gfecha").val()},function(data){
 			
 			$("#result").html(data);
-			cargarPlanillas();
+			cargarPlanillas(0);
 
 		});
 	}
@@ -169,9 +169,11 @@
 		return false;
 	}
 
-	function cargarPlanillas(filtrar=0){
+	function cargarPlanillas(filtrar){
 		var params = {};
-		if(filtrar=!0){
+
+		console.log(filtrar);
+		if(filtrar==1){
 			var params = {ffecha_ini:$("#ffecha_ini").val(),ffecha_fin:$("#ffecha_fin").val(),fconsorcio:$("#fconsorcio").val()}
 		}
 
@@ -228,7 +230,7 @@
 	}
 
 
-	cargarPlanillas();
+	cargarPlanillas(0);
 	cargarConsorcios();
 
     $(".fecha").datetimepicker({
