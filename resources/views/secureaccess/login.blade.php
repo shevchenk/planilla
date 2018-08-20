@@ -80,3 +80,15 @@
     </div>
 </div>
 </body>
+
+
+<script type="text/javascript">
+    
+        $('#password').keypress(function(e) {
+            if(e.which == 10 || e.which == 13) {
+                $("#btnIniciar").click();
+            }
+        });
+
+        
+</script>
