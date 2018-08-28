@@ -27,3 +27,17 @@ CHANGE COLUMN `ultimo_resgistro` `ultimo_registro`  int(11) NOT NULL DEFAULT 1 A
 ALTER TABLE `m_eventos_tipos`
 ADD COLUMN `aplica_cambio`  int(11) NOT NULL DEFAULT 0 COMMENT '0: Todo' AFTER `aplica_dscto`;
 
+/**************** 26/08*****//
+
+CREATE TABLE `m_cursos` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `curso` varchar(250) NOT NULL,
+  `curso_apocope` varchar(50) DEFAULT '',
+  `estado` int(11) NOT NULL DEFAULT '1',
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime DEFAULT NULL,
+  `persona_id_created_at` int(11) NOT NULL,
+  `persona_id_updated_at` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
