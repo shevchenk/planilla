@@ -36,6 +36,12 @@ class Persona extends Model
         $persona->password=$bcryptpassword;
         $persona->telefono = trim( $r->telefono );
         $persona->celular = trim( $r->celular );
+
+        $persona->regina = trim( $r->regina );
+        $persona->regina_anio = trim( $r->regina_anio );
+        $persona->dina = trim( $r->dina );
+        $persona->dina_anio = trim( $r->dina_anio );
+
         if(trim( $r->fecha_nacimiento )!=''){
         $persona->fecha_nacimiento = trim( $r->fecha_nacimiento );}
         else {
@@ -178,7 +184,12 @@ class Persona extends Model
 
         $persona->telefono = trim( $r->telefono );
         $persona->celular = trim( $r->celular );
-
+        
+        $persona->regina = trim( $r->regina );
+        $persona->regina_anio = trim( $r->regina_anio );
+        $persona->dina = trim( $r->dina );
+        $persona->dina_anio = trim( $r->dina_anio );
+        
         if(trim( $r->fecha_nacimiento )!='')
         {
         $persona->fecha_nacimiento = trim( $r->fecha_nacimiento );
@@ -423,9 +434,13 @@ class Persona extends Model
 
     public static function runLoad($r)
     {
-        $sql=Persona::select('id','paterno','materno','nombre','dni',
-            'email',DB::raw('IFNULL(fecha_nacimiento,"") as fecha_nacimiento'),'sexo','telefono',
-            'celular','password','estado')
+        $sql=Persona::select('id','paterno','materno','nombre','dni','email',
+                DB::raw('IFNULL(fecha_nacimiento,"") as fecha_nacimiento'),
+                'sexo','telefono','celular','password','estado',
+                DB::raw('IFNULL(regina,"") as regina'),
+                DB::raw('IFNULL(regina_anio,"") as regina_anio'),
+                DB::raw('IFNULL(dina,"") as dina'),
+                DB::raw('IFNULL(dina_anio,"") as dina_anio'))
             ->where(
                 function($query) use ($r){
                     if( $r->has("paterno") ){

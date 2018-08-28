@@ -21,7 +21,11 @@ password:"",
 telefono:"",
 celular:"",
 fecha_nacimiento:"",
-estado:1}; // Datos Globales
+estado:1,
+regina:"",
+regina_anio:"",
+dina:"",
+dina_anio:""}; // Datos Globales
 $(document).ready(function() {
 
     $(".fecha").datetimepicker({
@@ -67,9 +71,15 @@ $(document).ready(function() {
         $('#ModalPersonaForm #txt_email').val( PersonaG.email );
         $('#ModalPersonaForm #txt_telefono').val( PersonaG.telefono );
         $('#ModalPersonaForm #txt_password').val( PersonaG.password );
-        $('#ModalPersonaForm #txt_celular').val( PersonaG.celular );        
+        $('#ModalPersonaForm #txt_celular').val( PersonaG.celular );
         $('#ModalPersonaForm #txt_fecha_nacimiento').val( PersonaG.fecha_nacimiento );
         $('#ModalPersonaForm #slct_estado').val( PersonaG.estado );
+
+        $('#ModalPersonaForm #txt_regina').val( PersonaG.regina );
+        $('#ModalPersonaForm #txt_regina_anio').val( PersonaG.regina_anio );
+        $('#ModalPersonaForm #txt_dina').val( PersonaG.dina );
+        $('#ModalPersonaForm #txt_dina_anio').val( PersonaG.dina_anio );
+
         $("#ModalPersona select").selectpicker('refresh');
         $('#ModalPersonaForm #txt_nombre').focus();
     });
@@ -126,6 +136,10 @@ AgregarEditar=function(val,id){
     PersonaG.celular='';
     PersonaG.fecha_nacimiento='';
     PersonaG.estado='1';
+    PersonaG.regina='';
+    PersonaG.regina_anio='';
+    PersonaG.dina='';
+    PersonaG.dina_anio='';
     if( val==0 ){
 
         PersonaG.id=id;
@@ -139,6 +153,11 @@ AgregarEditar=function(val,id){
         PersonaG.celular=$("#TablePersona #trid_"+id+" .celular").val();
         PersonaG.fecha_nacimiento=$("#TablePersona #trid_"+id+" .fecha_nacimiento").val();
         PersonaG.estado=$("#TablePersona #trid_"+id+" .estado").val();
+
+        PersonaG.regina=$("#TablePersona #trid_"+id+" .regina").val();
+        PersonaG.regina_anio=$("#TablePersona #trid_"+id+" .regina_anio").val();
+        PersonaG.dina=$("#TablePersona #trid_"+id+" .dina").val();
+        PersonaG.dina_anio=$("#TablePersona #trid_"+id+" .dina_anio").val();
       
     }
     $('#ModalPersona').modal('show');
@@ -315,6 +334,10 @@ HTMLCargarPersona=function(result){
             "<input type='hidden' class='sexo' value='"+r.sexo+"'>"+
             "<input type='hidden' class='telefono' value='"+r.telefono+"'>"+
             "<input type='hidden' class='celular' value='"+r.celular+"'>"+
+                "<input type='hidden' class='regina' value='"+r.regina+"'>"+
+                "<input type='hidden' class='regina_anio' value='"+r.regina_anio+"'>"+
+                "<input type='hidden' class='dina' value='"+r.dina+"'>"+
+                "<input type='hidden' class='dina_anio' value='"+r.dina_anio+"'>"+
             "<input type='hidden' class='estado' value='"+r.estado+"'>"+estadohtml+
             "</td>"+
             '<td><a class="btn btn-primary btn-sm" onClick="AgregarEditar(0,'+r.id+')"><i class="fa fa-edit fa-lg"></i> </a></td>';

@@ -82,6 +82,30 @@
                         </div>
                     </fieldset>
 
+                    <fieldset id="" style="margin-top:10px;">
+                        <legend>Regina / Dina</legend>
+                        <div class="row form-group">
+                            <div class="col-sm-12">
+                                <div class="col-sm-4">
+                                    <label>Regina</label>
+                                    <input type="text" class="form-control" id="txt_regina" name="txt_regina" placeholder="Regina">
+                                </div>
+                                <div class="col-sm-2">
+                                    <label>A&ntilde;o</label>
+                                    <input type="text" class="form-control fechaanio" id="txt_regina_anio" name="txt_regina_anio" placeholder="" readonly style="cursor:pointer;">
+                                </div>
+                                <div class="col-sm-4">
+                                    <label>Dina</label>
+                                    <input type="text" class="form-control" id="txt_dina" name="txt_dina" placeholder="Dina">
+                                </div>
+                                <div class="col-sm-2">
+                                    <label>A&ntilde;o</label>
+                                    <input type="text" class="form-control fechaanio" id="txt_dina_anio" name="txt_dina_anio" placeholder="" readonly style="cursor:pointer;">
+                                </div>          
+                            </div>
+                        </div>
+                    </fieldset>
+
                     <fieldset id="f_areas_cargo" style="margin-top:10px;">
                         <legend>Grado Instrucci&oacute;n 
                                 <button type="button" class="btn btn-info btn-sm" Onclick="AgregarGrado();" style="margin-bottom:3px;">
