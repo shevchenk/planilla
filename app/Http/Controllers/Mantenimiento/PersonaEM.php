@@ -114,7 +114,7 @@ class PersonaEM extends Controller
         }
     }
     
-     public function ListPrivilegio (Request $r )
+    public function ListPrivilegio (Request $r )
     {
         if ( $r->ajax() ) {
             $renturnModel = Privilegio::ListPrivilegio($r);
@@ -125,15 +125,40 @@ class PersonaEM extends Controller
         }
     }
     
-        public function CargarAreas(Request $r)
+    public function CargarAreas(Request $r)
     {
-            if ( $r->ajax() ) {
-                $personaId =$r->persona_id;
-                $return = Persona::getAreas($personaId);
-                return response()->json($return);
-            }
-
+        if ( $r->ajax() ) {
+            $personaId =$r->persona_id;
+            $return = Persona::getAreas($personaId);
+            return response()->json($return);
+        }
     }
     
+    public function CargarGrados(Request $r)
+    {
+        if ( $r->ajax() ) {
+            $personaId =$r->persona_id;
+            $return = Persona::getGrado($personaId);
+            return response()->json($return);
+        }
+    }
+
+    public function CargarInvestigaciones(Request $r)
+    {
+        if ( $r->ajax() ) {
+            $personaId =$r->persona_id;
+            $return = Persona::getInvestigaciones($personaId);
+            return response()->json($return);
+        }
+    }
+
+    public function CargarPublicaciones(Request $r)
+    {
+        if ( $r->ajax() ) {
+            $personaId =$r->persona_id;
+            $return = Persona::getPublicaciones($personaId);
+            return response()->json($return);
+        }
+    }
 
 }

@@ -81,9 +81,40 @@
                             </div><!--FIN DE COL SM 12-->
                         </div>
                     </fieldset>
+
+                    <fieldset id="f_areas_cargo" style="margin-top:10px;">
+                        <legend>Grado Instrucci&oacute;n 
+                                <button type="button" class="btn btn-info btn-sm" Onclick="AgregarGrado();" style="margin-bottom:3px;">
+                                    <i class="fa fa-plus fa-sm"></i>
+                                    &nbsp;Nuevo Grado
+                                </button>
+                        </legend>
+                        <ul class="list-group" id="t_gradoPersona"></ul>
+                    </fieldset>
+
+                    <fieldset id="f_areas_cargo" style="margin-top:10px;">
+                        <legend>Investigaciones &nbsp;&nbsp;&nbsp;&nbsp;
+                                <button type="button" class="btn btn-info btn-sm" Onclick="AgregarInvestigacion();" style="margin-bottom:3px;">
+                                    <i class="fa fa-plus fa-sm"></i>
+                                    &nbsp;Nuevo
+                                </button>
+                        </legend>
+                        <ul class="list-group" id="t_investigaPersona"></ul>
+                    </fieldset>
+
+                    <fieldset id="f_areas_cargo" style="margin-top:10px;">
+                        <legend>Publicaciones &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                                <button type="button" class="btn btn-info btn-sm" Onclick="AgregarPublicacion();" style="margin-bottom:3px;">
+                                    <i class="fa fa-plus fa-sm"></i>
+                                    &nbsp;Nuevo
+                                </button>
+                        </legend>
+                        <ul class="list-group" id="t_publicaPersona"></ul>
+                    </fieldset>
+
+
                     <fieldset id="f_areas_cargo">
                         <legend>Niveles de Acceso</legend>
-
                         <div class="row form-group">
                             <div class="col-sm-12">
                                 <div class="col-sm-6">

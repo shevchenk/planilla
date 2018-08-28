@@ -1,4 +1,13 @@
 <script type="text/javascript">
+var ConGradoG=100000;
+var grados_selec=[];
+
+var ConInvestigaG=100000;
+var investiga_selec=[];
+
+var ConPublicaG=100000;
+var publica_selec=[];
+
 var persona_id, cargos_selec=[], PersonaObj,SlctItem='',SlctSedesMarcadas="",SlctConsorciosMarcadas="";
 var AddEdit=0; //0: Editar | 1: Agregar
 var PersonaG={id:0,
@@ -42,6 +51,9 @@ $(document).ready(function() {
             $(this).find('.modal-footer .btn-primary').text('Guardar').attr('onClick','AgregarEditarAjax();');
         }
         else{
+            AjaxPersona.CargarGrados(SlctCargarGrados,PersonaG.id);
+            AjaxPersona.CargarInvestigaciones(SlctCargarInvestigacion,PersonaG.id);
+            AjaxPersona.CargarPublicaciones(SlctCargarPublicacion,PersonaG.id);
             AjaxPersona.CargarAreas(SlctCargarAreas,PersonaG.id); //no es multiselect
             $(this).find('.modal-footer .btn-primary').text('Actualizar').attr('onClick','AgregarEditarAjax();');
             $("#ModalPersonaForm").append("<input type='hidden' value='"+PersonaG.id+"' name='id'>");
@@ -65,6 +77,9 @@ $(document).ready(function() {
     $('#ModalPersona').on('hidden.bs.modal', function (event) {
         $("#ModalPersonaForm input[type='hidden']").not('.mant').remove();
         $('#slct_cargos,#slct_rol,#slct_area').selectpicker('destroy');
+        $("#ModalPersonaForm #t_gradoPersona").html(''); //Limpia los datos
+        $("#ModalPersonaForm #t_investigaPersona").html('');
+        $("#ModalPersonaForm #t_publicaPersona").html('');
         $("#ModalPersonaForm #t_cargoPersona").html('');
     });
 });
@@ -190,6 +205,66 @@ SlctCargarConsorcio=function(result){
     $("#t_cargoPersona #slct_consorcios"+SlctItem).val(SlctConsorciosMarcadas); 
     $("#t_cargoPersona #slct_consorcios"+SlctItem).selectpicker('refresh');
 };
+
+SlctCargarGrados=function(result){    
+    var html="";
+    grados_selec=[];
+    $.each(result, function(index,r){
+        html="<li class='list-group-item'>";
+        html+="<div class='row'>";                
+        html+='<div class="col-sm-4"><input type="text" class="form-control" id="txt_universidad'+r.id+'" name="txt_universidad'+r.id+'" placeholder="Universidad" value="'+r.universidad+'"></div>';
+        html+='<div class="col-sm-5"><input type="text" class="form-control" id="txt_grado_instruccion'+r.id+'" name="txt_grado_instruccion'+r.id+'" placeholder="Grado Instruccion" value="'+r.grado_instruccion+'"></div>';
+        html+='<div class="col-sm-2"><input type="text" class="form-control fechaanio" id="txt_anio'+r.id+'" name="txt_anio'+r.id+'"  readonly="" value="'+r.anio+'" style="cursor:pointer;"></div>';
+        html+='<div class="col-sm-1">';
+        html+='<button type="button" id="'+r.id+'" Onclick="EliminarGrado(this)" class="btn btn-danger btn-sm" >';
+        html+='<i class="fa fa-minus fa-sm"></i> </button></div></div>';
+        html+="</li>";
+
+        $("#t_gradoPersona").append(html); 
+        grados_selec.push(r.id);
+    });
+    FechaAnio(); 
+};
+
+SlctCargarInvestigacion=function(result){    
+    var html="";
+    investiga_selec=[];
+    $.each(result, function(index,r){
+        html="<li class='list-group-item'>";
+        html+="<div class='row'>";
+        html+='<div class="col-sm-9"><input type="text" class="form-control" id="txt_investiga'+r.id+'" name="txt_investiga'+r.id+'" placeholder="Ingrese Investigación" value="'+r.investiga+'"></div>';
+        html+='<div class="col-sm-2"><input type="text" class="form-control fechaanio" id="txt_anio'+r.id+'" name="txt_anio'+r.id+'"  readonly="" value="'+r.anio+'" style="cursor:pointer;"></div>';
+        html+='<div class="col-sm-1">';
+        html+='<button type="button" id="'+r.id+'" Onclick="EliminarInvestiga(this)" class="btn btn-danger btn-sm" >';
+        html+='<i class="fa fa-minus fa-sm"></i> </button></div></div>';
+        html+="</li>";
+
+        $("#t_investigaPersona").append(html); 
+        investiga_selec.push(r.id);
+    });
+    FechaAnio(); 
+};
+
+SlctCargarPublicacion=function(result){    
+    var html="";
+    publica_selec=[];
+    $.each(result, function(index,r){
+        html="<li class='list-group-item'>";
+        html+="<div class='row'>";
+        html+='<div class="col-sm-5"><input type="text" class="form-control" id="txt_publica'+r.id+'" name="txt_publica'+r.id+'" placeholder="Ingrese Publicación" value="'+r.publica+'"></div>';
+        html+='<div class="col-sm-2"><input type="text" class="form-control fechaanio" id="txt_anio'+r.id+'" name="txt_anio'+r.id+'"  readonly="" value="'+r.anio+'" style="cursor:pointer;"></div>';
+        html+='<div class="col-sm-4"><input type="text" class="form-control" id="txt_revista'+r.id+'" name="txt_revista'+r.id+'" placeholder="Ingrese Revista" value="'+r.revista+'"></div>';
+        html+='<div class="col-sm-1">';
+        html+='<button type="button" id="'+r.id+'" Onclick="EliminarPublica(this)" class="btn btn-danger btn-sm" >';
+        html+='<i class="fa fa-minus fa-sm"></i> </button></div></div>';
+        html+="</li>";
+
+        $("#t_publicaPersona").append(html); 
+        publica_selec.push(r.id);
+    });
+    FechaAnio(); 
+};
+
 SlctCargarAreas=function(result){
     var html="";
     cargos_selec=[];
@@ -217,6 +292,7 @@ SlctCargarAreas=function(result){
     });
     Fecha(); 
 };
+
 
 HTMLCargarPersona=function(result){
     var html="";
@@ -263,6 +339,82 @@ HTMLCargarPersona=function(result){
         } 
     });
 };
+
+AgregarGrado=function(){
+    ConGradoG++;
+    var html="";
+    html="<li class='list-group-item'>";
+    html+="<div class='row'>";
+    html+='<div class="col-sm-4"><input type="text" class="form-control" id="txt_universidad'+ConGradoG+'" name="txt_universidad'+ConGradoG+'" placeholder="Universidad" value=""></div>';
+    html+='<div class="col-sm-5"><input type="text" class="form-control" id="txt_grado_instruccion'+ConGradoG+'" name="txt_grado_instruccion'+ConGradoG+'" placeholder="Grado Instruccion" value=""></div>';
+    html+='<div class="col-sm-2"><input type="text" class="form-control fechaanio" id="txt_anio'+ConGradoG+'" name="txt_anio'+ConGradoG+'"  readonly="" value="<?php echo date('Y')?>" style="cursor:pointer;"></div>';
+    html+='<div class="col-sm-1">';
+    html+='<button type="button" id="'+ConGradoG+'" Onclick="EliminarGrado(this)" class="btn btn-danger btn-sm" >';
+    html+='<i class="fa fa-minus fa-sm"></i> </button></div></div>';
+    html+="</li>";
+
+    $("#t_gradoPersona").append(html);
+    grados_selec.push(ConGradoG);
+    FechaAnio();
+};
+
+AgregarInvestigacion=function(){
+    ConInvestigaG++;
+    var html="";
+    html="<li class='list-group-item'>";
+    html+="<div class='row'>";
+    html+='<div class="col-sm-9"><input type="text" class="form-control" id="txt_investiga'+ConInvestigaG+'" name="txt_investiga'+ConInvestigaG+'" placeholder="Ingrese Investigación" value=""></div>';
+    html+='<div class="col-sm-2"><input type="text" class="form-control fechaanio" id="txt_anio'+ConInvestigaG+'" name="txt_anio'+ConInvestigaG+'"  readonly="" value="<?php echo date('Y')?>" style="cursor:pointer;"></div>';
+    html+='<div class="col-sm-1">';
+    html+='<button type="button" id="'+ConInvestigaG+'" Onclick="EliminarInvestiga(this)" class="btn btn-danger btn-sm" >';
+    html+='<i class="fa fa-minus fa-sm"></i> </button></div></div>';
+    html+="</li>";
+
+    $("#t_investigaPersona").append(html);
+    investiga_selec.push(ConInvestigaG);
+    FechaAnio();
+};
+
+AgregarPublicacion=function(){
+    ConPublicaG++;
+    var html="";
+    html="<li class='list-group-item'>";
+    html+="<div class='row'>";
+    html+='<div class="col-sm-5"><input type="text" class="form-control" id="txt_publica'+ConPublicaG+'" name="txt_publica'+ConPublicaG+'" placeholder="Ingrese Publicación" value=""></div>';
+    html+='<div class="col-sm-2"><input type="text" class="form-control fechaanio" id="txt_anio'+ConPublicaG+'" name="txt_anio'+ConPublicaG+'"  readonly="" value="<?php echo date('Y')?>" style="cursor:pointer;"></div>';
+    html+='<div class="col-sm-4"><input type="text" class="form-control" id="txt_revista'+ConPublicaG+'" name="txt_revista'+ConPublicaG+'" placeholder="Ingrese Revista" value=""></div>';
+    html+='<div class="col-sm-1">';
+    html+='<button type="button" id="'+ConPublicaG+'" Onclick="EliminarInvestiga(this)" class="btn btn-danger btn-sm" >';
+    html+='<i class="fa fa-minus fa-sm"></i> </button></div></div>';
+    html+="</li>";
+
+    $("#t_publicaPersona").append(html);
+    publica_selec.push(ConPublicaG);
+    FechaAnio();
+};
+
+EliminarGrado=function(obj){
+    var valor= obj.id;
+    obj.parentNode.parentNode.parentNode.remove();
+    var index = grados_selec.indexOf(valor);
+    grados_selec.splice( index, 1 );
+};
+
+EliminarInvestiga=function(obj){
+    var valor= obj.id;
+    obj.parentNode.parentNode.parentNode.remove();
+    var index = investiga_selec.indexOf(valor);
+    investiga_selec.splice( index, 1 );
+};
+
+EliminarPublica=function(obj){
+    var valor= obj.id;
+    obj.parentNode.parentNode.parentNode.remove();
+    var index = publica_selec.indexOf(valor);
+    publica_selec.splice( index, 1 );
+};
+
+
 AgregarArea=function(){
     //añadir registro "opcion" por usuario
     var html="";
@@ -295,7 +447,6 @@ AgregarArea=function(){
             alert("Ya se agrego este Privilegio");
     } else 
         alert("Seleccione Privilegio");
-
 };
 
 EliminarArea=function(obj){
@@ -316,6 +467,17 @@ Fecha=function(){
         minView:2,
         autoclose: true,
         todayBtn: false
+    });
+}
+
+FechaAnio=function(){
+    $(".fechaanio").datetimepicker({
+        format: "yyyy",
+        language: 'es',
+        startView: 'decade',
+        minView: 'decade',
+        viewSelect: 'decade',
+        autoclose: true,
     });
 }
 </script>
