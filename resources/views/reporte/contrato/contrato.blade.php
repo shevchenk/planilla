@@ -117,7 +117,7 @@
                                         <div class="col-md-4">
                                             <div class="form-group">
                                                 <label>Sueldo Producción</label>
-                                                <span id="lbl_sueldo_produccion"></span>
+                                                <span id="lbl_monto_adicional"></span>
                                             </div>
                                         </div>
                                         <div class="col-md-4">

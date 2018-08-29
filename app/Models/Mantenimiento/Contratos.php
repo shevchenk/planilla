@@ -22,7 +22,7 @@ class Contratos extends Model
         'ch.estado_contrato as estado',
         'ch.fecha_ini_contrato',
         'ch.sueldo_mensual',
-        'ch.sueldo_produccion',
+        'ch.monto_adicional',
         'ch.asignacion_familiar',
         'ch.tipo_contrato',
         'mp.dni',

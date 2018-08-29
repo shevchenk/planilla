@@ -39,7 +39,7 @@ class PlanillaM extends Model{
           R.prima,
           R.seguro,
           R.tipo_regimen,
-          PC.sueldo_produccion,
+          PC.monto_adicional,
           GROUP_CONCAT(DISTINCT(dia_id)) as dias_en_horario,
           COUNT(PA.id) as dias_laborados,
           SUM(UNIX_TIMESTAMP(CONCAT(DATE(NOW()),' ',PA.total_hora_tardanza)) - UNIX_TIMESTAMP(CONCAT(DATE(NOW()),' 00:00:00'))) / 60 / 60 as totalTardanzas
@@ -60,6 +60,7 @@ class PlanillaM extends Model{
           P.paterno,
           P.materno,
           PC.tipo_contrato,
+          PC.modalidad_contrato,
           PC.regimen_id,
           PC.cargo_id,
           PC.consorcio_id,
@@ -70,7 +71,7 @@ class PlanillaM extends Model{
           R.prima,
           R.seguro,
           R.tipo_regimen,
-          PC.sueldo_produccion  
+          PC.monto_adicional  
       ";
 
       $data = DB::select( DB::raw($sql));
@@ -130,7 +131,7 @@ class PlanillaM extends Model{
             $sueldo =0;
 
             if($value->tipo_contrato == 1){
-              $sueldo =$value->sueldo_produccion;
+              $sueldo =$value->monto_adicional;
               $valorPorJornada = $sueldo / $totalDiasMes;
               $pagoBruto = $totalDiasMes*$valorPorJornada;
             }else{
@@ -170,7 +171,7 @@ class PlanillaM extends Model{
                 'total_tardanza' => number_format($value->totalTardanzas,2),
                 'dias_laborados' => $value->dias_laborados,
                 'dias_no_laborados' => $diasNoLaborados,
-                'tipo_regimen' => $value->tipo_contrato
+                'tipo_regimen' => $value->tipo_regimen
             ];
 
 

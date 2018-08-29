@@ -89,8 +89,20 @@
                                             <div class="input-group">
                                                 <select class="form-control" name="slct_tipo_contrato" id="slct_tipo_contrato">
                                                     <option value='' selected>.::Todo::.</option>
-                                                    <option value='1'>Producción</option>
+                                                    <option value='1'>Docente</option>
                                                     <option value='2'>Regular</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </th>
+                                    <th class="col-xs-2">
+                                        <div class="form-group">
+                                            <label><h4>Modalidad de Contrato:</h4></label>
+                                            <div class="input-group">
+                                                <select class="form-control" name="slct_modalidad_contrato" id="slct_modalidad_contrato">
+                                                    <option value='' selected>.::Todo::.</option>
+                                                    <option value='1'>Tiempo completo</option>
+                                                    <option value='2'>Tiempo parcial</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -207,8 +219,18 @@
                                             <label>Tipo Contrato</label>
                                             <select  class="form-control selectpicker show-menu-arrow" data-live-search="true" id="slct_tipo_contrato" name="slct_tipo_contrato">
                                                 <option value="0">.::Seleccione::.</option>
-                                                <option value='1'>Producción</option>
+                                                <option value='1'>Docente</option>
                                                 <option value='2'>Regular</option>
+                                            </select>
+                                        </div> 
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <label>Modalidad de Contrato</label>
+                                            <select  class="form-control selectpicker show-menu-arrow" data-live-search="true" id="slct_modalidad_contrato" name="slct_modalidad_contrato">
+                                                <option value="0">.::Seleccione::.</option>
+                                                <option value='1'>Tiempo completo</option>
+                                                <option value='2'>Tiempo parcial</option>
                                             </select>
                                         </div> 
                                     </div>
@@ -232,12 +254,6 @@
                                     </div>
                                     <div class="col-md-3">
                                         <div class="form-group">
-                                            <label>Sueldo Producción</label>
-                                            <input type="text" onkeyup="masterG.DecimalMax(this, 2);" onkeypress="return masterG.validaDecimal(event, this);" class="form-control" id="txt_sueldo_produccion" name="txt_sueldo_produccion" readonly="">
-                                        </div>
-                                    </div>
-                                    <div class="col-md-2">
-                                        <div class="form-group">
                                             <label>Asignación Familiar</label>
                                             <select  class="form-control selectpicker show-menu-arrow" data-live-search="true" id="slct_asignacion_familiar" name="slct_asignacion_familiar">
                                                 <option value="0">No</option>
@@ -245,6 +261,27 @@
                                             </select>
                                         </div> 
                                     </div>
+    
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label>Monto adicional</label>
+                                            <input type="text" onkeyup="masterG.DecimalMax(this, 2);" onkeypress="return masterG.validaDecimal(event, this);" class="form-control" id="txt_monto_adicional" name="txt_monto_adicional" readonly="">
+                                        </div>
+                                        
+                                        <div class="form-group">
+                                                    
+<button onClick="agregarExtra();return false;" class="btn btn-info"><i class="fa fa-plus"></i> Agregar</button><hr>
+
+                                            
+                                           
+                                            <div id="extraDiv"></div>
+                                            
+                                            
+                                        </div>
+                                        
+                                    </div>
+
+
                                 </div>
                             </div>
                         </div>
@@ -261,6 +298,28 @@
         </div><!-- .col -->
     </div><!-- .row -->
 </section><!-- .content -->
+
+<script type="text/javascript">
+    
+    var iterator = 0;
+    function agregarExtra(){
+
+        var div ="";
+        div+='<div class="row" id="extra_'+iterator+'">';
+        div+='<div class="col-md-4"> <select name="nombre_extra[]" class="form-control"><option>- Seleccione -</option><option>Transporte</option></select></div>';
+        div+='<div class="col-md-4"><input type="text" class="form-control" placeholder="Monto: Ex: 200" name="monto_extra[]" class="extraMonto"></div>';
+        div+='<div class="col-md-4"><button onClick="return false;" class="btn btn-sm btn-success"><i class="fa fa-check"></i></button><button onClick="removeExtra(\''+iterator+'\');return false;" class="btn btn-sm btn-danger"><i class="fa fa-times"></i></button></div>';
+        div+='<br></div>';
+
+        $("#extraDiv").append(div);
+
+        iterator++;
+    }
+
+    function removeExtra(it){
+        $('#extra_'+it).remove();
+    }
+</script>
 @stop
 
 @section('form')

@@ -28,10 +28,11 @@ class PersonaContratoHistorico extends Model
         $personacontrato->regimen_id = trim( $r->regimen_id );
         $personacontrato->estado_contrato = trim( $r->estado_contrato );
         $personacontrato->tipo_contrato = trim( $r->tipo_contrato );
+        $personacontrato->modalidad_contrato = trim( $r->modalidad_contrato );
         $personacontrato->fecha_ini_contrato = trim( $r->fecha_ini_contrato );
         $personacontrato->fecha_fin_contrato = trim( $r->fecha_fin_contrato );
         $personacontrato->sueldo_mensual = trim( $r->sueldo_mensual );
-        $personacontrato->sueldo_produccion = trim( $r->sueldo_produccion );
+        $personacontrato->monto_adicional = trim( $r->monto_adicional );
         $personacontrato->asignacion_familiar = trim( $r->asignacion_familiar );
         $personacontrato->estado = trim( $r->estado );
         $personacontrato->persona_id_created_at=Auth::user()->id;

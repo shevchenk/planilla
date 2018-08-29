@@ -1,8 +1,8 @@
 <script type="text/javascript">
 var AddEdit=0; //0: Editar | 1: Agregar
 var ContratoG={id:0,persona_id:0,persona:"",sede_id:0,consorcio_id:0,cargo_id:0,regimen_id:0
-    ,estado_contrato:0,tipo_contrato:0,fecha_ini_contrato:"",fecha_fin_contrato:"",sueldo_mensual:0,
-    sueldo_produccion:0,asignacion_familiar:0,estado:1}; // Datos Globales
+    ,estado_contrato:0,tipo_contrato:0,modalidad_contrato:0,fecha_ini_contrato:"",fecha_fin_contrato:"",sueldo_mensual:0,
+    monto_adicional:0,asignacion_familiar:0,estado:1}; // Datos Globales
 
 $(document).ready(function() {
     $(".fecha").datetimepicker({
@@ -51,7 +51,7 @@ loadDetail=function(ID){
     $("#lbl_tipo").text(contratoDetalle[ID].tipo);
     $("#lbl_asignacion_familiar").text(contratoDetalle[ID].asignacion_familiar);
     $("#lbl_sueldo_mensual").text(contratoDetalle[ID].sueldo_mensual);
-    $("#lbl_sueldo_produccion").text(contratoDetalle[ID].sueldo_produccion);
+    $("#lbl_monto_adicional").text(contratoDetalle[ID].monto_adicional);
     $("#lbl_nombre").text(contratoDetalle[ID].nombre);
     $("#lbl_dni").text(contratoDetalle[ID].dni);
 
@@ -79,9 +79,10 @@ ListContratos=function(idPersona){
             contratoDetalle[cData[i].id].fecha_ini_contrato = cData[i].fecha_ini_contrato;
             contratoDetalle[cData[i].id].fecha_fin_contrato = cData[i].fecha_fin_contrato;
             contratoDetalle[cData[i].id].tipo = (cData[i].tipo_contrato==1?'Produccion':'Regular');
+            contratoDetalle[cData[i].id].modalidad = (cData[i].modalidad_contrato==1?'Tiempo completo':'Tiempo parcial');
             contratoDetalle[cData[i].id].asignacion_familiar = cData[i].asignacion_familiar;
             contratoDetalle[cData[i].id].sueldo_mensual = cData[i].sueldo_mensual;
-            contratoDetalle[cData[i].id].sueldo_produccion = cData[i].sueldo_produccion;
+            contratoDetalle[cData[i].id].monto_adicional = cData[i].monto_adicional;
             contratoDetalle[cData[i].id].dni = cData[i].dni;
             contratoDetalle[cData[i].id].nombre = cData[i].nombre;
             contratoDetalle[cData[i].id].sexo = cData[i].sexo;
@@ -104,6 +105,7 @@ HTMLCargarContrato=function(result){
             "<td class='consorcio'>"+r.consorcio+"</td>"+
             "<td class='estado_contrato_nombre'>"+r.estado_contrato_nombre+"</td>"+
             "<td class='tipo_contrato_nombre'>"+r.tipo_contrato_nombre+"</td>"+
+            "<td class='modalidad_contrato_nombre'>"+r.modalidad_contrato_nombre+"</td>"+
             "";
         html+="<td>"+
             '<a class="btn btn-primary btn-sm" onClick="ListContratos('+r.persona_id+')"><i class="fa fa-search fa-lg"></i> </a></td>';

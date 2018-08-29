@@ -23,6 +23,7 @@ class DiaNoLaboral extends Model
         $dianolaboral = new DiaNoLaboral;
         $dianolaboral->fecha = trim( $r->fecha );
         $dianolaboral->estado = trim( $r->estado );
+        $dianolaboral->pago = trim( $r->pago );
         $dianolaboral->persona_id_created_at=Auth::user()->id;
         $dianolaboral->save();
         $sedes = $r->sede_ids;
@@ -47,6 +48,7 @@ class DiaNoLaboral extends Model
         $dianolaboral = DiaNoLaboral::find($r->id);
         $dianolaboral->fecha = trim( $r->fecha );
         $dianolaboral->estado = trim( $r->estado );
+        $dianolaboral->pago = trim( $r->pago );
         $dianolaboral->persona_id_updated_at=Auth::user()->id;
         //$dianolaboral->save();
 
@@ -71,6 +73,7 @@ class DiaNoLaboral extends Model
         $sql=DiaNoLaboral::select('m_dias_no_laborables.id',
                                 'm_dias_no_laborables.fecha',
                                 'm_dias_no_laborables.sede_ids',
+                                'm_dias_no_laborables.pago',
                                 DB::raw('(SELECT GROUP_CONCAT(sede) FROM m_sedes s WHERE FIND_IN_SET(s.id, sede_ids)) sede'), 
                                 'm_dias_no_laborables.estado')
                             ->where( 

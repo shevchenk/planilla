@@ -53,6 +53,11 @@
                                         <div class="form-group">
                                             <label><h4>Sedes:</h4></label>
                                         </div>
+                                    </th> 
+                                    <th class="col-xs-3">
+                                        <div class="form-group">
+                                            <label><h4>Pago:</h4></label>
+                                        </div>
                                     </th>                                    
                                     <th class="col-xs-2">
                                         <div class="form-group">
@@ -75,6 +80,7 @@
                                 <tr class="cabecera">
                                   <th>Fecha</th>
                                   <th>Sedes</th>
+                                  <th>Pago</th>
                                   <th>Estado</th>
                                   <th>[-]</th>
                                 </tr>

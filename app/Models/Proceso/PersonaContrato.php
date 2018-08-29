@@ -37,10 +37,11 @@ class PersonaContrato extends Model
         $personacontrato->regimen_id = trim( $r->regimen_id );
         $personacontrato->estado_contrato = trim( $r->estado_contrato );
         $personacontrato->tipo_contrato = trim( $r->tipo_contrato );
+        $personacontrato->modalidad_contrato = trim( $r->modalidad_contrato );
         $personacontrato->fecha_ini_contrato = trim( $r->fecha_ini_contrato );
         $personacontrato->fecha_fin_contrato = trim( $r->fecha_fin_contrato );
         $personacontrato->sueldo_mensual = trim( $r->sueldo_mensual );
-        $personacontrato->sueldo_produccion = trim( $r->sueldo_produccion );
+        $personacontrato->monto_adicional = trim( $r->monto_adicional );
         $personacontrato->asignacion_familiar = trim( $r->asignacion_familiar );
         $personacontrato->estado = 1;
         $personacontrato->persona_id_created_at=Auth::user()->id;
@@ -62,10 +63,11 @@ class PersonaContrato extends Model
         $personacontrato->regimen_id = trim( $r->regimen_id );
         $personacontrato->estado_contrato = trim( $r->estado_contrato );
         $personacontrato->tipo_contrato = trim( $r->tipo_contrato );
+        $personacontrato->modalidad_contrato = trim( $r->modalidad_contrato );
         $personacontrato->fecha_ini_contrato = trim( $r->fecha_ini_contrato );
         $personacontrato->fecha_fin_contrato = trim( $r->fecha_fin_contrato );
         $personacontrato->sueldo_mensual = trim( $r->sueldo_mensual );
-        $personacontrato->sueldo_produccion = trim( $r->sueldo_produccion );
+        $personacontrato->monto_adicional = trim( $r->monto_adicional );
         $personacontrato->asignacion_familiar = trim( $r->asignacion_familiar );
         $personacontrato->estado = 1;
         $personacontrato->persona_id_updated_at=Auth::user()->id;
@@ -80,11 +82,12 @@ class PersonaContrato extends Model
     public static function runLoad($r){
         
         $sql=PersonaContrato::select('ms.sede','mc.consorcio','p_personas_contratos.id','p_personas_contratos.persona_id','p_personas_contratos.sede_id','p_personas_contratos.consorcio_id',
-                'p_personas_contratos.cargo_id','p_personas_contratos.regimen_id','p_personas_contratos.estado_contrato','p_personas_contratos.tipo_contrato',
+                'p_personas_contratos.cargo_id','p_personas_contratos.regimen_id','p_personas_contratos.estado_contrato','p_personas_contratos.tipo_contrato','p_personas_contratos.modalidad_contrato',
                 'p_personas_contratos.fecha_ini_contrato','p_personas_contratos.fecha_fin_contrato','p_personas_contratos.sueldo_mensual'
-                ,'p_personas_contratos.sueldo_produccion','p_personas_contratos.asignacion_familiar','p_personas_contratos.estado',
+                ,'p_personas_contratos.monto_adicional','p_personas_contratos.asignacion_familiar','p_personas_contratos.estado',
                 DB::raw('CASE p_personas_contratos.estado_contrato  WHEN 1 THEN "Vigente" WHEN 2 THEN "Vacaciones" WHEN 3 THEN "Cesante" END AS estado_contrato_nombre'),
                 DB::raw('CASE p_personas_contratos.tipo_contrato  WHEN 1 THEN "Producción" WHEN 2 THEN "Regular"  END AS tipo_contrato_nombre'),
+                DB::raw('CASE p_personas_contratos.modalidad_contrato  WHEN 1 THEN "Tiempo Completo" WHEN 2 THEN "Tiempo Parcial"  END AS modalidad_contrato_nombre'),
                 DB::raw('CONCAT_WS(" ",mp.paterno,mp.materno,mp.nombre) as persona'))
             ->join('m_personas AS mp', function($join){
                 $join->on('mp.id','=','p_personas_contratos.persona_id');
@@ -126,6 +129,12 @@ class PersonaContrato extends Model
                         $tipo_contrato=trim($r->tipo_contrato);
                         if( $tipo_contrato !='' ){
                             $query->where('p_personas_contratos.tipo_contrato','=',$tipo_contrato);
+                        }   
+                    }
+                    if( $r->has("modalidad_contrato") ){
+                        $modalidad_contrato=trim($r->modalidad_contrato);
+                        if( $modalidad_contrato !='' ){
+                            $query->where('p_personas_contratos.modalidad_contrato','=',$modalidad_contrato);
                         }   
                     }
                     

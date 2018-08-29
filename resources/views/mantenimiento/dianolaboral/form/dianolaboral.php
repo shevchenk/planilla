@@ -34,6 +34,19 @@
                             </select>
                         </div>
                     </div>
+
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Pago</label>
+                            <select class="form-control selectpicker show-menu-arrow" name="slct_pago" id="slct_pago">
+                                <option  value='1'>1 Día</option>
+                                <option  value='1.5'>1.5 Días</option>
+                                <option  value='2'>2.0 Días</option>
+                                <option  value='2.5'>2.5 Días</option>
+                                <option  value='3'>3 Días</option>
+                            </select>
+                        </div>
+                    </div>
                      <div class="form-group"> 
                          <label></label>
                      </div>
