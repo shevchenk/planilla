@@ -38,9 +38,12 @@ class Persona extends Model
         $persona->celular = trim( $r->celular );
 
         $persona->regina = trim( $r->regina );
-        $persona->regina_anio = trim( $r->regina_anio );
+        if($r->regina_anio)
+            $persona->regina_anio = trim( $r->regina_anio );
+
         $persona->dina = trim( $r->dina );
-        $persona->dina_anio = trim( $r->dina_anio );
+        if($r->dina_anio)
+            $persona->dina_anio = trim( $r->dina_anio );
 
         if(trim( $r->fecha_nacimiento )!=''){
         $persona->fecha_nacimiento = trim( $r->fecha_nacimiento );}
@@ -184,12 +187,15 @@ class Persona extends Model
 
         $persona->telefono = trim( $r->telefono );
         $persona->celular = trim( $r->celular );
-        
+
         $persona->regina = trim( $r->regina );
-        $persona->regina_anio = trim( $r->regina_anio );
+        if($r->regina_anio)
+            $persona->regina_anio = trim( $r->regina_anio );
+
         $persona->dina = trim( $r->dina );
-        $persona->dina_anio = trim( $r->dina_anio );
-        
+        if($r->dina_anio)
+            $persona->dina_anio = trim( $r->dina_anio );
+
         if(trim( $r->fecha_nacimiento )!='')
         {
         $persona->fecha_nacimiento = trim( $r->fecha_nacimiento );
@@ -274,7 +280,24 @@ class Persona extends Model
             }
         }
 
-        // Tabla m_personas_grados
+        // Tabla m_personas_grados       
+        if ($r->grados_delete) {
+            $data = explode(',', $r->grados_delete);
+            if (is_array($data)) {
+                for ($i=0; $i<count($data); $i++) {
+                    DB::table('m_personas_grados')
+                            ->where('id', '=', $data[$i])
+                            ->update(
+                                array(
+                                    'estado' => 0,
+                                    'updated_at'=> date('Y-m-d h:m:s'),
+                                    'persona_id_updated_at' => Auth::user()->id
+                                )
+                        );
+                }
+            }
+        }
+
         if ($r->grados_selec) {
             $data = explode(',', $r->grados_selec);
             if (is_array($data)) {
@@ -307,6 +330,7 @@ class Persona extends Model
                         {
                             DB::table('m_personas_grados')
                                 ->where('id', '=', $data[$i])
+                                ->where('estado', '=', 1)
                                 ->update(
                                     array(
                                         'universidad' => $universidad,
@@ -327,6 +351,23 @@ class Persona extends Model
         // --
 
         // Tabla m_personas_investigaciones
+        if ($r->investiga_delete) {
+            $data = explode(',', $r->investiga_delete);
+            if (is_array($data)) {
+                for ($i=0; $i<count($data); $i++) {
+                    DB::table('m_personas_investigaciones')
+                            ->where('id', '=', $data[$i])
+                            ->update(
+                                array(
+                                    'estado' => 0,
+                                    'updated_at'=> date('Y-m-d h:m:s'),
+                                    'persona_id_updated_at' => Auth::user()->id
+                                )
+                        );
+                }
+            }
+        }
+
         if ($r->investiga_selec) {
             $data = explode(',', $r->investiga_selec);
             if (is_array($data)) {
@@ -377,6 +418,23 @@ class Persona extends Model
 
 
         // Tabla m_personas_publicaciones
+        if ($r->publica_delete) {
+            $data = explode(',', $r->publica_delete);
+            if (is_array($data)) {
+                for ($i=0; $i<count($data); $i++) {
+                    DB::table('m_personas_publicaciones')
+                            ->where('id', '=', $data[$i])
+                            ->update(
+                                array(
+                                    'estado' => 0,
+                                    'updated_at'=> date('Y-m-d h:m:s'),
+                                    'persona_id_updated_at' => Auth::user()->id
+                                )
+                        );
+                }
+            }
+        }
+        
         if ($r->publica_selec) {
             $data = explode(',', $r->publica_selec);
             if (is_array($data)) {
@@ -521,7 +579,8 @@ class Persona extends Model
 
     public static function getPublicaciones($personaId) {
         $sql = DB::table('m_personas_publicaciones as mpa')
-                   ->select('mpa.id','mpa.persona_id',"mpa.publica", "mpa.revista",
+                   ->select('mpa.id','mpa.persona_id',"mpa.publica",
+                            DB::raw('IFNULL(mpa.revista,"") as revista'),
                            'mpa.anio')
                    ->where('mpa.persona_id','=',$personaId)
                    ->where('mpa.estado','=',1)

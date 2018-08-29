@@ -1,12 +1,15 @@
 <script type="text/javascript">
 var ConGradoG=100000;
 var grados_selec=[];
+var grados_delete=[];
 
 var ConInvestigaG=100000;
 var investiga_selec=[];
+var investiga_delete=[];
 
 var ConPublicaG=100000;
 var publica_selec=[];
+var publica_delete=[];
 
 var persona_id, cargos_selec=[], PersonaObj,SlctItem='',SlctSedesMarcadas="",SlctConsorciosMarcadas="";
 var AddEdit=0; //0: Editar | 1: Agregar
@@ -235,7 +238,7 @@ SlctCargarGrados=function(result){
         html+='<div class="col-sm-5"><input type="text" class="form-control" id="txt_grado_instruccion'+r.id+'" name="txt_grado_instruccion'+r.id+'" placeholder="Grado Instruccion" value="'+r.grado_instruccion+'"></div>';
         html+='<div class="col-sm-2"><input type="text" class="form-control fechaanio" id="txt_anio'+r.id+'" name="txt_anio'+r.id+'"  readonly="" value="'+r.anio+'" style="cursor:pointer;"></div>';
         html+='<div class="col-sm-1">';
-        html+='<button type="button" id="'+r.id+'" Onclick="EliminarGrado(this)" class="btn btn-danger btn-sm" >';
+        html+='<button type="button" id="'+r.id+'" Onclick="EliminarGradoEdit(this)" class="btn btn-danger btn-sm" >';
         html+='<i class="fa fa-minus fa-sm"></i> </button></div></div>';
         html+="</li>";
 
@@ -254,7 +257,7 @@ SlctCargarInvestigacion=function(result){
         html+='<div class="col-sm-9"><input type="text" class="form-control" id="txt_investiga'+r.id+'" name="txt_investiga'+r.id+'" placeholder="Ingrese Investigación" value="'+r.investiga+'"></div>';
         html+='<div class="col-sm-2"><input type="text" class="form-control fechaanio" id="txt_anio'+r.id+'" name="txt_anio'+r.id+'"  readonly="" value="'+r.anio+'" style="cursor:pointer;"></div>';
         html+='<div class="col-sm-1">';
-        html+='<button type="button" id="'+r.id+'" Onclick="EliminarInvestiga(this)" class="btn btn-danger btn-sm" >';
+        html+='<button type="button" id="'+r.id+'" Onclick="EliminarInvestigaEdit(this)" class="btn btn-danger btn-sm" >';
         html+='<i class="fa fa-minus fa-sm"></i> </button></div></div>';
         html+="</li>";
 
@@ -274,7 +277,7 @@ SlctCargarPublicacion=function(result){
         html+='<div class="col-sm-2"><input type="text" class="form-control fechaanio" id="txt_anio'+r.id+'" name="txt_anio'+r.id+'"  readonly="" value="'+r.anio+'" style="cursor:pointer;"></div>';
         html+='<div class="col-sm-4"><input type="text" class="form-control" id="txt_revista'+r.id+'" name="txt_revista'+r.id+'" placeholder="Ingrese Revista" value="'+r.revista+'"></div>';
         html+='<div class="col-sm-1">';
-        html+='<button type="button" id="'+r.id+'" Onclick="EliminarPublica(this)" class="btn btn-danger btn-sm" >';
+        html+='<button type="button" id="'+r.id+'" Onclick="EliminarPublicaEdit(this)" class="btn btn-danger btn-sm" >';
         html+='<i class="fa fa-minus fa-sm"></i> </button></div></div>';
         html+="</li>";
 
@@ -423,11 +426,23 @@ EliminarGrado=function(obj){
     grados_selec.splice( index, 1 );
 };
 
+EliminarGradoEdit=function(obj){
+    var valor= obj.id;
+    obj.parentNode.parentNode.parentNode.remove();
+    grados_delete.push(valor);
+};
+
 EliminarInvestiga=function(obj){
     var valor= obj.id;
     obj.parentNode.parentNode.parentNode.remove();
     var index = investiga_selec.indexOf(valor);
     investiga_selec.splice( index, 1 );
+};
+
+EliminarInvestigaEdit=function(obj){
+    var valor= obj.id;
+    obj.parentNode.parentNode.parentNode.remove();
+    investiga_delete.push(valor);
 };
 
 EliminarPublica=function(obj){
@@ -437,6 +452,11 @@ EliminarPublica=function(obj){
     publica_selec.splice( index, 1 );
 };
 
+EliminarPublicaEdit=function(obj){
+    var valor= obj.id;
+    obj.parentNode.parentNode.parentNode.remove();
+    publica_delete.push(valor);
+};
 
 AgregarArea=function(){
     //añadir registro "opcion" por usuario

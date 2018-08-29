@@ -6,12 +6,16 @@ var AjaxPersona={
 
         $("#ModalPersonaForm input[name='grados_selec']").remove();
         $("#ModalPersonaForm").append("<input type='hidden' value='"+grados_selec+"' name='grados_selec'>");
+        $("#ModalPersonaForm").append("<input type='hidden' value='"+grados_delete+"' name='grados_delete'>");
 
         $("#ModalPersonaForm input[name='investiga_selec']").remove();
         $("#ModalPersonaForm").append("<input type='hidden' value='"+investiga_selec+"' name='investiga_selec'>");
+        $("#ModalPersonaForm").append("<input type='hidden' value='"+investiga_delete+"' name='investiga_delete'>");
 
         $("#ModalPersonaForm input[name='publica_selec']").remove();
         $("#ModalPersonaForm").append("<input type='hidden' value='"+publica_selec+"' name='publica_selec'>");
+        $("#ModalPersonaForm").append("<input type='hidden' value='"+publica_delete+"' name='publica_delete'>");
+        
         var data=$("#ModalPersonaForm").serialize().split("txt_").join("").split("slct_").join("");
         url='AjaxDinamic/Mantenimiento.PersonaEM@New';
         if(AddEdit==0){
