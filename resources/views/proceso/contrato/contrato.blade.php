@@ -270,11 +270,11 @@
                                         
                                         <div class="form-group">
                                                     
-<button onClick="agregarExtra();return false;" class="btn btn-info"><i class="fa fa-plus"></i> Agregar</button><hr>
 
                                             
-                                           
                                             <div id="extraDiv"></div>
+                                           <hr>
+<button onClick="agregarExtra();return false;" class="btn btn-info"><i class="fa fa-plus"></i> Agregar pago extra</button><hr>
                                             
                                             
                                         </div>
@@ -302,13 +302,16 @@
 <script type="text/javascript">
     
     var iterator = 0;
-    function agregarExtra(){
+    function agregarExtra(n,m){
+
+        n = n || "";
+        m = m || "";
 
         var div ="";
         div+='<div class="row" id="extra_'+iterator+'">';
-        div+='<div class="col-md-4"> <select name="nombre_extra[]" class="form-control"><option>- Seleccione -</option><option>Transporte</option></select></div>';
-        div+='<div class="col-md-4"><input type="text" class="form-control" placeholder="Monto: Ex: 200" name="monto_extra[]" class="extraMonto"></div>';
-        div+='<div class="col-md-4"><button onClick="return false;" class="btn btn-sm btn-success"><i class="fa fa-check"></i></button><button onClick="removeExtra(\''+iterator+'\');return false;" class="btn btn-sm btn-danger"><i class="fa fa-times"></i></button></div>';
+        div+='<div class="col-md-4"> <input type="text" class="form-control" placeholder="Nombre: Ej. Bono hogar." name="nombre_extra[]" value="'+n+'"></div>';
+        div+='<div class="col-md-4"><input type="text" class="extraMonto form-control" placeholder="Monto: Ej. 200" name="monto_extra[]" value="'+m+'" onkeyup="calcExtra();" onkeypress="return isNumber(event)"></div>';
+        div+='<div class="col-md-4"><button onClick="removeExtra(\''+iterator+'\');return false;" class="btn btn-sm btn-danger"><i class="fa fa-times"></i></button></div>';
         div+='<br></div>';
 
         $("#extraDiv").append(div);
@@ -316,9 +319,33 @@
         iterator++;
     }
 
+
     function removeExtra(it){
         $('#extra_'+it).remove();
     }
+
+
+    function isNumber(evt) {
+        evt = (evt) ? evt : window.event;
+        var charCode = (evt.which) ? evt.which : evt.keyCode;
+        if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+            return false;
+        }        
+        return true;
+    }
+
+    function calcExtra(){        
+        var montoTotal = 0;
+
+        $(".extraMonto").each(function( index ) {
+            console.log("extra plus."+index);
+            montoTotal=parseInt(montoTotal)+ parseInt($( this ).val());
+        });
+
+        $("#txt_monto_adicional").val(montoTotal);
+    }
+
+
 </script>
 @stop
 

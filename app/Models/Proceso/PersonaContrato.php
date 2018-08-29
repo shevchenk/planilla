@@ -25,10 +25,19 @@ class PersonaContrato extends Model
 
     public static function runNew($r)
     {
+
         $buscar= PersonaContrato::where('persona_id','=',$r->persona_id)->first();
         if($buscar){
             PersonaContrato::runEdit($r);
         }else{
+
+
+        $conceptos = array();
+        if(is_array($r->nombre_extra))foreach ($r->nombre_extra as $index => $nombre) {
+            $conceptos[]=array('n'=>$nombre,'m'=>$r->monto_extra[$index]);
+        }
+
+
         $personacontrato = new PersonaContrato;
         $personacontrato->persona_id = trim( $r->persona_id );
         $personacontrato->sede_id = trim( $r->sede_id );
@@ -44,6 +53,7 @@ class PersonaContrato extends Model
         $personacontrato->monto_adicional = trim( $r->monto_adicional );
         $personacontrato->asignacion_familiar = trim( $r->asignacion_familiar );
         $personacontrato->estado = 1;
+        $personacontrato->conceptos_adicionales = json_encode($conceptos);
         $personacontrato->persona_id_created_at=Auth::user()->id;
         $personacontrato->save();
 
@@ -56,6 +66,12 @@ class PersonaContrato extends Model
     public static function runEdit($r)
     {
         
+
+        $conceptos = array();
+        if(is_array($r->nombre_extra))foreach ($r->nombre_extra as $index => $nombre) {
+            $conceptos[]=array('n'=>$nombre,'m'=>$r->monto_extra[$index]);
+        }
+
         $personacontrato = PersonaContrato::where('persona_id','=',$r->persona_id)->first();
         $personacontrato->sede_id = trim( $r->sede_id );
         $personacontrato->consorcio_id =trim( $r->consorcio_id );
@@ -70,6 +86,7 @@ class PersonaContrato extends Model
         $personacontrato->monto_adicional = trim( $r->monto_adicional );
         $personacontrato->asignacion_familiar = trim( $r->asignacion_familiar );
         $personacontrato->estado = 1;
+        $personacontrato->conceptos_adicionales = json_encode($conceptos);
         $personacontrato->persona_id_updated_at=Auth::user()->id;
         $personacontrato->save();
         
@@ -81,7 +98,7 @@ class PersonaContrato extends Model
 
     public static function runLoad($r){
         
-        $sql=PersonaContrato::select('ms.sede','mc.consorcio','p_personas_contratos.id','p_personas_contratos.persona_id','p_personas_contratos.sede_id','p_personas_contratos.consorcio_id',
+        $sql=PersonaContrato::select('ms.sede','mc.consorcio','p_personas_contratos.id','p_personas_contratos.persona_id','p_personas_contratos.sede_id','p_personas_contratos.consorcio_id','p_personas_contratos.conceptos_adicionales',
                 'p_personas_contratos.cargo_id','p_personas_contratos.regimen_id','p_personas_contratos.estado_contrato','p_personas_contratos.tipo_contrato','p_personas_contratos.modalidad_contrato',
                 'p_personas_contratos.fecha_ini_contrato','p_personas_contratos.fecha_fin_contrato','p_personas_contratos.sueldo_mensual'
                 ,'p_personas_contratos.monto_adicional','p_personas_contratos.asignacion_familiar','p_personas_contratos.estado',

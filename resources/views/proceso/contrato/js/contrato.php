@@ -134,6 +134,7 @@ AgregarEditar=function(val,id){
         ContratoG.sueldo_mensual=$("#TableContrato #trid_"+id+" .sueldo_mensual").val();
         ContratoG.monto_adicional=$("#TableContrato #trid_"+id+" .monto_adicional").val();
         ContratoG.asignacion_familiar=$("#TableContrato #trid_"+id+" .asignacion_familiar").val();
+        ContratoG.conceptos_adicionales=$("#TableContrato #trid_"+id+" .conceptos_adicionales").val();
         ContratoG.estado=1;
     }
     LlenarAgregarEditar();
@@ -165,6 +166,13 @@ LlenarAgregarEditar=function(){
         $('#ModalContratoForm #slct_asignacion_familiar').selectpicker('val',ContratoG.asignacion_familiar);
         $('#ModalContratoForm #txt_estado').val(ContratoG.estado );
         $('#ModalContratoForm #txt_persona').focus();
+
+        $("#extraDiv").html("");
+        mdata =  JSON.parse(ContratoG.conceptos_adicionales);
+        for (var i = mdata.length - 1; i >= 0; i--) {
+            agregarExtra(mdata[i].n,mdata[i].m);
+        }
+
         
         
 }
@@ -230,7 +238,8 @@ HTMLCargarContrato=function(result){
             "<input type='hidden' class='fecha_fin_contrato' value='"+r.fecha_fin_contrato+"'>"+
             "<input type='hidden' class='sueldo_mensual' value='"+r.sueldo_mensual+"'>"+
             "<input type='hidden' class='monto_adicional' value='"+r.monto_adicional+"'>"+
-            "<input type='hidden' class='asignacion_familiar' value='"+r.asignacion_familiar+"'>";
+            "<input type='hidden' class='asignacion_familiar' value='"+r.asignacion_familiar+"'>"+
+            "<input type='hidden' class='conceptos_adicionales' value='"+r.conceptos_adicionales+"'>";
         html+="<input type='hidden' class='estado' value='"+r.estado+"'>"+estadohtml+"</td><td>"+
             '<a class="btn btn-primary btn-sm" onClick="AgregarEditar(0,'+r.id+')"><i class="fa fa-edit fa-lg"></i> </a></td>';
         html+="</tr>";
