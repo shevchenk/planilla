@@ -93,7 +93,7 @@ class Curso extends Model
     
         public static function ListCurso($r)
     {
-        $sql=Curso::select('id','curso','certificado_curso','tipo_curso','estado')
+        $sql=Curso::select('id','curso','estado')
             ->where('estado','=','1')
             ->where( 
                 function($query) use ($r){
