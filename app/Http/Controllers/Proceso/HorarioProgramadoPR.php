@@ -26,7 +26,7 @@ class HorarioProgramadoPR extends Controller
         }
     }
 
-   public function New(Request $r )
+    public function New(Request $r )
     {
         if ( $r->ajax() ) {
             $mensaje= array(
@@ -47,7 +47,7 @@ class HorarioProgramadoPR extends Controller
 
                 if(count($r->horario_plantilla) > 0)
                 {
-                    foreach ($r->horario_plantilla as $key => $hp) {                    
+                    foreach ($r->horario_plantilla as $key => $hp) {
                         $t_hp = DB::table('m_horarios_plantillas')->select('id', 'dia_ids', 'hora_inicio', 'hora_fin', 'horario_amanecida')->where('id', '=', $hp)->first();
                         
                         $arr_dias = explode(',', $t_hp->dia_ids);
@@ -55,6 +55,9 @@ class HorarioProgramadoPR extends Controller
                         {
                             foreach ($arr_dias as  $dia) {
                                 $tolerancia = 'tolerancia'.$hp.$dia;
+                                $monto_hora = 'monto_hora'.$hp.$dia;
+                                $carrera = 'carrera'.$hp.$dia;
+                                $curso = 'curso'.$hp.$dia;
                                 //if(($r->$tolerancia*1) > 0) {
                                 if($r->$tolerancia != '') {
                                     //echo $hp.'.'.$dia.'.'.$t_hp->hora_inicio.'.'.$r->$tolerancia.' - ';
@@ -64,6 +67,11 @@ class HorarioProgramadoPR extends Controller
                                     $r['hora_fin'] = $t_hp->hora_fin;
                                     $r['horario_amanecida'] = $t_hp->horario_amanecida;
                                     $r['tolerancia'] = $r->$tolerancia;
+
+                                    $r['monto_hora'] = $r->$monto_hora;
+                                    $r['curso'] = $r->$curso;
+                                    $r['carrera'] = $r->$carrera;
+
                                     HorarioProgramado::runNew($r);
                                 }
                             }
@@ -117,6 +125,17 @@ class HorarioProgramadoPR extends Controller
             $return['rst'] = 1;
             $return['data'] = $renturnModel;
             $return['msj'] = "No hay registros aún";    
+            return response()->json($return);   
+        }
+    }
+
+
+    public function LoadCursos(Request $r )
+    {
+        if ( $r->ajax() ) {
+            $renturnModel = HorarioProgramado::runLoadCursos($r);
+            $return['rst'] = 1;
+            $return['data'] = $renturnModel;    
             return response()->json($return);   
         }
     }

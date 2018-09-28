@@ -30,6 +30,11 @@ class HorarioProgramado extends Model
         $horarioprogramdo->horario_amanecida = trim( $r->horario_amanecida );
         $horarioprogramdo->tolerancia = trim( $r->tolerancia );
         $horarioprogramdo->estado = 1;
+
+        $horarioprogramdo->carrera = trim( $r->carrera );
+        $horarioprogramdo->curso = trim( $r->curso );
+        $horarioprogramdo->monto_hora = trim( $r->monto_hora );
+
         $horarioprogramdo->persona_id_created_at=Auth::user()->id;
         $horarioprogramdo->save();
     }
@@ -40,6 +45,17 @@ class HorarioProgramado extends Model
         $horarioprogramdo->estado = trim( $r->estado );
         $horarioprogramdo->persona_id_updated_at=Auth::user()->id;
         $horarioprogramdo->save();
+    }
+
+
+    public static function runLoadCursos($r)
+    {
+
+        $sql= DB::select(DB::raw('SELECT C.id as  idcarrera, C.carrera, mC.id as idcurso, mC.curso FROM `m_carreras` as C 
+                            INNER JOIN `m_cursos_carreras` as CC ON CC.carrera_id = C.id
+                            INNER JOIN `m_cursos` as mC ON CC.curso_id = mC.id'));
+        $result = $sql;//->get();
+        return $result;
     }
 
 

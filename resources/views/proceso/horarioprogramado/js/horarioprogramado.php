@@ -3,6 +3,10 @@ var AddEdit=0; //0: Editar | 1: Agregar
 var EventoG={id:0,evento_tipo_id:0,persona_contrato_id:0,evento_descripcion:"",
     fecha_inicio:"",fecha_fin:"",hora_inicio:"",hora_fin:"",estado:1}; // Datos Globales
 
+var carrerasOptions = "";
+var cursosLbl = [];
+var cursos = [];
+
 $(document).ready(function() {
     $(".fecha").datetimepicker({
         format: "yyyy-mm-dd",
@@ -15,6 +19,27 @@ $(document).ready(function() {
     });
 
     //AjaxDato.CargarEventoTipo(SlctCargarEventoTipo);
+
+    AjaxDato.CargarCursos(function(da){
+        
+
+        tmp = [];
+        if(da.rst==1)for (var i = da.data.length - 1; i >= 0; i--) {
+            
+            
+            if(!tmp.includes(da.data[i].idcarrera)){
+                carrerasOptions+='<option value="'+da.data[i].idcarrera+'">'+da.data[i].carrera+'</option>';
+                tmp.push(da.data[i].idcarrera);
+                cursos[da.data[i].idcarrera] = [];
+            }
+
+            tmp[da.data[i].idcarrera] = da.data[i].idcarrera;
+            cursos[da.data[i].idcarrera].push(da.data[i].idcurso);
+            cursosLbl[da.data[i].idcurso] = da.data[i].curso;
+        }
+
+    });
+
     
     //$("#EventoForm #TableEvento select").change(function(){ AjaxDato.Cargar(HTMLCargarDatos); });
     //$("#EventoForm #TableEvento input").blur(function(){ AjaxDato.Cargar(HTMLCargarDatos); });
@@ -217,8 +242,10 @@ HTMLCargarHorarioPlantilla=function(result){
                     '<div class="panel-body">';
 
                     var ar_dias = r.dias.split(',');
+                    var it=0;
                     $.each(ar_dias, function(i, d){
                         var ar_d = d.split('-');
+                        it++;
                         html+='<div class="col-lg-2">'+
                                     '<div class="panel panel-warning">'+
                                       '<div class="panel-heading">'+
@@ -227,7 +254,8 @@ HTMLCargarHorarioPlantilla=function(result){
                                       '<div class="panel-body">'+
                                         '<p><strong>Hora Ini :</strong> '+r.hora_inicio+'</p>'+
                                         '<p><strong>Hora Fin :</strong> '+r.hora_fin+'</p>'+
-                                        '<p><input type="text" readonly class="form-control text-center input_tolera'+r.id+'" id="txt_tolerancia'+r.id+ar_d[0]+'" name="txt_tolerancia'+r.id+ar_d[0]+'" onkeypress="return masterG.validaNumeros(event, this);" placeholder="Tolerancia"></p>'+
+                                        '<p><input type="text" readonly class="form-control text-center input_tolera'+r.id+'" id="txt_tolerancia'+r.id+ar_d[0]+'" name="txt_tolerancia'+r.id+ar_d[0]+'" onkeypress="return masterG.validaNumeros(event, this);" placeholder="Tolerancia">'+
+                                        '<select class="form-control" id="carrera_'+it+'" name="carrera'+r.id+ar_d[0]+'" onchange="dependiente(this);"><option value="0"> - Carrera - </option>'+carrerasOptions+'</select><select class="form-control" id="curso_'+it+'" name="curso'+r.id+ar_d[0]+'"><option value="0"> - Curso -</option></select><input type="text" placeholder="Monto por hora" id="monto_hora'+r.id+'" name="monto_hora'+r.id+ar_d[0]+'" class="form-control" onkeypress="return masterG.validaNumeros(event, this);"></p>'+
                                       '</div>'+
                                     '</div>'+
                                 '</div>';
@@ -260,5 +288,20 @@ HTMLCargarHorarioPlantilla=function(result){
 
     $("#ModalHorarioPlantilla").html(html);
 };
+
+
+
+
+function dependiente(t){
+    var id=$(t).attr("id").replace("carrera_","");
+    var tCarrera=$(t).val();
+    console.log(tCarrera);
+    var tCursos ="<option> - Cursos -</option>";
+    for (var i = cursos[tCarrera].length - 1; i >= 0; i--) {
+        tCursos+="<option value=\""+cursos[tCarrera][i]+"\">"+cursosLbl[cursos[tCarrera][i]]+"</option>";
+    }
+    $("#curso_"+id).html(tCursos);
+
+}
 
 </script>

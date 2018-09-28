@@ -10,6 +10,11 @@ var AjaxDato={
         url='AjaxDinamic/Proceso.HorarioProgramadoPR@Load';
         masterG.postAjax(url,data,evento);
     },
+    CargarCursos:function(evento){
+        data={};
+        url='AjaxDinamic/Proceso.HorarioProgramadoPR@LoadCursos';
+        masterG.postAjax(url,data,evento);
+    },  
     CambiarEstado:function(evento,AI,id){
         $("#EventoForm").append("<input type='hidden' value='"+AI+"' name='estadof'>");
         $("#EventoForm").append("<input type='hidden' value='"+id+"' name='id'>");
