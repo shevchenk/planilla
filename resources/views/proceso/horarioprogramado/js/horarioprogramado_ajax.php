@@ -32,7 +32,7 @@ var AjaxDato={
     */
     CargarHorarioPlantilla:function(evento,pag){
         url='AjaxDinamic/Mantenimiento.HorarioPlantillaMA@ListHorarioPlantilla';
-        data={};
+        data={persona_contrato_id:$("#EventoForm #txt_persona_contrato_id").val()};
         masterG.postAjax(url,data,evento);
     },
     
