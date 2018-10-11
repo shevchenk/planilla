@@ -55,7 +55,7 @@ class Planilla extends Controller{
 
             $months = array('01' => 'Enero','02' => 'Febrero','03' => 'Marzo','04' => 'Abril','05' => 'Mayo','06' => 'Junio','07' => 'Julio','08' => 'Agosto','09' => 'Septiembre','10' => 'Octubre','11' => 'Noviembre','12' => 'Diciembre');
 
-                function nxFormat($str){$x=explode(",",$str);return $x[0].'</b>,<small>'.$x[1].'</small>';}
+            function nxFormat($str){$x=explode(",",$str);return $x[0].'</b>,<small>'.$x[1].'</small>';}
 
             foreach ($list as $key => $value) {
                 $date = explode('-',date("Y-m-d",strtotime($value->fecha_generada)));
