@@ -324,9 +324,15 @@ var masterG ={
         te = String.fromCharCode(tecla); // 5
         return patron.test(te); // 6
     },
-    validaNumeros:function(e) { // 1
+    validaNumeros:function(e,t,tipo) { // 1
         tecla = (document.all) ? e.keyCode : e.which; // 2
+        valida=t.value.substring(0,2);
         if (tecla==8 || tecla==0) return true;//8 barra, 0 flechas desplaz
+        if( tipo=='ruc' ){
+          if( (valida.length==0 && tecla!=50) || (valida.length==1 && tecla!=48) ){
+            return false;
+          }
+        }
         patron = /\d/; // Solo acepta números
         te = String.fromCharCode(tecla); // 5
         return patron.test(te); // 6

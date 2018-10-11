@@ -23,7 +23,10 @@ class DiaNoLaboral extends Model
         $dianolaboral = new DiaNoLaboral;
         $dianolaboral->fecha = trim( $r->fecha );
         $dianolaboral->estado = trim( $r->estado );
-        $dianolaboral->pago = trim( $r->pago );
+        if( trim( $r->pago )!='' ){
+            $dianolaboral->pago = trim( $r->pago );
+        }
+        
         $dianolaboral->persona_id_created_at=Auth::user()->id;
         $dianolaboral->save();
         $sedes = $r->sede_ids;

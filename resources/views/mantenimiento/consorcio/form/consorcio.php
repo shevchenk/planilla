@@ -33,7 +33,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label>Ruc</label>
-                            <input type="text" onkeypress="masterG.validaNumeros(event, this);" class="form-control" id="txt_ruc" name="txt_ruc">
+                            <input type="text" maxlength="11" onkeypress="return masterG.validaNumeros(event,this,'ruc');" class="form-control" id="txt_ruc" name="txt_ruc">
                         </div>
                     </div>
                     <div class="col-md-8">

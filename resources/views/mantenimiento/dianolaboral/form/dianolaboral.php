@@ -24,26 +24,18 @@
                             </div>
                         </div>  
                     </div>
-
+                    <div class="col-md-12">
+                        <div class="form-group">
+                            <label>Pago</label>
+                            <input type="text" class="form-control" onkeyup="return masterG.DecimalMax(this,1);" onkeypress="return masterG.validaDecimal(event,this);" id="slct_pago" name="slct_pago" >
+                        </div>
+                    </div>
                     <div class="col-md-12">
                         <div class="form-group">
                             <label>Estado</label>
                             <select class="form-control selectpicker show-menu-arrow" name="slct_estado" id="slct_estado">
                                 <option  value='0'>Inactivo</option>
                                 <option  value='1'>Activo</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="col-md-12">
-                        <div class="form-group">
-                            <label>Pago</label>
-                            <select class="form-control selectpicker show-menu-arrow" name="slct_pago" id="slct_pago">
-                                <option  value='1'>1 Día</option>
-                                <option  value='1.5'>1.5 Días</option>
-                                <option  value='2'>2.0 Días</option>
-                                <option  value='2.5'>2.5 Días</option>
-                                <option  value='3'>3 Días</option>
                             </select>
                         </div>
                     </div>

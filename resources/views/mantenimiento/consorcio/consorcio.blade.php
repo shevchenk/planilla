@@ -65,7 +65,7 @@
                                             <label><h4>RUC:</h4></label>
                                             <div class="input-group">
                                                 <div class="input-group-addon"><i class="fa fa-search"></i></div>
-                                                <input type="text" class="form-control" name="txt_ruc" id="txt_ruc" placeholder="RUC" onkeypress="return masterG.enterGlobal(event, '.input-group', 1);">
+                                                <input type="text" maxlength="11" class="form-control" name="txt_ruc" id="txt_ruc" placeholder="RUC" onkeypress="return masterG.enterGlobal(event, '.input-group', 1);">
                                             </div>
                                         </div>
                                     </th>

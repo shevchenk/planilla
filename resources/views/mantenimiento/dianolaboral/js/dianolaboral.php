@@ -40,7 +40,7 @@ $(document).ready(function() {
 
         var sede = DatosG.sede_ids.split(',');
         $('#ModalDiaNoLaboralForm #slct_sede_ids').selectpicker( 'val', sede );
-        $('#ModalDiaNoLaboralForm #slct_pago').selectpicker( 'val', pago );
+        $('#ModalDiaNoLaboralForm #slct_pago').val( DatosG.pago );
 
         $('#ModalDiaNoLaboralForm #slct_estado').selectpicker( 'val',DatosG.estado );
         //$('#ModalDiaNoLaboralForm #txt_fecha').focus();
@@ -128,9 +128,9 @@ HTMLCargarDatos=function(result){
         html+="<tr id='trid_"+r.id+"'>"+
             "<td class='fecha'>"+r.fecha+"</td>"+
             "<td class='sede'>"+sede+"</td>"+
-            "<td>"+r.pago+" Días</td>"+
+            "<td>"+r.pago+" Día(s)</td>"+
             "<td>"+
-            "<input type='hidden' class='sede_ids' value='"+r.sede_ids+"'>";
+            "<input type='hidden' class='sede_ids' value='"+r.sede_ids+"'>"+
             "<input type='hidden' class='pago' value='"+r.pago+"'>";
         html+="<input type='hidden' class='estado' value='"+r.estado+"'>"+estadohtml+"</td>"+
             '<td><a class="btn btn-primary btn-sm" onClick="AgregarEditar(0,'+r.id+')"><i class="fa fa-edit fa-lg"></i> </a></td>';
