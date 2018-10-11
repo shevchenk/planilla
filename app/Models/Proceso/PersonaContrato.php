@@ -268,9 +268,9 @@ class PersonaContrato extends Model
     }
     
     public static function runLoadBoleta($r){
-        $sql= DB::table("p_planilla_detalle as ppd")
+        $sql= DB::table("p_planillas_detalles as ppd")
             ->select('ppd.*')
-            ->join("p_planilla as pp","pp.id","=","ppd.planilla_id")
+            ->join("p_planillas as pp","pp.id","=","ppd.planilla_id")
             ->where(
                 function($query) use ($r){
                     if( $r->has("persona_id") ){
@@ -312,7 +312,7 @@ class PersonaContrato extends Model
     }
     
     public static function runLoadBoletaFind($r){
-        $sql= DB::table("p_planilla_detalle as ppd")
+        $sql= DB::table("p_planillas_detalles as ppd")
             ->select('ppd.*','mp.dni',DB::raw("CONCAT_WS(' ',mp.paterno,mp.materno,mp.nombre) as colaborador"))
             ->join("m_personas as mp","ppd.persona_id","=","mp.id")
             ->where(
