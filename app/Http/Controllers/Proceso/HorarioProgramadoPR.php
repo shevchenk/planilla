@@ -68,9 +68,9 @@ class HorarioProgramadoPR extends Controller
                                     $r['horario_amanecida'] = $t_hp->horario_amanecida;
                                     $r['tolerancia'] = $r->$tolerancia;
 
-                                    $r['monto_hora'] = $r->$monto_hora;
-                                    $r['curso'] = $r->$curso;
-                                    $r['carrera'] = $r->$carrera;
+                                    $r['monto_hora'] = ($r->$monto_hora!=''?$r->$monto_hora:0);
+                                    $r['curso'] = ($r->$curso!=''?$r->$curso:0);
+                                    $r['carrera'] = ($r->$carrera!=''?$r->$carrera:0);
 
                                     HorarioProgramado::runNew($r);
                                 }
