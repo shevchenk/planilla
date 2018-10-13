@@ -473,7 +473,8 @@ Class Casuistica{
         
         if($fechaH!=null && $horaH !=null){
             $this->emularFecha = true;
-            $this->emuTime = trim($fechaH).' '.trim($horaH);
+            //$this->emuTime = trim($fechaH).' '.trim($horaH);
+            $this->emuTime = date("Y-m-d H:i:s");
         }else{
             $this->emularFecha = false;
             $this->emuTime = date("Y-m-d H:i:s");
