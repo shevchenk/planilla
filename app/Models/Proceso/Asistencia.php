@@ -748,7 +748,7 @@ Class Casuistica{
     private function vDate($param1=null,$param2=null){
         if($param2!=null){
             if($this->emularFecha === true){
-                $nowEmuTime = time() - $param2;
+                $nowEmuTime = $this->vTime() - $param2;
                 return date($param1,strtotime($this->emuTime)+$nowEmuTime);
             }else{
                 return date($param1,$param2);
