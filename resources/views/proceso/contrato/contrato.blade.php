@@ -89,8 +89,9 @@
                                             <div class="input-group">
                                                 <select class="form-control" name="slct_tipo_contrato" id="slct_tipo_contrato">
                                                     <option value='' selected>.::Todo::.</option>
-                                                    <option value='1'>Docente</option>
+                                                    <option value='1'>Irregular</option>
                                                     <option value='2'>Regular</option>
+                                                    <option value='3'>Docente</option>
                                                 </select>
                                             </div>
                                         </div>
@@ -219,8 +220,9 @@
                                             <label>Tipo Contrato</label>
                                             <select  class="form-control selectpicker show-menu-arrow" data-live-search="true" id="slct_tipo_contrato" name="slct_tipo_contrato">
                                                 <option value="0">.::Seleccione::.</option>
-                                                <option value='1'>Docente</option>
+                                                <option value='1'>Irregular</option>
                                                 <option value='2'>Regular</option>
+                                                <option value='3'>Docente</option>
                                             </select>
                                         </div> 
                                     </div>
