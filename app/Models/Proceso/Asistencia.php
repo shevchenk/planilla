@@ -525,6 +525,7 @@ Class Casuistica{
             ->first();
 
 
+
             if(count($hpAux)>0 && $hpAux->horario_amanecida == 1){
 
                     if($this->compararFechasHoras($hpAux->hora_fin,$this->horahoy)){
@@ -623,13 +624,13 @@ Class Casuistica{
 
     public function estadoAsistencia(){
 
-
         if(count($this->horarioprogramado)==0){
             if(count($this->asistencia)>0){$this->asistenciaActivo = $this->asistencia->id;$this->asistenciaAux = false;}
             return -1; // NO TIENE HORARIO ASIGNADO.
         }
-
+	
         if($this->asistencia != NULL && $this->asistencia->fecha_ingreso==$this->fechahoy && $this->horarioprogramado->horario_amanecida==0){
+	
             $this->asistenciaActivo = $this->asistencia->id;
             return MARCA_SALIDA; // ENTRO, NO HA SALIDO - HORARIO REGULAR
 
@@ -748,8 +749,9 @@ Class Casuistica{
     private function vDate($param1=null,$param2=null){
         if($param2!=null){
             if($this->emularFecha === true){
-                $nowEmuTime = $this->vTime() - $param2;
-                return date($param1,strtotime($this->emuTime)+$nowEmuTime);
+
+                $nowEmuTime = strtotime($this->emuTime) + ($param2 - time());
+                return date($param1,$nowEmuTime);
             }else{
                 return date($param1,$param2);
             }
