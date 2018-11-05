@@ -50,6 +50,7 @@
                                             <label>Nombre Completo</label>
                                             <input type="hidden" name="txt_estado" id="txt_estado" class="form-control mant" readonly="" value="1">
                                             <input type="hidden" name="txt_persona_contrato_id" id="txt_persona_contrato_id" class="form-control mant" readonly="">
+                                            <input type="hidden" name="txt_tipo_contrato" id="txt_tipo_contrato" class="form-control mant">
                                             <input type="text" class="form-control" id="txt_persona" name="txt_persona" disabled="">
                                         </div> 
                                     </div>
