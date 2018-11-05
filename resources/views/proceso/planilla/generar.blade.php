@@ -157,6 +157,13 @@
 
 		$.post("AjaxDinamic/Proceso.Planilla@generar",{consorcio:$("#gconsorcio").val(),fecha:$("#gfecha").val()},function(data){
 			
+
+			if(data.data.result==1){
+				swal("Listo",data.msj,"success");
+			}else{
+				swal("Información",data.msj,"warning");
+			}
+
 			$("#result").html(data);
 			cargarPlanillas(0);
 
@@ -215,12 +222,12 @@
 	}
 
 	function loadFecha(val){
-		var currentDate = new Date();
+		/*var currentDate = new Date();
 		var day = currentDate.getDate();
 		var month = currentDate.getMonth() + 1;
 		var year = currentDate.getFullYear();
 		console.log(consorcios[val]);
-		$('#gfecha').val(consorcios[val] == null || consorcios[val] == 'undefined' ? year+'-'+pad(month,2)+'-'+pad(day,2) : consorcios[val]);
+		$('#gfecha').val(consorcios[val] == null || consorcios[val] == 'undefined' ? year+'-'+pad(month,2)+'-'+pad(day,2) : consorcios[val]);*/
 	}
 
 	function pad(n, width, z) {
@@ -234,13 +241,12 @@
 	cargarConsorcios();
 
     $(".fecha").datetimepicker({
-        format: "yyyy-mm-dd",
+        format: "yyyy-mm",
         language: 'es',
-        showMeridian: true,
-        time:true,
-        minView:2,
+        startView:3,
+        minView:3,
         autoclose: true,
-        todayBtn: false
+        todayBtn: false,
     });
 
 </script>
