@@ -31,7 +31,7 @@ class Planilla extends Controller{
                 
             $return['rst'] = 1;
             $return['data'] = ( $x ? array('result'=>1) : array('result'=>0) );
-            $return['msj'] = ( $x ? 'Planilla generada correctamente' : 'No se ha generado la planilla.' );
+            $return['msj'] = ( $x ? 'Planilla generada correctamente' : 'No hay trabajadores pendientes por generar en el mes seleccionado.' );
             return response()->json($return);
 
         }
@@ -103,8 +103,8 @@ class Planilla extends Controller{
 
 ?>
 
-<table width="100%" border=1>
-    <tr>
+<table width="100%" border=0>
+    <tr align="center">
         <th width="20%">Fecha Inicial</th>
         <th width="20%">Fecha Final</th>
         <th width="20%">Fecha Generado</th>
@@ -114,6 +114,8 @@ class Planilla extends Controller{
     </tr>
 
 
+
+
 <?php
 
 
@@ -121,33 +123,110 @@ class Planilla extends Controller{
 
 		if(count($list['detalle'])>0){
 
-            $html.="<tr><td>".$list['data'][0]->fecha_inicial."</td><td>".$list['data'][0]->fecha_final."</td><td>".$list['data'][0]->fecha_generada."</td><td>".$list['data'][0]->total_neto."</td><td>".$list['data'][0]->total_aporte."</td><td>".$list['data'][0]->total_descuentos."</td></tr>";
+            $html.="<tr align=\"center\"><td>".$list['data'][0]->fecha_inicial."</td><td>".$list['data'][0]->fecha_final."</td><td>".$list['data'][0]->fecha_generada."</td><td>".$list['data'][0]->total_neto."</td><td>".$list['data'][0]->total_aporte."</td><td>".$list['data'][0]->total_descuentos."</td></tr></table>";
 
 			//$html .= '<tr><th>'.implode("</th><th>", array_keys((array)$list['data'][0])).'</th></tr>';
 			//$html .= '<tr><th>'.implode("</th><th>", ((array)$list['data'][0])).'</th></tr>';
 
 
-            $html .= "</table><br><br><br><table width='100%' border=1>";
-
-
-            $html.='<tr>
-            <th>Persona</th>
-            <th>Sueldo Bruto</th>
-            <th>Tipo regimen</th>
-            <th>Descuento</th>
-            <th>Seguro</th>
-            <th>Aporte</th>
-            <th>Comisión</th>
-            <th>Tardanza</th>
-            <th>Prima</th>
-            <th>Días laborados</th>
-            <th>Días no laborados</th>
-            <th>Valor Día</th>
-            <th>Neto</th>
-            </tr>';
-
 			foreach ($list['detalle'] as $key => $value) {
-				$html .= "<tr><td>".$value->persona."</td><td>".$value->sueldo_bruto."</td><td>".$value->tipo_regimen."</td><td>".$value->descuento."</td><td>".$value->seguro."</td><td>".$value->aporte."</td><td>".$value->comision."</td><td>".$value->total_tardanza."</td><td>".$value->prima."</td><td>".$value->dias_laborados."</td><td>".$value->dias_no_laborados."</td><td>".$value->valor_por_jornada."</td><td>".$value->sueldo_neto."</td></tr>";
+				$html .= "<br><hr><br>
+
+
+
+                <table width=\"100%\" border=\"0\" align=\"center\">
+                    <tr style=\"background-color: #E5E5E5FF;\">
+                        
+                        <th colspan=\"11\">".strtoupper($value->persona)."</th>
+                    </tr>
+                    <tr>
+                        <th>Sueldo Bruto</th>
+                        <th>Remun. Basica</th>
+                        <th>Ingreso Asignación familiar</th>
+                        <th>Días laborados</th>
+                        <th>Monto Días laborados</th>
+                        <th>Vacac.</th>
+                        <th>Ingreso Vacaciones</th>
+                        <th>Horas extra</th>
+                        <th>Ingreso horas extra</th>
+                        <th>Bonos</th>
+                        <th>EsSalud</th>
+                    </tr>
+                    <tr align=\"center\">
+                        <td>".$value->sueldo_bruto."</td>
+                        <td>".$value->remuneracion_basica."</td>
+                        <td>".$value->ingreso_asig_familiar."</td>
+                        <td>".$value->dias_laborados."</td>
+                        <td>".$value->ingreso_dias_laborados."</td>
+                        <td>".$value->vacaciones."</td>
+                        <td>".$value->ingreso_vacaciones."</td>
+                        <td>".$value->horas_extras."</td>
+                        <td>".$value->ingreso_horas_extras."</td>
+                        <td>".$value->bonos."</td>
+                        <td>".$value->aporte_essalud."</td>
+                    </tr>
+
+                    </table>
+                   <table width=\"100%\" border=\"0\">
+                    <tr>
+                        <th colspan=\"10\">BONOS</th>
+                    </tr>
+
+
+
+                    <tr>
+                        <td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+                    </tr>
+
+
+                    ";
+
+
+
+                    $x = json_decode($value->bonos_detalle);
+                    
+                    $html .= "<tr>";
+                    if(is_array($x)) for ($i=0; $i < count($x); $i++) {
+                        if($x%10==0)
+                            $html .= "</tr><tr align=\"center\">";
+                        $html .= "<td width=\"10%\">".$x[$i]->m." [".$x[$i]->n."]</td>";
+                    }
+
+
+                    $html .= "</tr>
+                </table>
+
+                <table width=\"100%\" border=\"0\">
+                        <th colspan=\"11\">DESCUENTOS</th>
+                    </tr>
+                    <tr>
+                        <th>Días No laborados</th>
+                        <th>Descuento días no laborados</th>
+                        <th>Total tardanza</th>
+                        <th>Desc. Tardanza</th>
+                        <th>Desc. Permisos</th>
+                        <th>Desc. Prestamo</th>
+                        <th>Desc. 5ta.</th>
+                        <th>Desc. Regimen Seguro</th>
+                        <th>Desc. Regimen Aporte</th>
+                        <th>Desc. Regimen Comisión</th>
+                        <th>Desc. Regimen Prima</th>
+
+                    </tr>
+                    <tr  align=\"center\">
+                        <td>".$value->dias_no_laborados."</td>
+                        <td>".$value->dscto_dias_no_laborados."</td>
+                        <td>".$value->total_tardanza."</td>
+                        <td>".$value->dscto_total_tardanza."</td>
+                        <td>".$value->dscto_permisos."</td>
+                        <td>".$value->dscto_prestamo."</td>
+                        <td>".$value->dscto_quinta."</td>
+                        <td>".$value->dscto_regimen_seguro."</td>
+                        <td>".$value->dscto_regimen_aporte."</td>
+                        <td>".$value->dscto_regimen_comision."</td>
+                        <td>".$value->dscto_regimen_prima."</td>
+                    </tr>
+                </table>";
 			}
 
 

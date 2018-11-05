@@ -19,14 +19,19 @@ class PlanillaM extends Model{
 
     public static function infoPlanilla($consorcio,$fecha){
 
-      $ultimaPlanilla = PlanillaM::ultimaPlanilla($consorcio,$fecha);
-      
-      $mes = '09';
-      $essalud = '0.09';
+      $cf = PlanillaM::ultimaPlanilla($consorcio,$fecha);
 
-      $asignacion_familiar = '75';
+      $config = PlanillaM::loadConfig();
+      $mes = substr($fecha, 5,2);
+
+      $fi = $fecha.'-'.str_pad($cf->dia_ciclo,2,'0',STR_PAD_LEFT);
+      $ff = date("Y-m-d",strtotime($fi." +1 month -1 day"));
+
+      $essalud = $config->essalud;
+      $asignacion_familiar = $config->asig_familiar;
+
       $sql = "
-            SELECT 
+        SELECT 
             trab.persona_id, contrato_id, sueldo_bruto
             , remuneracion_basica, ingreso_asig_familiar, dias_laborados, ingreso_dias_laborados, vacaciones, ingreso_vacaciones, horas_extras, ingreso_horas_extras, bonos, bonos_detalle
             , dias_no_laborados, dscto_dias_no_laborados, total_tardanza, dscto_total_tardanza, dscto_permisos, dscto_prestamo
@@ -37,7 +42,7 @@ class PlanillaM extends Model{
                                     -IFNULL(pla.acu_dscto_quinta,0))/(12-$mes+1),2)
                 FROM a_renta_quinta rq 
                 WHERE remuneracion_basica*(12-$mes+1)+IFNULL(acu_sueldo_neto,0)-(7*4040) BETWEEN rq.importe_minimo_calculado AND rq.importe_maximo_calculado ),0) dscto_quinta
-            , ROUND(seguro*remuneracion_basica,2) dscto_dscto_regimen_seguro
+            , ROUND(seguro*remuneracion_basica,2) dscto_regimen_seguro
             , ROUND(aporte*remuneracion_basica,2) dscto_regimen_aporte, ROUND(comision*remuneracion_basica,2) dscto_regimen_comision
             , ROUND(prima*remuneracion_basica,2) dscto_regimen_prima, ROUND(essalud*remuneracion_basica,2) aporte_essalud
 
@@ -176,26 +181,34 @@ class PlanillaM extends Model{
             LEFT JOIN p_eventos_asistencias ea ON ea.asistencia_id=a.id AND ea.estado=1
             LEFT JOIN p_eventos e ON e.id=ea.evento_id AND e.estado=1
             LEFT JOIN m_eventos_tipos et ON et.id=e.evento_tipo_id
-            AND a.estado=1 AND a.fecha_ingreso BETWEEN '2018-09-01' AND '2018-09-30' 
-            WHERE DATE(pc.created_at)='2018-09-23' 
+            AND a.estado=1 AND a.fecha_ingreso BETWEEN '$fi' AND '$ff' 
+            WHERE pc.consorcio_id='$consorcio'
             GROUP BY pc.id,pc.persona_id,pc.regimen_id,pc.asignacion_familiar,pc.tipo_contrato,r.seguro,r.aporte,r.comision,r.prima,pc.sueldo_mensual,
             pc.horaextra,pc.monto_adicional,pc.conceptos_adicionales, p.dni
             ) trab
             LEFT JOIN (
-                SELECT pd.persona_id, SUM(pd.dscto_quinta) acu_dscto_quinta, SUM(pd.sueldo_neto) acu_sueldo_neto
+                SELECT pd.persona_id, SUM(pd.dscto_quinta) AS acu_dscto_quinta, SUM(pd.remuneracion_basica) AS acu_sueldo_neto
                 FROM p_planillas_detalles pd
                 INNER JOIN p_planillas p ON p.id=pd.planilla_id AND p.estado=1
                 WHERE YEAR(p.fecha_generada)=YEAR(CURDATE()) AND pd.estado=1
                 GROUP BY pd.persona_id
-            ) pla ON pla.persona_id=trab.persona_id 
-
+            ) pla ON pla.persona_id=trab.persona_id
+            LEFT JOIN (
+                SELECT pd.persona_id
+                FROM p_planillas_detalles pd
+                INNER JOIN p_planillas p ON p.id=pd.planilla_id AND p.estado=1
+                WHERE p.consorcio_id = $consorcio 
+                AND p.fecha_inicial = '$fi' 
+                AND p.fecha_final = '$ff' 
+            ) as PG ON PG.persona_id=trab.persona_id 
+            WHERE PG.persona_id IS NULL
             /*
             Probar cuando lleva un dia sin programacion
             Probar las programaciones con 2 a mas veces al dia
             Probar las tardanzas de amanecida y sus eventos
             */
       ";
-        //die($sql);
+
         $data = DB::select( DB::raw($sql));
 
         $total_trabajadores = 0;
@@ -206,17 +219,19 @@ class PlanillaM extends Model{
 
         if(count($data) > 0){
 
-                $planilla = new PlanillaM("p_planillas");
-                $planilla->total_trabajadores = $total_trabajadores;
-                $planilla->total_aporte = $total_aporte;
-                $planilla->total_bruto = $total_bruto;
-                $planilla->total_neto = $total_neto;
-                $planilla->total_descuentos = $total_descuentos;
-                $planilla->consorcio_id = $consorcio;
-                $planilla->estado = 1;
-                $planilla->fecha_generada  = date("Y-m-d");
-                $planilla->generado_por = Auth::user()->id;
-                $planilla->save();
+            $planilla = new PlanillaM("p_planillas");
+            $planilla->total_trabajadores = $total_trabajadores;
+            $planilla->total_aporte = $total_aporte;
+            $planilla->total_bruto = $total_bruto;
+            $planilla->total_neto = $total_neto;
+            $planilla->fecha_inicial = $fi;
+            $planilla->fecha_final = $ff;
+            $planilla->total_descuentos = $total_descuentos;
+            $planilla->consorcio_id = $consorcio;
+            $planilla->estado = 1;
+            $planilla->fecha_generada  = date("Y-m-d");
+            $planilla->generado_por = Auth::user()->id;
+            $planilla->save();
 
 
             foreach ($data as $key => $value) {
@@ -224,27 +239,42 @@ class PlanillaM extends Model{
                 $total_trabajadores++;
                 $total_aporte += $value->aporte_essalud;
                 $total_bruto += $value->sueldo_bruto;
-                $total_neto += $value->remuneracion_basica;
-                $total_descuentos += $value->dscto_total_tardanza;
 
+                $descuentos = $value->dscto_prestamo+$value->dscto_quinta+$value->dscto_regimen_seguro+$value->dscto_regimen_aporte+$value->dscto_regimen_comision+$value->dscto_regimen_prima;
+                $total_descuentos += $descuentos;
+                $neto = $value->remuneracion_basica-$descuentos;
+                $total_neto += $neto;
 
                 $iDataTmp = (object) [
                     'planilla_id'=>$planilla->id,
                     'persona_id' => $value->persona_id,
                     'contrato_id' => $value->contrato_id,
                     'sueldo_bruto' => $value->sueldo_bruto,
-                    'sueldo_neto' => $value->remuneracion_basica,
-                    'aporte' => $value->aporte_essalud,
-                    'comision' => $value->dscto_regimen_comision,
-                    'prima' => $value->dscto_regimen_prima,
-                    'seguro' => $value->dscto_dscto_regimen_seguro,
-                    'valor_por_jornada' => 0,
-                    'estado' => 1,
-                    'descuento' => $value->dscto_total_tardanza,
-                    'dscto_quinta' => $value->dscto_quinta,
-                    'total_tardanza' => $value->dscto_total_tardanza,
+                    'remuneracion_basica' => $value->remuneracion_basica,
+                    'ingreso_asig_familiar' => $value->ingreso_asig_familiar,
                     'dias_laborados' => $value->dias_laborados,
+                    'ingreso_dias_laborados' => $value->ingreso_dias_laborados,
+                    'vacaciones' => $value->vacaciones,
+                    'ingreso_vacaciones' => $value->ingreso_vacaciones,
+                    'horas_extras' => $value->horas_extras,
+                    'ingreso_horas_extras' => $value->ingreso_horas_extras,
+                    'bonos' => $value->bonos,
+                    'bonos_detalle' => $value->bonos_detalle,
                     'dias_no_laborados' => $value->dias_no_laborados,
+                    'dscto_dias_no_laborados' => $value->dscto_dias_no_laborados,
+                    'total_tardanza' => $value->total_tardanza,
+                    'dscto_total_tardanza' => $value->dscto_total_tardanza,
+                    'dscto_permisos' => $value->dscto_permisos,
+                    'dscto_prestamo' => $value->dscto_prestamo,
+                    'acu_dscto_quinta' => $value->acu_dscto_quinta,
+                    'acu_sueldo_neto' => $value->acu_sueldo_neto,
+                    'dscto_quinta' => $value->dscto_quinta,
+                    'dscto_regimen_seguro' => $value->dscto_regimen_seguro,
+                    'dscto_regimen_aporte' => $value->dscto_regimen_aporte,
+                    'dscto_regimen_comision' => $value->dscto_regimen_comision,
+                    'dscto_regimen_prima' => $value->dscto_regimen_prima,
+                    'aporte_essalud' => $value->aporte_essalud,
+                    'estado' => 1,
                 ];
 
                 PlanillaM::crearDetallePlanilla($iDataTmp);
@@ -258,7 +288,12 @@ class PlanillaM extends Model{
                 $planilla->total_descuentos = $total_descuentos;
                 $planilla->save();
 
+                $actConsorcio = Consorcio::find($consorcio);
+                $actConsorcio->fecha_ultima_planilla = date("Y-m-d");
+                $actConsorcio->save();
 
+        }else{
+            return false;
         }
         
       return true;
@@ -270,13 +305,19 @@ class PlanillaM extends Model{
 
     private static function ultimaPlanilla($consorcio,$fecha){
 
-      $x = DB::select( DB::raw("SELECT fecha_ultima_planilla FROM planilla.m_consorcios WHERE estado = 1 AND id = '$consorcio';"));
+      $x = DB::select( DB::raw("SELECT fecha_ultima_planilla,dia_ciclo FROM planilla.m_consorcios WHERE estado = 1 AND id = '$consorcio';"));
       
       if(count($x)>0 && $x[0]->fecha_ultima_planilla != null){
-        return $x[0]->fecha_ultima_planilla;
+        return $x[0];
       }else{
         return $fecha;
       }
+    } 
+
+    private static function loadConfig(){
+
+      $x = DB::select( DB::raw("SELECT * FROM planilla.a_config WHERE estado = 1"));
+      return $x[0];
     } 
 
     public static function listPlanillas($filters){
@@ -290,7 +331,6 @@ class PlanillaM extends Model{
       $qry = "SELECT p.*,c.consorcio,c.ruc FROM p_planillas as p INNER JOIN m_consorcios as c ON c.id = p.consorcio_id WHERE p.estado=1 $auxQry";
 
       //echo $qry;
-
 
         return DB::select(DB::raw($qry));
     }
