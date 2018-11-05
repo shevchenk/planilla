@@ -55,10 +55,10 @@
 	                	</div>
 	                	<div class="col-md-4">
 		                	<div class="col-md-6">
-		                		<input type="text" id="ffecha_ini" class="form-control fecha" placeholder="Año-Mes-Día">
+		                		<input type="text" id="ffecha_ini" class="form-control fecha" placeholder="Seleccione">
 		                	</div>
 		                	<div class="col-md-6">
-		                		<input type="text" id="ffecha_fin" class="form-control fecha" placeholder="Año-Mes-Día">
+		                		<input type="text" id="ffecha_fin" class="form-control fecha" placeholder="Seleccione">
 		                	</div>
 	                	</div>
 
